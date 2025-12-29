@@ -20,7 +20,7 @@ const Home = () => {
           <div className="absolute inset-0 bg-gradient-to-br from-purple-900/50 via-black to-blue-900/50" />
 
           {/* raster fog: appears in front of gradient but behind content */}
-          <div className="fogwrapper" style={{ zIndex: 8 }} aria-hidden>
+          <div className="fogwrapper fog-light" style={{ zIndex: 8 }} aria-hidden>
             <div id="foglayer_01" className="fog">
               <div className="image01" />
               <div className="image02" />
