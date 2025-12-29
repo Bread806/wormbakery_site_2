@@ -1,0 +1,104 @@
+/* demo 基本頁面樣式 */
+html, body { height: 100%; }
+body {
+  margin: 0;
+  background: #000; /* 黑底更容易看見霧 */
+  color: #fff;
+  font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+}
+
+/* 霧氣背景容器（全螢幕、固定在後面） */
+.fogwrapper {
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  z-index: 0;           /* 放在內容之下但不會被負值藏起來 */
+  pointer-events: none; /* 不擋住滑鼠點擊 */
+  -webkit-filter: blur(1px) grayscale(0.2) saturate(1.2) sepia(0.2);
+  filter: blur(1px) grayscale(0.2) saturate(1.2) sepia(0.2);
+}
+
+/* 每層 fog 的定位與寬度 */
+#foglayer_01, #foglayer_02, #foglayer_03 {
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 200%;
+}
+
+#foglayer_01 .image01, #foglayer_01 .image02,
+#foglayer_02 .image01, #foglayer_02 .image02,
+#foglayer_03 .image01, #foglayer_03 .image02 {
+  float: left;
+  height: 100%;
+  width: 50%;
+}
+
+/* 圖片來源（直接 hotlink，免下載） */
+/* 使用 hotlink 圖片（可替換為本地 public/pic/ 路徑） */
+#foglayer_01 .image01, #foglayer_01 .image02 {
+  background: url("https://raw.githubusercontent.com/danielstuart14/CSS_FOG_ANIMATION/master/fog1.png") center center/cover no-repeat;
+}
+
+#foglayer_02 .image01, #foglayer_02 .image02,
+#foglayer_03 .image01, #foglayer_03 .image02 {
+  background: url("https://raw.githubusercontent.com/danielstuart14/CSS_FOG_ANIMATION/master/fog2.png") center center/cover no-repeat;
+}
+
+/* 動畫：移動 + 透明度變化 */
+@keyframes foglayer_moveme {
+  0% { left: 0; }
+  100% { left: -100%; }
+}
+
+@keyframes foglayer_01_opacity {
+  0% { opacity: .1; }
+  22% { opacity: .5; }
+  40% { opacity: .28; }
+  58% { opacity: .4; }
+  80% { opacity: .16; }
+  100% { opacity: .1; }
+}
+
+@keyframes foglayer_02_opacity {
+  0% { opacity: .5; }
+  25% { opacity: .2; }
+  50% { opacity: .1; }
+  80% { opacity: .3; }
+  100% { opacity: .5; }
+}
+
+@keyframes foglayer_03_opacity {
+  0% { opacity: .8; }
+  27% { opacity: .2; }
+  52% { opacity: .6; }
+  68% { opacity: .3; }
+  100% { opacity: .8; }
+}
+
+/* 套用動畫（可以調整時間讓它更慢） */
+/* 套用動畫（可調整時間讓它更慢或更快） */
+#foglayer_01 {
+  left: 0;
+  animation: foglayer_01_opacity 20s linear infinite, foglayer_moveme 40s linear infinite;
+}
+
+#foglayer_02 {
+  left: 0;
+  animation: foglayer_02_opacity 30s linear infinite, foglayer_moveme 50s linear infinite;
+}
+
+#foglayer_03 {
+  left: 0;
+  animation: foglayer_03_opacity 35s linear infinite, foglayer_moveme 60s linear infinite;
+}
+
+/* 若想要更柔和，降低透明度上限或加長動畫時間 */
+
+/* (已移除舊的 SVG 彩色煙霧樣式：使用較省效能的 Canvas 實作) */
+
+/* Canvas-based smoke canvas positioning (JS will create canvas#smokeCanvas) */
+/* canvas implementation removed; keep demo focused on raster fog */

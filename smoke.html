@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="zh-TW">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Smoke Demo</title>
+    <!-- 載入 smoke demo 的 CSS -->
+    <link rel="stylesheet" href="/smoke.css" />
+    <style>
+      /* 讓 demo 的文字顯眼，並確保它位於霧層之上 */
+      .demo-title {
+        position: relative;
+        z-index: 10;
+        color: #fff;
+        text-align: center;
+        margin-top: 28vh;
+        font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+        font-size: 2rem;
+        text-shadow: 0 6px 24px rgba(0,0,0,0.6);
+      }
+    </style>
+  </head>
+  <body>
+    <h1 class="demo-title">Smoke demo — 若看不到霧請等待圖片載入</h1>
+
+    <!-- 原本的霧氣背景 (raster fog layers) -->
+    <div class="fogwrapper">
+      <div id="foglayer_01" class="fog">
+        <div class="image01"></div>
+        <div class="image02"></div>
+      </div>
+      <div id="foglayer_02" class="fog">
+        <div class="image01"></div>
+        <div class="image02"></div>
+      </div>
+      <div id="foglayer_03" class="fog">
+        <div class="image01"></div>
+        <div class="image02"></div>
+      </div>
+    </div>
+
+    <!-- (已移除舊的 SVG 彩色煙霧；保留 raster fog 與 canvas-based smoke) -->
+
+  </body>
+</html>

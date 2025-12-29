@@ -19,6 +19,22 @@ const Home = () => {
         >
           <div className="absolute inset-0 bg-gradient-to-br from-purple-900/50 via-black to-blue-900/50" />
 
+          {/* raster fog: appears in front of gradient but behind content */}
+          <div className="fogwrapper" style={{ zIndex: 8 }} aria-hidden>
+            <div id="foglayer_01" className="fog">
+              <div className="image01" />
+              <div className="image02" />
+            </div>
+            <div id="foglayer_02" className="fog">
+              <div className="image01" />
+              <div className="image02" />
+            </div>
+            <div id="foglayer_03" className="fog">
+              <div className="image01" />
+              <div className="image02" />
+            </div>
+          </div>
+
           <div className="absolute inset-0 opacity-10">
             <div className="absolute top-20 left-20 w-32 h-32 neon-glow-pink animate-float" />
             <div className="absolute bottom-40 right-32 w-24 h-24 neon-glow-cyan animate-float-delayed" />
