@@ -1,5 +1,7 @@
 import { motion } from 'framer-motion';
-import { Cat } from 'lucide-react';
+import React from 'react';
+
+const SHIBA_SRC = '/pic/bread-svgrepo-com_2.svg'; // 或 '/pic/bread-svgrepo-com_2.svg'
 
 interface LoadingScreenProps {
   onLoadingComplete: () => void;
@@ -17,17 +19,17 @@ const LoadingScreen = ({ onLoadingComplete }: LoadingScreenProps) => {
       <div className="text-center">
         <motion.div
           animate={{
-            scale: [1, 1.2, 1],
-            rotate: [0, 360],
+            // 微幅縮放：從 1 -> 1.08 -> 1
+            scale: [1, 1.08, 1],
           }}
           transition={{
-            duration: 2,
+            duration: 1.8,
             repeat: Infinity,
             ease: "easeInOut",
           }}
           className="inline-block mb-8"
         >
-          <Cat className="w-20 h-20 text-neon-pink" />
+          <img src={SHIBA_SRC} alt="loading shiba" className="w-28 h-28 object-contain" />
         </motion.div>
 
         <motion.div

@@ -2,6 +2,52 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Google Fonts 已由根目錄的 index.html 的 <link> 載入（請勿在此使用 @import 重複載入） */
+/* 全站預設：英文優先使用 Courier Prime，中文會退回 Noto Sans TC */
+html, body {
+  font-family: 'Courier Prime', 'Noto Sans TC', Inter, ui-sans-serif, system-ui;
+  @apply bg-[#0a0a0a] text-white antialiased;
+}
+
+/* 強制使用 Noto（中文） */
+.font-noto {
+  font-family: 'Noto Sans TC', ui-sans-serif, system-ui !important;
+}
+
+/* 保留 Cherish 類別（如需） */
+.font-cherish {
+  font-family: 'Cherish', 'Noto Sans TC', ui-sans-serif, system-ui !important;
+}
+
+/* Explora（僅供 Home 使用） */
+.explora-regular {
+  font-family: 'Explora', serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+/* Courier Prime 明確 class（可用於覆寫）*/
+.courier-prime-regular {
+  font-family: 'Courier Prime', monospace;
+  font-weight: 400;
+  font-style: normal;
+}
+.courier-prime-bold {
+  font-family: 'Courier Prime', monospace;
+  font-weight: 700;
+  font-style: normal;
+}
+.courier-prime-regular-italic {
+  font-family: 'Courier Prime', monospace;
+  font-weight: 400;
+  font-style: italic;
+}
+.courier-prime-bold-italic {
+  font-family: 'Courier Prime', monospace;
+  font-weight: 700;
+  font-style: italic;
+}
+
 @layer base {
   :root {
     --neon-pink: #FF007F;
@@ -11,12 +57,15 @@
   }
 
   body {
-    @apply bg-[#0a0a0a] text-white font-sans antialiased;
-    background-image:
+    @apply bg-[#0a0a0a] text-white antialiased;
+    /* background-image:
       radial-gradient(circle at 20% 50%, rgba(255, 0, 127, 0.03) 0%, transparent 50%),
       radial-gradient(circle at 80% 80%, rgba(0, 243, 255, 0.03) 0%, transparent 50%),
       radial-gradient(circle at 40% 20%, rgba(204, 255, 0, 0.03) 0%, transparent 50%),
-      url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 10 L40 20 L30 30 L20 20 Z M10 30 L15 35 L10 40 L5 35 Z M50 30 L55 35 L50 40 L45 35 Z' fill='%23FF007F' fill-opacity='0.05'/%3E%3C/svg%3E");
+      url("/pic/bread-svgrepo-com_2.svg"); */
+    background-repeat: no-repeat;
+    background-position: center top;
+    background-size: contain; /* 或用具體尺寸 background-size: 20rem; */
     background-attachment: fixed;
   }
 
@@ -181,5 +230,48 @@
     50% {
       box-shadow: 0 0 40px rgba(255, 0, 127, 0.8);
     }
+  }
+
+  /* 紫色煙霧背景 */
+  .purple-haze {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 4; /* 調整 z-index，確保在背景之上 */
+    pointer-events: none; /* 不擋滑鼠 */
+    /* background: linear-gradient(135deg, #0f0c29, #302b63, #24243e); 紫色漸層背景 */
+  }
+
+  .purple-haze svg {
+    width: 100%;
+    height: 100%;
+    filter: url(#noise);
+    animation: smoke 30s linear infinite;
+  }
+
+  @keyframes smoke {
+    0% {
+      transform: translate(0, 0) scale(1);
+    }
+    50% {
+      transform: translate(10%, -10%) scale(1.2);
+    }
+    100% {
+      transform: translate(0, 0) scale(1);
+    }
+  }
+
+  .purple-haze::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at center, transparent 30%, #0f0c29 70%);
+    mix-blend-mode: screen;
+    opacity: 0.6;
   }
 }

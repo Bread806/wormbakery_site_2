@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Cat } from 'lucide-react';
+import CatIcon from './icons/CatIcon';
 
 const Navigation = () => {
   const location = useLocation();
@@ -16,9 +16,9 @@ const Navigation = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <Link to="/" className="flex items-center space-x-2 group">
-            <Cat className="w-8 h-8 text-neon-cyan group-hover:text-neon-pink transition-colors duration-300" />
+            <CatIcon className="w-8 h-8 text-neon-cyan group-hover:text-neon-pink transition-colors duration-300" />
             <span className="text-xl font-black text-neon-pink group-hover:text-neon-cyan transition-colors duration-300">
-              CYBER-POP
+              {/* site title（可改成文字或圖片） */}
             </span>
           </Link>
 

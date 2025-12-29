@@ -2,12 +2,13 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ExternalLink } from 'lucide-react';
 
-type Category = 'all' | 'illustration' | 'animation' | 'character' | 'commission';
+type Category = 'all' | 'creation' | 'script' | 'commission';
 
 interface Work {
   id: number;
   title: string;
-  category: Category;
+  // 保留原始 category 字串（illustration/animation/character/commission），方便分群
+  category: string;
   description: string;
   color: string;
   height: string;
@@ -17,60 +18,60 @@ const Works = () => {
   const [selectedCategory, setSelectedCategory] = useState<Category>('all');
   const [selectedWork, setSelectedWork] = useState<Work | null>(null);
 
+  // 新分類：創作（creation）、公開台本（script）、委託（commission）
   const categories = [
-    { id: 'all', label: 'All Works' },
-    { id: 'illustration', label: 'Illustrations' },
-    { id: 'animation', label: 'Animations' },
-    { id: 'character', label: 'Characters' },
-    { id: 'commission', label: 'Commissions' },
+    { id: 'all', label: '全部' },
+    { id: 'creation', label: '創作' },
+    { id: 'script', label: '公開台本' },
+    { id: 'commission', label: '委託' },
   ];
 
   const works: Work[] = [
     {
       id: 1,
-      title: 'Cyber Cat #001',
-      category: 'character',
-      description: 'A futuristic cat character with neon accessories and holographic elements.',
+      title: '我與充滿包容力的姊姊撒嬌日常',
+      category: 'script',
+      description: '關於姊姊與弟弟偷偷交往，兩人一起躺在床上的聊天談話。',
       color: 'from-pink-500 to-purple-600',
       height: 'h-80',
     },
     {
       id: 2,
-      title: 'Neon Dreams',
-      category: 'illustration',
-      description: 'An atmospheric piece exploring the intersection of nature and technology.',
+      title: '白色情人節的加班巧克力',
+      category: 'script',
+      description: '一個男孩子想在情人節多陪伴加班學姊的故事。',
       color: 'from-cyan-500 to-blue-600',
       height: 'h-96',
     },
     {
       id: 3,
-      title: 'Pop Art Character',
-      category: 'character',
-      description: 'Vibrant character design combining pop art aesthetics with cyber elements.',
+      title: '被教授狠狠的打了耳光',
+      category: 'script',
+      description: '教授想辦法脅迫學生的故事。',
       color: 'from-lime-500 to-green-600',
       height: 'h-72',
     },
     {
       id: 4,
-      title: 'Commission Work',
-      category: 'commission',
-      description: 'Custom VTuber model design with unique cyber-pop styling.',
+      title: '無法逃離獸人姊姊病嬌的愛',
+      category: 'script',
+      description: '關於一位人類被獸人愛上，被獸人吃死死的故事。',
       color: 'from-pink-500 to-orange-600',
       height: 'h-88',
     },
     {
       id: 5,
-      title: 'City Lights',
-      category: 'illustration',
-      description: 'Urban landscape bathed in neon glow with a lonely cat protagonist.',
+      title: '等待女朋友回家的時候被姊姊給襲擊了',
+      category: 'script',
+      description: '關於姊姊想把自己妹妹的男朋友占為己有的故事。',
       color: 'from-purple-500 to-pink-600',
       height: 'h-80',
     },
     {
       id: 6,
-      title: 'Dance Animation',
-      category: 'animation',
-      description: 'Smooth character animation featuring dynamic dance movements.',
+      title: '絲襪日的小確幸',
+      category: 'script',
+      description: '被無理取鬧的女上司為難的故事',
       color: 'from-yellow-500 to-red-600',
       height: 'h-72',
     },
@@ -100,9 +101,19 @@ const Works = () => {
     },
   ];
 
-  const filteredWorks = selectedCategory === 'all'
-    ? works
-    : works.filter((work) => work.category === selectedCategory);
+  // 分類對應（把原始 works.category 分配到新的分類）
+  const categoryMap: Record<Exclude<Category, 'all'>, string[]> = {
+    creation: ['illustration', 'animation', 'character'],
+    script: ['animation'], // 如果你的「公開台本」實際對應其他 category 可在此調整
+    commission: ['commission'],
+  };
+
+  const filteredWorks =
+    selectedCategory === 'all'
+      ? works
+      : works.filter((work) =>
+          categoryMap[selectedCategory as Exclude<Category, 'all'>].includes(work.category)
+        );
 
   return (
     <div className="min-h-screen pt-24 pb-16">
@@ -112,9 +123,7 @@ const Works = () => {
           animate={{ opacity: 1, y: 0 }}
           className="text-5xl font-black text-center mb-4"
         >
-          <span className="text-neon-pink">My </span>
-          <span className="text-neon-cyan">Creative </span>
-          <span className="text-neon-lime">Works</span>
+          <span className="text-neon-cyan">各式作品</span>
         </motion.h1>
 
         <motion.p
@@ -123,7 +132,8 @@ const Works = () => {
           transition={{ delay: 0.2 }}
           className="text-center text-white/80 mb-12 text-lg"
         >
-          Explore my portfolio of cyber-pop creations
+          使用「公開台本」時請遵守使用規範 
+          {/* 這邊要塞超連結 */}
         </motion.p>
 
         <div className="flex flex-wrap justify-center gap-4 mb-12">
@@ -171,7 +181,7 @@ const Works = () => {
                   <p className="text-white/80 text-sm mb-3 line-clamp-2">
                     {work.description}
                   </p>
-                  <span className="inline-block px-3 py-1 rounded-full bg-white/20 text-white text-xs font-bold uppercase tracking-wider">
+                  <span className="inline-block px-3 py-1 rounded-full bg-white/20 text-white text-xs font-bold uppercase">
                     {work.category}
                   </span>
                 </div>

@@ -3,25 +3,24 @@ import { Code, Palette, Music, Star, Zap, Heart } from 'lucide-react';
 
 const Profile = () => {
   const skills = [
-    { name: 'Illustration', icon: Palette, level: 95 },
-    { name: 'Animation', icon: Zap, level: 88 },
-    { name: 'Design', icon: Star, level: 92 },
-    { name: 'Coding', icon: Code, level: 85 },
+    { name: '短篇文本', icon: Palette, exp: 80 },
+    { name: '音聲作品', icon: Zap, exp: 88 },
+    { name: '會員語音', icon: Star, exp: 92 },
+    { name: '企劃文本', icon: Code, exp: 85 },
   ];
 
   const timeline = [
-    { year: '2020', event: 'Started as VTuber', color: 'neon-pink' },
-    { year: '2021', event: 'First Character Design', color: 'neon-cyan' },
-    { year: '2023', event: '10K Followers Milestone', color: 'neon-lime' },
-    { year: '2024', event: 'Launched Personal Brand', color: 'neon-pink' },
+    { year: '2022', event: '我與充滿包容力的姊姊撒嬌日常 \n 等待女朋友回家的時候被姊姊給襲擊了 \n 無法逃離獸人姊姊病嬌的愛', color: 'neon-pink' },
+    { year: '2023', event: '鄉間小路與多愁善感的姐姐 \n 慾兔 \n 我們的事', color: 'neon-cyan' },
+    { year: '2024', event: '只想要你聽著我 \n 我才是最特別的納一位 \n 居酒屋的姊姊似乎討厭下雨天', color: 'neon-lime' },
+    { year: '2025', event: '鼠在不想離開你 \n Love Sick', color: 'neon-pink' },
+    { year: '2026', event: ' \" 敬請期待 :D \"', color: 'neon-blue' }
   ];
 
   const gallery = [
     { id: 1, title: 'Character Design', color: 'bg-gradient-to-br from-pink-500 to-purple-600' },
     { id: 2, title: 'Cyber Cat Series', color: 'bg-gradient-to-br from-cyan-500 to-blue-600' },
-    { id: 3, title: 'Neon Dreams', color: 'bg-gradient-to-br from-lime-500 to-green-600' },
-    { id: 4, title: 'Digital Art', color: 'bg-gradient-to-br from-pink-500 to-orange-600' },
-    { id: 5, title: 'Live2D Models', color: 'bg-gradient-to-br from-purple-500 to-indigo-600' },
+    { id: 3, title: 'Neon Dreams', color: 'bg-gradient-to-br from-lime-500 to-green-600' }
   ];
 
   return (
@@ -36,10 +35,15 @@ const Profile = () => {
             whileHover={{ scale: 1.05, rotate: 5 }}
             className="relative w-64 h-64 rounded-3xl overflow-hidden border-4 border-neon-pink shadow-neon-pink"
           >
-            <div className="absolute inset-0 bg-gradient-to-br from-pink-500 via-purple-500 to-cyan-500 animate-gradient" />
-            <div className="absolute inset-0 flex items-center justify-center">
-              <Music className="w-32 h-32 text-white/90" />
-            </div>
+            <img
+              src="/pic/profile_1.png"
+              alt="profile art"
+              className="absolute inset-0 w-full h-full object-cover"
+              // 將裁切焦點往下移（50% = 水平 中心, 60% = 垂直偏下）
+              style={{ objectPosition: '50% 10%' }}
+            />
+            {/* 可選遮罩：讓下方裁切看起來更柔和 */}
+            <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-black/30 to-transparent" />
           </motion.div>
 
           <div className="flex-1 text-center md:text-left">
@@ -49,9 +53,10 @@ const Profile = () => {
               transition={{ delay: 0.2 }}
               className="text-5xl font-black mb-4"
             >
-              <span className="text-neon-pink">Cyber</span>
+              {/* <span className="text-neon-pink">Cyber</span>
               <span className="text-neon-cyan">Pop</span>
-              <span className="text-neon-lime"> Artist</span>
+              <span className="text-neon-lime"> Artist</span> */}
+              <span className="text-neon-cyan">卡蚯蚓</span>
             </motion.h1>
 
             <motion.p
@@ -60,7 +65,7 @@ const Profile = () => {
               transition={{ delay: 0.3 }}
               className="text-xl text-white/80 mb-6 font-bold"
             >
-              VTuber / Illustrator / Creator
+              Writing / VTuber Staff
             </motion.p>
 
             <motion.div
@@ -69,7 +74,7 @@ const Profile = () => {
               transition={{ delay: 0.4 }}
               className="flex flex-wrap gap-3 justify-center md:justify-start"
             >
-              {['Creative', 'Energetic', 'Innovative'].map((tag, index) => (
+              {['台本設計', 'VTuber窗口'].map((tag, index) => (
                 <span
                   key={index}
                   className="px-4 py-2 rounded-full border-2 border-neon-cyan text-neon-cyan text-sm font-bold"
@@ -88,7 +93,7 @@ const Profile = () => {
             viewport={{ once: true }}
             className="text-4xl font-black text-neon-lime mb-8"
           >
-            About Me
+            關於我
           </motion.h2>
 
           <motion.div
@@ -98,13 +103,13 @@ const Profile = () => {
             className="glass-card p-8 rounded-2xl border-2 border-neon-lime"
           >
             <p className="text-white/90 text-lg leading-relaxed mb-4">
-              Welcome to my cyber-pop universe! I'm a digital artist and content creator passionate about blending futuristic neon aesthetics with cute, approachable designs. My work focuses on creating vibrant characters that bridge the gap between cyberpunk edginess and pop culture charm.
+              我叫做卡蚯蚓，可以稱呼我蚯蚓就好。喜歡寫作與編劇，同時也是喜歡各種聲音表演的聽眾。在網路上發表與撰寫短篇語音、長篇音聲作品與情境劇台本。在這個網站裡，你可以看到我曾參與過的作品以及我練習的文本。
             </p>
             <p className="text-white/90 text-lg leading-relaxed mb-4">
-              As a VTuber, I stream art creation, gaming, and chatting sessions where I connect with an amazing community of fellow creators and enthusiasts. Every piece I create is infused with energy, color, and a touch of digital magic.
+              蚯蚓麵包屋是一個我用來發表實驗性質作品的計畫，多數作品會免費發表讓表演者練習。作品發表的頻率不固定，不過都會是我覺得富有意義的創作。
             </p>
             <p className="text-white/90 text-lg leading-relaxed">
-              When I'm not creating art, you'll find me exploring new design trends, experimenting with animation techniques, or collaborating with other artists to push the boundaries of what's possible in the digital realm. Let's create something extraordinary together!
+              關於台本委託事宜可以見 Official SNS 頁面，或是直接透過電子郵件與我聯絡討論。
             </p>
           </motion.div>
         </section>
@@ -116,10 +121,10 @@ const Profile = () => {
             viewport={{ once: true }}
             className="text-4xl font-black text-neon-cyan mb-8"
           >
-            Skills
+            承接委託事項
           </motion.h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
             {skills.map((skill, index) => (
               <motion.div
                 key={index}
@@ -127,7 +132,7 @@ const Profile = () => {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
-                className="glass-card p-6 rounded-2xl border-2 border-neon-cyan"
+                className="glass-card p-4 rounded-2xl border-2 border-neon-cyan"
               >
                 <div className="flex items-center gap-4 mb-4">
                   <skill.icon className="w-8 h-8 text-neon-cyan" />
@@ -138,14 +143,15 @@ const Profile = () => {
                 <div className="relative h-3 bg-gray-800 rounded-full overflow-hidden">
                   <motion.div
                     initial={{ width: 0 }}
-                    whileInView={{ width: `${skill.level}%` }}
+                    whileInView={{ width: `${skill.exp}%` }}
                     viewport={{ once: true }}
                     transition={{ duration: 1, delay: index * 0.1 }}
                     className="h-full bg-gradient-to-r from-neon-cyan to-neon-lime rounded-full"
                   />
                 </div>
-                <span className="text-neon-cyan text-sm font-bold mt-2 block">
-                  {skill.level}%
+                {/* 不顯示任何數字 */}
+                <span className="text-neon-cyan text-sm font-bold mt-2 block invisible">
+                  exp: {skill.exp} %
                 </span>
               </motion.div>
             ))}
@@ -159,7 +165,7 @@ const Profile = () => {
             viewport={{ once: true }}
             className="text-4xl font-black text-neon-pink mb-8"
           >
-            Timeline
+            部分參與作品
           </motion.h2>
 
           <div className="space-y-6">
@@ -178,7 +184,7 @@ const Profile = () => {
                   </span>
                 </div>
                 <div className={`glass-card p-6 rounded-2xl border-2 border-${item.color} flex-1`}>
-                  <p className="text-lg font-bold text-white">
+                  <p className="text-lg font-bold text-white whitespace-pre-line">
                     {item.event}
                   </p>
                 </div>
@@ -194,10 +200,10 @@ const Profile = () => {
             viewport={{ once: true }}
             className="text-4xl font-black text-neon-lime mb-8"
           >
-            Gallery Highlights
+            其他關於我ㄉ酷酷圖片
           </motion.h2>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4">
             {gallery.map((item, index) => (
               <motion.div
                 key={item.id}
@@ -206,9 +212,16 @@ const Profile = () => {
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
                 whileHover={{ scale: 1.05, rotate: 2 }}
-                className={`aspect-square rounded-2xl ${item.color} p-6 flex items-center justify-center border-2 border-white/20 hover:border-white/60 transition-all cursor-pointer`}
+                className={`aspect-square rounded-2xl overflow-hidden ${item.color} border-2 border-white/20 hover:border-white/60 transition-all cursor-pointer`}
               >
-                <Heart className="w-12 h-12 text-white" />
+                {/* 把圖片放 public/pic/gallery-1.png, gallery-2.png ... */}
+                <img
+                  src={`/pic/gallery-${item.id}.png`}
+                  alt={item.title}
+                  className="w-full h-full object-cover"
+                  // 只調整第一張（index === 0）的裁切點，其他維持中央裁切
+                  style={index === 0 ? { objectPosition: '50% 5%' } : { objectPosition: '50% 50%' }}
+                />
               </motion.div>
             ))}
           </div>
