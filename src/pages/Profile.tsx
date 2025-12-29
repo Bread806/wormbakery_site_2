@@ -109,7 +109,7 @@ const Profile = () => {
               蚯蚓麵包屋是一個我用來發表實驗性質作品的計畫，多數作品會免費發表讓表演者練習。作品發表的頻率不固定，不過都會是我覺得富有意義的創作。
             </p>
             <p className="text-white/90 text-lg leading-relaxed">
-              關於台本委託事宜可以見 Official SNS 頁面，或是直接透過電子郵件與我聯絡討論。
+              聯絡台本委託可以見 Official SNS 頁面。委託會先經過一輪需求討論才會確認是否承接，造成不便請見諒。
             </p>
           </motion.div>
         </section>

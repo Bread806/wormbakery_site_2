@@ -18,11 +18,11 @@ const Footer = () => {
           </button>
 
           <div className="text-center">
-            <p className="text-neon-pink font-bold text-sm tracking-widest animate-pulse">
-              2025 CYBER-POP
-            </p>
+            {/* <p className="text-neon-pink font-bold text-sm tracking-widest animate-pulse">
+              2025 wormbakery
+            </p> */}
             <p className="text-white/60 text-xs mt-1">
-              Powered by Neon Dreams
+              Powered by Bread_sk8
             </p>
           </div>
         </div>
