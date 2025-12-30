@@ -2,16 +2,16 @@
 <html lang="zh-TW">
   <head>
     <meta charset="UTF-8" />
-  <link rel="icon" type="image/svg+xml" href="/wormbakery_site_2/vite.svg" />
+    <link rel="icon" type="image/svg+xml" href="/wormbakery_site_2/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>蚯蚓麵包屋</title>
     <meta name="description" content="卡蚯蚓ㄉ酷酷個人網站" />
-    <meta property="og:image" content="import.meta.env.BASE_URL + 'work_pic/work_school.jpeg" />
+    <!-- 使用 Vite 的占位符 /wormbakery_site_2/（build 時會被替換） -->
+    <meta property="og:image" content="/wormbakery_site_2/pic/gallery-3.png" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:image" content="import.meta.env.BASE_URL + 'work_pic/work_school.jpeg" />
+    <meta name="twitter:image" content="/wormbakery_site_2/pic/gallery-3.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- Google Fonts: Courier Prime (英文預設), Explora (Home), Noto Sans TC (中文) -->
     <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400;1,700&family=Explora&family=Noto+Sans+TC:wght@100..900&display=swap" rel="stylesheet">
     <!-- 預先載入 Home 英文字樣圖片，減少首次顯示延遲 -->
     <link rel="preload" as="image" href="/wormbakery_site_2/pic/text_white.png">
@@ -20,5 +20,6 @@
   </head>
   <body>
     <div id="root"></div>
+    <!-- 入口模組請使用相對路徑 (不要加 /wormbakery_site_2/) -->
   </body>
 </html>
