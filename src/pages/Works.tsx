@@ -104,7 +104,7 @@ const Works = () => {
       height: 'h-96',
       link: 'https://docs.google.com/document/d/1lHbkDro0s-PINt4qaMT_gEeisT3S2cl5/edit?usp=sharing&ouid=115379523661572300748&rtpof=true&sd=true',
       release: 'https://youtu.be/P5U56uoFyec?si=M9kX9UaD8I9EZTbO',
-      image: '/public/work_pic/work_id7.jpg'
+  image: import.meta.env.BASE_URL + 'pic/gallery-3.png'
 
     },
     {
@@ -116,7 +116,7 @@ const Works = () => {
       height: 'h-75',
       link: 'https://docs.google.com/document/d/11egSpT8jzC1Xs7Z4wDW4a6o6i48cZQWQ/edit?usp=sharing&ouid=115379523661572300748&rtpof=true&sd=true',
       release: 'https://youtu.be/KVuv_6Em-Xk?si=4RtZsEUTmM3lNabt',
-      image: 'https://i.imgur.com/M1SVEkn.jpg'
+  image: import.meta.env.BASE_URL + 'pic/gallery-3.png'
     },
     {
       id: 9,
@@ -126,7 +126,7 @@ const Works = () => {
       color: 'from-pink-500 to-cyan-600',
       height: 'h-88',
       link: 'https://docs.google.com/document/d/1Dy3-vkLOS2it3aL51u1aZNkqrkKpn26m/edit?usp=sharing&ouid=115379523661572300748&rtpof=true&sd=true',
-      image: 'https://i.imgur.com/HTi6TLT.jpeg'
+  image: import.meta.env.BASE_URL + 'pic/gallery-3.png'
     },
     {
       id: 10,
@@ -137,7 +137,7 @@ const Works = () => {
       height: 'h-88',
       link: 'https://docs.google.com/document/d/1AYjLeykOJdILUX3rxRYNqRg2kM8YJZR7/edit?usp=sharing&ouid=115379523661572300748&rtpof=true&sd=true',
       release: 'https://youtu.be/8pzdFcY7cEU?si=zL1LNF2ndj7CvkXd',
-      image: 'https://i.imgur.com/dxxgBaJ.png'
+  image: import.meta.env.BASE_URL + 'pic/gallery-3.png'
     },
     {
       id: 11,
@@ -147,7 +147,7 @@ const Works = () => {
       color: 'from-pink-500 to-cyan-600',
       height: 'h-42',
       link: 'https://docs.google.com/document/d/1F9o-b8AC2VD-oRfbCiuP9uFhPkGdSM8_/edit?usp=sharing&ouid=115379523661572300748&rtpof=true&sd=true',
-      image: 'https://i.imgur.com/yCf5o7d.jpeg'
+  image: import.meta.env.BASE_URL + 'pic/gallery-3.png'
     },
     {
       id: 12,
@@ -157,7 +157,7 @@ const Works = () => {
       color: 'from-pink-500 to-cyan-600',
       height: 'h-63',
       link: 'https://docs.google.com/document/d/1JuPygjFXsBVfrDhX_Nlc-hSQPgamnXtv/edit?usp=sharing&ouid=115379523661572300748&rtpof=true&sd=true',
-      image: 'https://i.imgur.com/cHi4jXE.jpeg'
+  image: import.meta.env.BASE_URL + 'pic/gallery-3.png'
     },
     {
       id: 13,
@@ -167,7 +167,7 @@ const Works = () => {
       color: 'from-pink-500 to-cyan-600',
       height: 'h-63',
       link: 'https://docs.google.com/document/d/1XpX_o2pX4xCszo77egUeLnKXoZE7XNhm/edit?usp=sharing&ouid=115379523661572300748&rtpof=true&sd=true',
-      image: 'https://i.imgur.com/MnQ7boI.jpg'
+  image: import.meta.env.BASE_URL + 'pic/gallery-3.png'
     },
     {
       id: 14,
@@ -177,7 +177,7 @@ const Works = () => {
       color: 'from-pink-500 to-cyan-600',
       height: 'h-55',
       link: 'https://docs.google.com/document/d/150ZECE5dGyYaarT2iFvrsLgVTwzRuQ6-/edit?usp=sharing&ouid=115379523661572300748&rtpof=true&sd=true',
-      image: 'https://i.imgur.com/65FvcBG.jpeg'
+  image: import.meta.env.BASE_URL + 'pic/gallery-3.png'
     },
     {
       id: 15,
@@ -187,7 +187,7 @@ const Works = () => {
       color: 'from-pink-500 to-cyan-600',
       height: 'h-55',
       link: 'https://docs.google.com/document/d/1HHprrIL6q9BkEemRtEujNI4cL0gWiRNf/edit?usp=sharing&ouid=115379523661572300748&rtpof=true&sd=true',
-      image: 'https://i.imgur.com/nxuLmiZ.jpg'
+  image: import.meta.env.BASE_URL + 'pic/gallery-3.png'
     },
     {
       id: 16,
@@ -197,7 +197,7 @@ const Works = () => {
       color: 'from-pink-500 to-cyan-600',
       height: 'h-40',
       link: 'https://docs.google.com/document/d/1IOwumirHhDvN3TXqkPMQL2m93Catb6Hg/edit?usp=sharing&ouid=115379523661572300748&rtpof=true&sd=true',
-      image: 'https://i.imgur.com/NiyqIBC.png'
+  image: import.meta.env.BASE_URL + 'pic/gallery-3.png'
     },
     {
       id: 17,
@@ -216,7 +216,7 @@ const Works = () => {
       color: 'from-pink-500 to-cyan-600',
       height: 'h-80',
       release: 'https://youtu.be/ZIVgpsQ8B-U?si=US9_4S-4OuVjWfBd',
-      image: '/public/work_pic/work_narciss.jpg'
+  image: import.meta.env.BASE_URL + 'pic/gallery-3.png'
     },
     {
       id: 19,
@@ -226,7 +226,7 @@ const Works = () => {
       color: 'from-pink-500 to-cyan-600',
       height: 'h-80',
       release: 'https://youtu.be/H5BQIZOmnuE?si=ziBn8emn_3bwvyhy',
-      image: '/public/work_pic/work_karas.jpg'
+  image: import.meta.env.BASE_URL + 'pic/gallery-3.png'
     },
     {
       id: 20,
@@ -236,7 +236,7 @@ const Works = () => {
       color: 'from-pink-500 to-cyan-600',
       height: 'h-80',
       release: 'https://youtu.be/QUgRyT-gGnk?si=pp4meRlyUKl3ShCv',
-      image: '/public/work_pic/work_sparky.jpg'
+  image: import.meta.env.BASE_URL + 'pic/gallery-3.png'
     },
     {
       id: 21,
@@ -246,7 +246,7 @@ const Works = () => {
       color: 'from-pink-500 to-cyan-600',
       height: 'h-70',
       release: 'https://youtu.be/0J5-uTq_Iv8?si=G_DYwHunXyXs4lWM',
-      image: '/public/work_pic/love_sick.png'
+  image: import.meta.env.BASE_URL + 'pic/gallery-3.png'
     },
     {
       id: 22,
@@ -256,7 +256,7 @@ const Works = () => {
       color: 'from-pink-500 to-cyan-600',
       height: 'h-80',
       release: 'https://youtu.be/7skNvaxGDZ0?si=YB0CxLZYgZAwmikM',
-      image: '/public/work_pic/work_between_us.jpg'
+  image: import.meta.env.BASE_URL + 'pic/gallery-3.png'
     },
     {
       id: 23,
@@ -266,7 +266,7 @@ const Works = () => {
       color: 'from-pink-500 to-cyan-600',
       height: 'h-75',
       release: 'https://youtu.be/m-4WFyJfKJU?si=buAfd2Ub4_Q-4-j_',
-      image: '/public/work_pic/work_chocolate.jpg'
+  image: import.meta.env.BASE_URL + 'pic/gallery-3.png'
     },
     {
       id: 24,
@@ -276,7 +276,7 @@ const Works = () => {
       color: 'from-pink-500 to-cyan-600',
       height: 'h-75',
       release: 'https://youtu.be/rUMoPagxK1Q?si=cB-T5g-d6xa5uQIW',
-      image: '/public/work_pic/work_rabbit.jpg'
+  image: import.meta.env.BASE_URL + 'pic/gallery-3.png'
     },
     {
       id: 25,
@@ -286,7 +286,7 @@ const Works = () => {
       color: 'from-pink-500 to-cyan-600',
       height: 'h-80',
       release: 'https://www.youtube.com/watch?v=05M8vv48VFU&t=1s',
-      image: '/public/work_pic/work_want.jpg'
+  image: import.meta.env.BASE_URL + 'pic/gallery-3.png'
     },
     
   ];
@@ -342,7 +342,15 @@ const Works = () => {
           transition={{ delay: 0.2 }}
           className="text-center text-white/80 mb-12 text-lg"
         >
-          使用「公開台本」時請遵守使用規範 
+          使用「公開台本」時請遵守
+          <a
+            href="https://docs.google.com/document/d/15HFjEE0m5qFX0OtDq1C59SPF5aU3tZHCzPS4GSfDPvQ/edit?usp=sharing"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-neon-lime hover:underline underline-offset-2"
+          >
+            使用規範
+          </a>
           {/* 這邊要塞超連結 */}
         </motion.p>
 

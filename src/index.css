@@ -48,8 +48,6 @@ html, body {
   font-style: italic;
 }
 
-@import url('https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&display=swap');
-
 @layer base {
   :root {
     --neon-pink: #FF007F;

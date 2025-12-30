@@ -146,7 +146,7 @@ const OfficialSNS = () => {
             期待收到您的聯繫🙏🏻
           </p>
           <img
-            src="/public/pic/text_white.png"
+            src={import.meta.env.BASE_URL + 'pic/gallery-3.png'}
             alt="Contact Image"
             className="mx-auto mt-6 w-full max-w-xs rounded-md"
           />
