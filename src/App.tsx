@@ -42,7 +42,7 @@ function App() {
           <div className="fixed inset-0 z-50 flex items-center justify-center">
             <LoadingScreen
               minDurationMs={800}
-              speedMultiplier={1.5}
+              speedMultiplier={0.7}
               onLoadingComplete={() => setInitialLoading(false)}
             />
           </div>
