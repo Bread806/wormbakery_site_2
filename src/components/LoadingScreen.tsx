@@ -4,9 +4,10 @@ import Typewriter from './Typewriter';
 type Props = {
   onLoadingComplete?: () => void;
   minDurationMs?: number;
+  speedMultiplier?: number;
 };
 
-const LoadingScreen: React.FC<Props> = ({ onLoadingComplete, minDurationMs = 2000 }) => {
+const LoadingScreen: React.FC<Props> = ({ onLoadingComplete, minDurationMs = 2000, speedMultiplier = 1 }) => {
   const [progress, setProgress] = useState(0);
   const [startTs] = useState(() => Date.now());
   const [imagesLoaded, setImagesLoaded] = useState(false);
@@ -16,7 +17,8 @@ const LoadingScreen: React.FC<Props> = ({ onLoadingComplete, minDurationMs = 200
     const id = setInterval(() => {
       setProgress((p) => {
         if (!mounted) return p;
-        const delta = p < 60 ? Math.random() * 6 + 3 : p < 95 ? Math.random() * 3 + 1 : Math.random() * 1;
+        const baseDelta = p < 60 ? Math.random() * 6 + 3 : p < 95 ? Math.random() * 3 + 1 : Math.random() * 1;
+        const delta = baseDelta * speedMultiplier;
         const next = Math.min(100, Math.round((p + delta) * 10) / 10);
         return next;
       });
