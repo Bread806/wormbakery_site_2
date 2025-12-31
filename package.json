@@ -8,6 +8,7 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
+    "preview:gh-pages": "bash ./scripts/preview_github_pages.sh",
     "typecheck": "tsc --noEmit -p tsconfig.app.json"
   },
   "dependencies": {
