@@ -216,7 +216,7 @@ const Profile = () => {
               >
                 {/* 把圖片放 public/pic/gallery-1.png, gallery-2.png ... */}
                 <img
-                  src={`/pic/gallery-${item.id}.png`}
+                  src={import.meta.env.BASE_URL + `pic/gallery-${item.id}.png`}
                   alt={item.title}
                   className="w-full h-full object-cover"
                   // 只調整第一張（index === 0）的裁切點，其他維持中央裁切
