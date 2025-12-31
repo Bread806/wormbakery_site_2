@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import Typewriter from './Typewriter';
 
 type Props = {
@@ -11,6 +11,7 @@ const LoadingScreen: React.FC<Props> = ({ onLoadingComplete, minDurationMs = 200
   const [progress, setProgress] = useState(0);
   const [startTs] = useState(() => Date.now());
   const [imagesLoaded, setImagesLoaded] = useState(false);
+  const fallbackTimer = useRef<number | null>(null);
 
   useEffect(() => {
     let mounted = true;
@@ -31,12 +32,24 @@ const LoadingScreen: React.FC<Props> = ({ onLoadingComplete, minDurationMs = 200
 
   useEffect(() => {
     if (progress >= 100) {
-      // 只有在 progress 到 100 並且關鍵圖片已經預載完成時，才結束 loading
-      if (!imagesLoaded) return;
       const elapsed = Date.now() - startTs;
       const wait = Math.max(0, minDurationMs - elapsed);
-      const t = setTimeout(() => onLoadingComplete && onLoadingComplete(), wait);
-      return () => clearTimeout(t);
+
+      // 如果圖片已載入，遵守最小顯示時間後結束
+      if (imagesLoaded) {
+        const t = window.setTimeout(() => onLoadingComplete && onLoadingComplete(), wait);
+        return () => window.clearTimeout(t);
+      }
+
+      // 圖片尚未載入：設定 fallback timeout（避免永遠等待），在 wait + 2000ms 後強制結束
+      const fallback = window.setTimeout(() => onLoadingComplete && onLoadingComplete(), wait + 2000);
+      fallbackTimer.current = fallback;
+      return () => {
+        if (fallbackTimer.current) {
+          window.clearTimeout(fallbackTimer.current);
+          fallbackTimer.current = null;
+        }
+      };
     }
   }, [progress, onLoadingComplete, minDurationMs, startTs]);
 
@@ -63,8 +76,21 @@ const LoadingScreen: React.FC<Props> = ({ onLoadingComplete, minDurationMs = 200
     preload(critical).then(() => {
       if (!mounted) return;
       setImagesLoaded(true);
-      // 當圖片載入時，確保進度條能夠到 100（若還沒）
-      setProgress((p) => Math.max(p, 100));
+
+      // 如果 progress 已達 100，清除 fallback 並在遵守 minDuration 後結束
+      if (fallbackTimer.current) {
+        window.clearTimeout(fallbackTimer.current);
+        fallbackTimer.current = null;
+      }
+
+      const elapsed = Date.now() - startTs;
+      const wait = Math.max(0, minDurationMs - elapsed);
+      if (progress >= 100) {
+        const t2 = window.setTimeout(() => onLoadingComplete && onLoadingComplete(), wait);
+        // 清除該定時器在 unmount 時
+        return () => window.clearTimeout(t2);
+      }
+      // 否則，讓現有的 progress interval 繼續把進度推到 100
     });
 
     return () => {
