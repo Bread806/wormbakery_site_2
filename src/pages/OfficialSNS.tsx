@@ -63,44 +63,51 @@ const OfficialSNS = () => {
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-          {socialLinks.map((social, index) => (
-            <motion.a
-              key={index}
-              href={social.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-              whileHover={{ scale: 1.05, y: -5 }}
-              className={`glass-card p-8 rounded-2xl border-2 ${social.containerClass} transition-all duration-300 group`}
-            >
-              <motion.div
-                whileHover={{ rotate: [0, -10, 10, -10, 0] }}
-                transition={{ duration: 0.5 }}
-                className="inline-block mb-4"
+          {socialLinks.map((social, index) => {
+            const isLink = Boolean(social.url);
+            const Wrapper: any = isLink ? motion.a : motion.div;
+
+            return (
+              <Wrapper
+                key={index}
+                {...(isLink
+                  ? { href: social.url, target: '_blank', rel: 'noopener noreferrer' }
+                  : { role: 'region', 'aria-disabled': true })}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+                whileHover={isLink ? { scale: 1.05, y: -5 } : undefined}
+                className={`glass-card p-8 rounded-2xl border-2 ${social.containerClass} transition-all duration-300 group ${isLink ? 'cursor-pointer' : 'cursor-default'}`}
               >
-                <social.icon className={`w-16 h-16 ${social.iconClass} group-hover:scale-110 transition-transform`} />
-              </motion.div>
+                <motion.div
+                  whileHover={isLink ? { rotate: [0, -10, 10, -10, 0] } : undefined}
+                  transition={{ duration: 0.5 }}
+                  className="inline-block mb-4"
+                >
+                  <social.icon className={`w-16 h-16 ${social.iconClass} group-hover:scale-110 transition-transform`} />
+                </motion.div>
 
-              <h2 className={`text-2xl font-black ${social.textClass} mb-2`}>
-                {social.name}
-              </h2>
+                <h2 className={`text-2xl font-black ${social.textClass} mb-2`}>
+                  {social.name}
+                </h2>
 
-              <p className="text-white/60 text-sm mb-3 font-mono">
-                {social.handle}
-              </p>
+                <p className="text-white/60 text-sm mb-3 font-mono">
+                  {social.handle}
+                </p>
 
-              <p className="text-white/80 leading-relaxed">
-                {social.description}
-              </p>
+                <p className="text-white/80 leading-relaxed">
+                  {social.description}
+                </p>
 
-              <div className="mt-4 flex items-center gap-2 text-sm font-bold text-white/60 group-hover:text-white transition-colors">
-                <span>Visit Profile</span>
-                <span className="group-hover:translate-x-2 transition-transform">→</span>
-              </div>
-            </motion.a>
-          ))}
+                {isLink && (
+                  <div className="mt-4 flex items-center gap-2 text-sm font-bold text-white/60 group-hover:text-white transition-colors">
+                    <span>Visit Profile</span>
+                    <span className="group-hover:translate-x-2 transition-transform">→</span>
+                  </div>
+                )}
+              </Wrapper>
+            );
+          })}
         </div>
 
         {/* <motion.div
