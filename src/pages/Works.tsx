@@ -122,11 +122,11 @@ const Works = () => {
     {
       id: 9,
       title: '捷運忠孝新生站',
-      category: ['script', 'creation'],
+      category: ['creation'],
       description: '和同為熱音社且正在曖昧的女生在畢業前一起去唱歌，離別時湧起曲終人散的寂寞。',
       color: 'from-pink-500 to-cyan-600',
       height: 'h-88',
-      link: 'https://docs.google.com/document/d/1Dy3-vkLOS2it3aL51u1aZNkqrkKpn26m/edit?usp=sharing&ouid=115379523661572300748&rtpof=true&sd=true',
+      // link: 'https://docs.google.com/document/d/1Dy3-vkLOS2it3aL51u1aZNkqrkKpn26m/edit?usp=sharing&ouid=115379523661572300748&rtpof=true&sd=true',
   image: import.meta.env.BASE_URL + '/work_pic/work_MRT.jpeg'
     },
     {
@@ -143,21 +143,21 @@ const Works = () => {
     {
       id: 11,
       title: '紙條',
-      category: ['script', 'creation'],
+      category: ['creation'],
       description: '好朋友突然不來學校了，於是我每天都寫張紙條告訴他學校的事情。',
       color: 'from-pink-500 to-cyan-600',
       height: 'h-42',
-      link: 'https://docs.google.com/document/d/1F9o-b8AC2VD-oRfbCiuP9uFhPkGdSM8_/edit?usp=sharing&ouid=115379523661572300748&rtpof=true&sd=true',
+      // link: 'https://docs.google.com/document/d/1F9o-b8AC2VD-oRfbCiuP9uFhPkGdSM8_/edit?usp=sharing&ouid=115379523661572300748&rtpof=true&sd=true',
   image: import.meta.env.BASE_URL + '/work_pic/work_note.jpeg'
     },
     {
       id: 12,
       title: '飛機雲',
-      category: ['script', 'creation'],
+      category: ['creation'],
       description: '曾在學校一起立下的目標，說好一起陪伴彼此，最終都在夢想面前一一妥協。',
       color: 'from-pink-500 to-cyan-600',
       height: 'h-63',
-      link: 'https://docs.google.com/document/d/1JuPygjFXsBVfrDhX_Nlc-hSQPgamnXtv/edit?usp=sharing&ouid=115379523661572300748&rtpof=true&sd=true',
+      // link: 'https://docs.google.com/document/d/1JuPygjFXsBVfrDhX_Nlc-hSQPgamnXtv/edit?usp=sharing&ouid=115379523661572300748&rtpof=true&sd=true',
   image: import.meta.env.BASE_URL + '/work_pic/work_cloud.jpeg'
     },
     {
@@ -173,31 +173,31 @@ const Works = () => {
     {
       id: 14,
       title: '依附性戀愛症候群',
-      category: ['script', 'creation'],
+      category: ['creation'],
       description: '一位弟弟常常來看皮膚科，漸漸參與且明白了醫師姊姊的生活。',
       color: 'from-pink-500 to-cyan-600',
       height: 'h-55',
-      link: 'https://docs.google.com/document/d/150ZECE5dGyYaarT2iFvrsLgVTwzRuQ6-/edit?usp=sharing&ouid=115379523661572300748&rtpof=true&sd=true',
+      // link: 'https://docs.google.com/document/d/150ZECE5dGyYaarT2iFvrsLgVTwzRuQ6-/edit?usp=sharing&ouid=115379523661572300748&rtpof=true&sd=true',
   image: import.meta.env.BASE_URL + '/work_pic/work_doctor.jpeg'
     },
     {
       id: 15,
       title: '你闖進了我的早自習',
-      category: ['script', 'creation'],
+      category: ['creation'],
       description: '早晨，全校升旗時間有兩個人窩在教室。原本不太交集的同班同學，因為早自習的混亂事件，兩人距離似乎拉近了一些。',
       color: 'from-pink-500 to-cyan-600',
       height: 'h-55',
-      link: 'https://docs.google.com/document/d/1HHprrIL6q9BkEemRtEujNI4cL0gWiRNf/edit?usp=sharing&ouid=115379523661572300748&rtpof=true&sd=true',
+      // link: 'https://docs.google.com/document/d/1HHprrIL6q9BkEemRtEujNI4cL0gWiRNf/edit?usp=sharing&ouid=115379523661572300748&rtpof=true&sd=true',
   image: import.meta.env.BASE_URL + '/work_pic/work_morning.jpeg'
     },
     {
       id: 16,
       title: '在早餐店睡著了',
-      category: ['script', 'creation'],
+      category: ['creation'],
       description: '一名上班族在早餐店遇到一位吃早餐吃到睡著的小孩，開啟了兩人人生觀與價值觀差異心靈交流。',
       color: 'from-pink-500 to-cyan-600',
       height: 'h-40',
-      link: 'https://docs.google.com/document/d/1IOwumirHhDvN3TXqkPMQL2m93Catb6Hg/edit?usp=sharing&ouid=115379523661572300748&rtpof=true&sd=true',
+      // link: 'https://docs.google.com/document/d/1IOwumirHhDvN3TXqkPMQL2m93Catb6Hg/edit?usp=sharing&ouid=115379523661572300748&rtpof=true&sd=true',
   image: import.meta.env.BASE_URL + '/work_pic/work_burger.png'
     },
     {

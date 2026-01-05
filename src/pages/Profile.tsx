@@ -23,6 +23,34 @@ const Profile = () => {
     { id: 3, title: 'Neon Dreams', color: 'bg-gradient-to-br from-lime-500 to-green-600' }
   ];
 
+  // 可編輯備註（儲存到 localStorage）
+  const EditableNotes = () => {
+    const key = 'profile_notes';
+    const [text, setText] = React.useState(() => {
+      try { return localStorage.getItem(key) ?? ''; } catch { return ''; }
+    });
+    React.useEffect(() => {
+      try { localStorage.setItem(key, text); } catch {}
+    }, [text]);
+
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="glass-card p-6 rounded-2xl border-2 mt-8"
+      >
+        <label className="block text-sm text-white/70 font-bold mb-2">個人備註</label>
+        <textarea
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          placeholder={`例如：\n短篇文本\n10-30分鐘的台本類型`}
+          className="w-full min-h-[96px] bg-transparent border border-white/10 p-3 rounded-md text-white/90 placeholder-white/40 resize-vertical"
+        />
+        <div className="mt-2 text-xs text-white/60">內容會儲存在瀏覽器，僅供本機使用。</div>
+      </motion.div>
+    );
+  };
+
   return (
     <div className="min-h-screen pt-24 pb-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
