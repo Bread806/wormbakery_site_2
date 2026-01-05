@@ -18,7 +18,7 @@ interface Work {
 }
 
 // TODO: 將此連結替換為實際的「使用規範文件」網址（例如 Google 文件或站內頁面）
-const USAGE_RULES_URL = 'https://example.com/usage-rules';
+const USAGE_RULES_URL = 'https://docs.google.com/document/d/15HFjEE0m5qFX0OtDq1C59SPF5aU3tZHCzPS4GSfDPvQ/edit?usp=sharing';
 
 const Works = () => {
   const [selectedCategory, setSelectedCategory] = useState<Category>('all');
@@ -349,6 +349,8 @@ const Works = () => {
           使用「公開台本」時請遵守
           {' '}
           <a
+            target="_blank"
+            rel="noopener noreferrer"
             href="https://docs.google.com/document/d/15HFjEE0m5qFX0OtDq1C59SPF5aU3tZHCzPS4GSfDPvQ/edit?usp=sharing"
             className="text-neon-lime underline underline-offset-4 font-bold hover:text-lime-300"
           >
