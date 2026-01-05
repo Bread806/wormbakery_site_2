@@ -17,6 +17,9 @@ interface Work {
   image?: string;
 }
 
+// TODO: 將此連結替換為實際的「使用規範文件」網址（例如 Google 文件或站內頁面）
+const USAGE_RULES_URL = 'https://example.com/usage-rules';
+
 const Works = () => {
   const [selectedCategory, setSelectedCategory] = useState<Category>('all');
   const [selectedWork, setSelectedWork] = useState<Work | null>(null);
@@ -343,8 +346,14 @@ const Works = () => {
           transition={{ delay: 0.2 }}
           className="text-center text-white/80 mb-12 text-lg"
         >
-          使用「公開台本」時請遵守使用規範 
-          {/* 這邊要塞超連結 */}
+          使用「公開台本」時請遵守
+          {' '}
+          <a
+            href="https://docs.google.com/document/d/15HFjEE0m5qFX0OtDq1C59SPF5aU3tZHCzPS4GSfDPvQ/edit?usp=sharing"
+            className="text-neon-lime underline underline-offset-4 font-bold hover:text-lime-300"
+          >
+            使用規範
+          </a>
         </motion.p>
 
         <div className="flex flex-wrap justify-center gap-4 mb-12">
@@ -468,6 +477,31 @@ const Works = () => {
           </motion.button>
         </motion.div>
       </div>
+
+      {/* 使用規範：連結目標區塊（可自行補充內容） */}
+      <motion.div
+        id="usage-rules"
+        initial={{ opacity: 0, y: 10 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 mt-8"
+      >
+        <h2 className="text-2xl font-black text-neon-lime mb-3">使用規範</h2>
+        <p className="text-white/80 text-sm">
+          1. 歡迎使用公開台本進行練習。<br />
+          2. 公開發表請取得卡蚯蚓同意。<br />
+          3. 詳細說明請見
+          {' '}
+          <a
+            href="https://docs.google.com/document/d/15HFjEE0m5qFX0OtDq1C59SPF5aU3tZHCzPS4GSfDPvQ/edit?usp=sharing"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-neon-lime underline underline-offset-4 font-bold hover:text-lime-300"
+          >
+            「使用規範文件」
+          </a>
+        </p>
+      </motion.div>
 
       <AnimatePresence>
         {selectedWork && (
