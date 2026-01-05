@@ -349,9 +349,9 @@ const Works = () => {
           使用「公開台本」時請遵守
           {' '}
           <a
+            href={USAGE_RULES_URL}
             target="_blank"
             rel="noopener noreferrer"
-            href="https://docs.google.com/document/d/15HFjEE0m5qFX0OtDq1C59SPF5aU3tZHCzPS4GSfDPvQ/edit?usp=sharing"
             className="text-neon-lime underline underline-offset-4 font-bold hover:text-lime-300"
           >
             使用規範
@@ -495,7 +495,7 @@ const Works = () => {
           3. 詳細說明請見
           {' '}
           <a
-            href="https://docs.google.com/document/d/15HFjEE0m5qFX0OtDq1C59SPF5aU3tZHCzPS4GSfDPvQ/edit?usp=sharing"
+            href={USAGE_RULES_URL}
             target="_blank"
             rel="noopener noreferrer"
             className="text-neon-lime underline underline-offset-4 font-bold hover:text-lime-300"
@@ -504,6 +504,7 @@ const Works = () => {
           </a>
         </p>
       </motion.div>
+      
 
       <AnimatePresence>
         {selectedWork && (
