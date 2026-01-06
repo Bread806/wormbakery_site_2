@@ -1,11 +1,9 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
-// https://vitejs.dev/config/
+// 固定使用子路徑（Project Pages）
 export default defineConfig(() => ({
-  base: process.env.CUSTOM_DOMAIN ? '/' : '/wormbakery_site_2/',
+  base: '/wormbakery_site_2/',
   plugins: [react()],
-  optimizeDeps: {
-    exclude: ['lucide-react'],
-  },
+  optimizeDeps: { exclude: ['lucide-react'] },
 }));

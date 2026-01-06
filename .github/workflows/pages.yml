@@ -17,21 +17,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
+        with: { fetch-depth: 0 }
       - uses: actions/setup-node@v4
-        with:
-          node-version: 18
-
+        with: { node-version: 18 }
       - name: Install
         run: npm ci
-
-      - name: Build (production)
-        env:
-          GH_PAGES: 1
+      - name: Build
         run: npm run build
-
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
