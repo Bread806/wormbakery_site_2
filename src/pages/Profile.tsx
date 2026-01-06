@@ -3,10 +3,10 @@ import { Code, Palette, Music, Star, Zap, Heart } from 'lucide-react';
 
 const Profile = () => {
   const skills = [
-    { name: '短篇文本', icon: Palette, exp: 80 },
-    { name: '音聲作品', icon: Zap, exp: 88 },
-    { name: '會員語音', icon: Star, exp: 92 },
-    { name: '企劃文本', icon: Code, exp: 85 },
+    { name: '情境劇', icon: Palette, exp: 80, desc: '5–30 分鐘的第一人稱文本\n 主要以人物對話與台詞呈現劇情，極少音效。' },
+    { name: '音聲作品', icon: Zap, exp: 88, desc: '長度與尺度彈性，音效與台詞穿插表達故事。' },
+    { name: '會員語音', icon: Star, exp: 92, desc: '快節奏的故事，適合 1-5 分鐘的語音內容。' },
+    { name: '企劃文本', icon: Code, exp: 85, desc: '適合使用在 ASMR 直播或是個特殊企劃直播的文本。' },
   ];
 
   const timeline = [
@@ -177,6 +177,10 @@ const Profile = () => {
                     className="h-full bg-gradient-to-r from-neon-cyan to-neon-lime rounded-full"
                   />
                 </div>
+                {/* 描述（支援換行） */}
+                <p className="text-white/80 text-sm mt-3 whitespace-pre-line">
+                  {skill.desc}
+                </p>
                 {/* 不顯示任何數字 */}
                 <span className="text-neon-cyan text-sm font-bold mt-2 block invisible">
                   exp: {skill.exp} %
