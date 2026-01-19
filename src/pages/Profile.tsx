@@ -64,7 +64,7 @@ const Profile = () => {
             className="relative w-64 h-64 rounded-3xl overflow-hidden border-4 border-neon-pink shadow-neon-pink"
           >
             <img
-              src={import.meta.env.BASE_URL + "/pic/profile_1.png"}
+              src={import.meta.env.BASE_URL + "pic/profile_1.png"}
               alt="profile art"
               className="absolute inset-0 w-full h-full object-cover"
               // 將裁切焦點往下移（50% = 水平 中心, 60% = 垂直偏下）

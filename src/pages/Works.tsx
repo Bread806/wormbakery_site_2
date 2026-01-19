@@ -120,7 +120,7 @@ const Works = () => {
       height: 'h-75',
       link: 'https://docs.google.com/document/d/11egSpT8jzC1Xs7Z4wDW4a6o6i48cZQWQ/edit?usp=sharing&ouid=115379523661572300748&rtpof=true&sd=true',
       release: 'https://youtu.be/KVuv_6Em-Xk?si=4RtZsEUTmM3lNabt',
-  image: import.meta.env.BASE_URL + '/work_pic/work_school.jpeg'
+  image: import.meta.env.BASE_URL + 'work_pic/work_school.jpeg'
     },
     {
       id: 9,
@@ -130,7 +130,7 @@ const Works = () => {
       color: 'from-pink-500 to-cyan-600',
       height: 'h-88',
       // link: 'https://docs.google.com/document/d/1Dy3-vkLOS2it3aL51u1aZNkqrkKpn26m/edit?usp=sharing&ouid=115379523661572300748&rtpof=true&sd=true',
-  image: import.meta.env.BASE_URL + '/work_pic/work_MRT.jpeg'
+  image: import.meta.env.BASE_URL + 'work_pic/work_MRT.jpeg'
     },
     {
       id: 10,
@@ -141,7 +141,7 @@ const Works = () => {
       height: 'h-88',
       link: 'https://docs.google.com/document/d/1AYjLeykOJdILUX3rxRYNqRg2kM8YJZR7/edit?usp=sharing&ouid=115379523661572300748&rtpof=true&sd=true',
       release: 'https://youtu.be/8pzdFcY7cEU?si=zL1LNF2ndj7CvkXd',
-  image: import.meta.env.BASE_URL + '/work_pic/work_sis.png'
+  image: import.meta.env.BASE_URL + 'work_pic/work_sis.png'
     },
     {
       id: 11,
@@ -151,7 +151,7 @@ const Works = () => {
       color: 'from-pink-500 to-cyan-600',
       height: 'h-42',
       // link: 'https://docs.google.com/document/d/1F9o-b8AC2VD-oRfbCiuP9uFhPkGdSM8_/edit?usp=sharing&ouid=115379523661572300748&rtpof=true&sd=true',
-  image: import.meta.env.BASE_URL + '/work_pic/work_note.jpeg'
+  image: import.meta.env.BASE_URL + 'work_pic/work_note.jpeg'
     },
     {
       id: 12,
@@ -161,7 +161,7 @@ const Works = () => {
       color: 'from-pink-500 to-cyan-600',
       height: 'h-63',
       // link: 'https://docs.google.com/document/d/1JuPygjFXsBVfrDhX_Nlc-hSQPgamnXtv/edit?usp=sharing&ouid=115379523661572300748&rtpof=true&sd=true',
-  image: import.meta.env.BASE_URL + '/work_pic/work_cloud.jpeg'
+  image: import.meta.env.BASE_URL + 'work_pic/work_cloud.jpeg'
     },
     {
       id: 13,
@@ -171,7 +171,7 @@ const Works = () => {
       color: 'from-pink-500 to-cyan-600',
       height: 'h-63',
       link: 'https://docs.google.com/document/d/1XpX_o2pX4xCszo77egUeLnKXoZE7XNhm/edit?usp=sharing&ouid=115379523661572300748&rtpof=true&sd=true',
-  image: import.meta.env.BASE_URL + '/work_pic/work_rain.jpeg'
+  image: import.meta.env.BASE_URL + 'work_pic/work_rain.jpeg'
     },
     {
       id: 14,
@@ -181,7 +181,7 @@ const Works = () => {
       color: 'from-pink-500 to-cyan-600',
       height: 'h-55',
       // link: 'https://docs.google.com/document/d/150ZECE5dGyYaarT2iFvrsLgVTwzRuQ6-/edit?usp=sharing&ouid=115379523661572300748&rtpof=true&sd=true',
-  image: import.meta.env.BASE_URL + '/work_pic/work_doctor.jpeg'
+  image: import.meta.env.BASE_URL + 'work_pic/work_doctor.jpeg'
     },
     {
       id: 15,
@@ -191,7 +191,7 @@ const Works = () => {
       color: 'from-pink-500 to-cyan-600',
       height: 'h-55',
       // link: 'https://docs.google.com/document/d/1HHprrIL6q9BkEemRtEujNI4cL0gWiRNf/edit?usp=sharing&ouid=115379523661572300748&rtpof=true&sd=true',
-  image: import.meta.env.BASE_URL + '/work_pic/work_morning.jpeg'
+  image: import.meta.env.BASE_URL + 'work_pic/work_morning.jpeg'
     },
     {
       id: 16,
@@ -201,7 +201,7 @@ const Works = () => {
       color: 'from-pink-500 to-cyan-600',
       height: 'h-40',
       // link: 'https://docs.google.com/document/d/1IOwumirHhDvN3TXqkPMQL2m93Catb6Hg/edit?usp=sharing&ouid=115379523661572300748&rtpof=true&sd=true',
-  image: import.meta.env.BASE_URL + '/work_pic/work_burger.png'
+  image: import.meta.env.BASE_URL + 'work_pic/work_burger.png'
     },
     {
       id: 17,
@@ -220,7 +220,7 @@ const Works = () => {
       color: 'from-pink-500 to-cyan-600',
       height: 'h-80',
       release: 'https://youtu.be/ZIVgpsQ8B-U?si=US9_4S-4OuVjWfBd',
-  image: import.meta.env.BASE_URL + '/work_pic/work_narciss.jpg'
+  image: import.meta.env.BASE_URL + 'work_pic/work_narciss.jpg'
     },
     {
       id: 19,
@@ -240,7 +240,7 @@ const Works = () => {
       color: 'from-pink-500 to-cyan-600',
       height: 'h-80',
       release: 'https://youtu.be/QUgRyT-gGnk?si=pp4meRlyUKl3ShCv',
-  image: import.meta.env.BASE_URL + '/work_pic/work_mouse.jpg'
+  image: import.meta.env.BASE_URL + 'work_pic/work_mouse.jpg'
     },
     {
       id: 21,
@@ -250,7 +250,7 @@ const Works = () => {
       color: 'from-pink-500 to-cyan-600',
       height: 'h-70',
       release: 'https://youtu.be/0J5-uTq_Iv8?si=G_DYwHunXyXs4lWM',
-  image: import.meta.env.BASE_URL + '/work_pic/love_sick.png'
+  image: import.meta.env.BASE_URL + 'work_pic/love_sick.png'
     },
     {
       id: 22,
@@ -260,7 +260,7 @@ const Works = () => {
       color: 'from-pink-500 to-cyan-600',
       height: 'h-80',
       release: 'https://youtu.be/7skNvaxGDZ0?si=YB0CxLZYgZAwmikM',
-  image: import.meta.env.BASE_URL + '/work_pic/work_between_us.jpg'
+  image: import.meta.env.BASE_URL + 'work_pic/work_between_us.jpg'
     },
     {
       id: 23,
@@ -270,7 +270,7 @@ const Works = () => {
       color: 'from-pink-500 to-cyan-600',
       height: 'h-75',
       release: 'https://youtu.be/m-4WFyJfKJU?si=buAfd2Ub4_Q-4-j_',
-  image: import.meta.env.BASE_URL + '/work_pic/work_chocolate.jpg'
+  image: import.meta.env.BASE_URL + 'work_pic/work_chocolate.jpg'
     },
     {
       id: 24,
@@ -280,7 +280,7 @@ const Works = () => {
       color: 'from-pink-500 to-cyan-600',
       height: 'h-75',
       release: 'https://youtu.be/rUMoPagxK1Q?si=cB-T5g-d6xa5uQIW',
-  image: import.meta.env.BASE_URL + '/work_pic/work_rabbit.jpg'
+  image: import.meta.env.BASE_URL + 'work_pic/work_rabbit.jpg'
     },
     {
       id: 25,
@@ -290,7 +290,7 @@ const Works = () => {
       color: 'from-pink-500 to-cyan-600',
       height: 'h-80',
       release: 'https://www.youtube.com/watch?v=05M8vv48VFU&t=1s',
-  image: import.meta.env.BASE_URL + '/work_pic/work_want.jpg'
+  image: import.meta.env.BASE_URL + 'work_pic/work_want.jpg'
     },
     
   ];
