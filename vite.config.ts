@@ -1,9 +1,8 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
-// 固定使用子路徑（Project Pages）
-export default defineConfig(() => ({
-  base: '/wormbakery_site_2/',
+// https://vitejs.dev/config/
+export default defineConfig({
   plugins: [react()],
-  optimizeDeps: { exclude: ['lucide-react'] },
-}));
+  base: '/',
+});
