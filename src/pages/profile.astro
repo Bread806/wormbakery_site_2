@@ -96,12 +96,12 @@ const brand = BRANDS.kacha;
         </div>
       </section>
 
-      <!-- 可愛圖片 -->
+      <!-- 可愛圖片：統一正方形比例 -->
       <section>
         <h2 class="text-4xl font-mono font-bold mb-8 acid-chroma">其他關於我ㄉ可愛圖片</h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
           {[1, 2, 3].map((id) => (
-            <div class="retro-border retro-shadow-lg overflow-hidden">
+            <div class="retro-border retro-shadow-lg overflow-hidden aspect-square">
               <img
                 src={`/pic/gallery-${id}.png`}
                 alt={`卡蚯蚓的圖片 ${id}`}

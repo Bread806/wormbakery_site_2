@@ -18,13 +18,13 @@ const brand = BRANDS.kacha; // 預設品牌，腳本會依實際選擇更新
     <!-- Hero Section -->
     <section class="relative min-h-[70vh] flex items-center justify-center overflow-hidden bg-grid">
       <div class="relative z-10 text-center px-4">
-        <!-- 品牌主視覺圖 -->
-        <div id="hero-logo-container" class="mb-8">
+        <!-- 品牌主視覺圖：固定容器高度，object-contain 保持比例、object-cover 統一裁切 -->
+        <div id="hero-logo-container" class="mb-8 w-full max-w-md mx-auto h-48 md:h-64">
           <img
             id="hero-image"
             src={brand.avatar}
             alt={brand.avatarAlt}
-            class="mx-auto max-h-[30vh] object-contain acid-chroma-strong"
+            class="w-full h-full object-contain acid-chroma-strong"
           />
         </div>
 

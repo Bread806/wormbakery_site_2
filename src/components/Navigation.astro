@@ -8,12 +8,14 @@ import { BRANDS, BRAND_KEYS } from '../data/brand';
     <div class="flex items-center justify-between h-16">
       <!-- Logo 區（品牌切換） -->
       <a href="/" class="flex items-center gap-3" id="brand-logo-link">
-        <img
-          id="brand-logo"
-          src={BRANDS.kacha.logo}
-          alt={BRANDS.kacha.logoAlt}
-          class="h-10 w-10 object-contain retro-border rounded-full"
-        />
+        <div class="w-10 h-10 retro-border rounded-full overflow-hidden flex-shrink-0">
+          <img
+            id="brand-logo"
+            src={BRANDS.kacha.logo}
+            alt={BRANDS.kacha.logoAlt}
+            class="w-full h-full object-cover"
+          />
+        </div>
         <span id="brand-name" class="font-mono font-bold text-lg hidden sm:inline">
           {BRANDS.kacha.label}
         </span>

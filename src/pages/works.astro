@@ -50,8 +50,8 @@ const defaultWorks = getWorksByBrand(defaultBrand);
             data-work-id={work.id}
             data-category={Array.isArray(work.category) ? work.category.join(',') : work.category}
           >
-            <!-- 封面 -->
-            <div class="relative h-48 overflow-hidden border-b-3 border-[var(--fg)]">
+            <!-- 封面：統一 4:3 比例，object-cover 裁切 -->
+            <div class="relative aspect-[4/3] overflow-hidden border-b-3 border-[var(--fg)]">
               {work.image ? (
                 <img src={work.image} alt={work.title} class="w-full h-full object-cover" loading="lazy" />
               ) : (
@@ -103,8 +103,8 @@ const defaultWorks = getWorksByBrand(defaultBrand);
       <button id="modal-close" class="absolute top-4 right-4 p-2 border-2 border-[var(--fg)] hover:bg-[var(--fg)] hover:text-[var(--bg)]" aria-label="關閉">
         ✕
       </button>
-      <div id="modal-image-container" class="mb-6">
-        <img id="modal-image" src="" alt="" class="w-full h-64 object-cover border-3 border-[var(--fg)]" />
+      <div id="modal-image-container" class="mb-6 aspect-[16/9]">
+        <img id="modal-image" src="" alt="" class="w-full h-full object-cover border-3 border-[var(--fg)]" />
       </div>
       <h2 id="modal-title" class="text-3xl font-bold mb-4 acid-chroma"></h2>
       <p id="modal-desc" class="text-lg mb-6 leading-relaxed"></p>
@@ -157,12 +157,12 @@ const defaultWorks = getWorksByBrand(defaultBrand);
 
       worksContainer.innerHTML = works.map((work) => {
         const imgHtml = work.image
-          ? `<img src="${work.image}" alt="${work.title}" class="w-full h-full object-cover" loading="lazy" />`
-          : `<div class="w-full h-full bg-[var(--fg)] flex items-center justify-center"><span class="text-[var(--bg)] font-barcode text-2xl">NO COVER</span></div>`;
+          ? `<img src="${work.image}" alt="${work.title}" class="absolute inset-0 w-full h-full object-cover" loading="lazy" />`
+          : `<div class="absolute inset-0 bg-[var(--fg)] flex items-center justify-center"><span class="text-[var(--bg)] font-barcode text-2xl">NO COVER</span></div>`;
 
         return `
           <article class="work-card card-retro overflow-hidden cursor-pointer" data-work-id="${work.id}">
-            <div class="relative h-48 overflow-hidden border-b-3 border-[var(--fg)]">${imgHtml}</div>
+            <div class="relative aspect-[4/3] overflow-hidden border-b-3 border-[var(--fg)]">${imgHtml}</div>
             <div class="p-5">
               <h3 class="text-xl font-bold mb-2 line-clamp-2">${work.title}</h3>
               <p class="text-sm opacity-80 mb-3 line-clamp-2">${work.description}</p>
