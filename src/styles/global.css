@@ -2,8 +2,12 @@
    Acid Design System — 蚯蚓麵包屋 / 卡蚯蚓
    ============================================ */
 
-/* ---------- 1. Fonts ---------- */
+/* ---------- 0. Tailwind 與字體（@import 必須置頂） ---------- */
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Libre+Barcode+128&family=Noto+Sans+TC:wght@400;500;700;900&display=swap');
+@import 'tailwindcss';
+
+/* 讓 dark: variant 對應 data-theme="dark" 屬性（而非 .dark class） */
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
 
 :root {
   /* 亮主題（預設） */
