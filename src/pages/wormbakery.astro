@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Navigation from '../components/Navigation.astro';
 import Footer from '../components/Footer.astro';
+import DecorationGallery from '../components/DecorationGallery.astro';
 import { BRANDS } from '../data/brand';
 
 const worm = BRANDS.worm;
@@ -66,6 +67,12 @@ const worm = BRANDS.worm;
             <p class="font-mono text-sm">圖示</p>
           </div>
         </div>
+      </section>
+
+      <!-- 裝飾圖庫 -->
+      <section class="mb-12">
+        <p class="font-mono text-sm opacity-70 text-center mb-4">DECO ELEMENTS</p>
+        <DecorationGallery />
       </section>
 
       <!-- 聯絡與返回 -->

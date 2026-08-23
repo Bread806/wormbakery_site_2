@@ -1,0 +1,72 @@
+---
+// 裝飾圖庫：從 src/png/ 選取代表性素材
+const decorations = [
+  { src: '/assets/diagram-01.png', label: 'DIAGRAM', show: true },
+  { src: '/assets/element-arrow.png', label: 'ARROW', show: true },
+  { src: '/assets/element-dot.png', label: 'DOT', show: true },
+  { src: '/assets/hud-frame.png', label: 'HUD', show: true },
+  { src: '/assets/hud-badge.png', label: 'BADGE', show: true },
+];
+---
+
+<!-- 裝飾圖庫：可作為各頁面角落點綴 -->
+<div class="decoration-gallery" aria-hidden="true">
+  {decorations.filter(d => d.show).map((item, i) => (
+    <div class="decoration-item" style={`animation-delay: ${i * 0.2}s;`}>
+      <img src={item.src} alt={item.label} loading="lazy" />
+      <span class="decoration-label">{item.label}</span>
+    </div>
+  ))}
+</div>
+
+<style>
+.decoration-gallery {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 2rem auto;
+  max-width: 48rem;
+}
+
+.decoration-item {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  border: 3px solid var(--fg);
+  background: var(--bg);
+  box-shadow: 4px 4px 0 0 var(--fg);
+  overflow: hidden;
+  animation: deco-bounce 2s steps(2) infinite;
+}
+
+.decoration-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.8;
+}
+
+.decoration-label {
+  position: absolute;
+  bottom: -18px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 0.1em;
+  color: var(--fg);
+  background: var(--bg);
+  padding: 0 2px;
+}
+
+@keyframes deco-bounce {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-6px) rotate(3deg); }
+}
+
+html[data-theme='dark'] .decoration-item img {
+  opacity: 0.9;
+  filter: invert(1);
+}
+</style>
