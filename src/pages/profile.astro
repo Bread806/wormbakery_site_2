@@ -29,13 +29,12 @@ const brand = BRANDS.kacha;
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <!-- Profile Header -->
       <section class="flex flex-col md:flex-row items-center gap-12 mb-20">
-        <div id="profile-avatar-container" class="relative w-64 h-64 retro-border retro-shadow-lg overflow-hidden">
+        <div id="profile-avatar-container" class="relative w-64 h-64 retro-border retro-shadow-lg overflow-hidden flex items-center justify-center bg-[var(--bg)]">
           <img
             id="profile-avatar"
             src={brand.avatar}
             alt={brand.avatarAlt}
-            class="w-full h-full object-cover"
-            style="object-position: 50% 10%;"
+            class="max-w-full max-h-full object-contain p-4"
           />
         </div>
         <div class="flex-1 text-center md:text-left">
@@ -91,23 +90,6 @@ const brand = BRANDS.kacha;
                   <p class="text-lg">{event}</p>
                 ))}
               </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <!-- 可愛圖片：統一正方形比例 -->
-      <section>
-        <h2 class="text-4xl font-mono font-bold mb-8 acid-chroma">其他關於我ㄉ可愛圖片</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {[1, 2, 3].map((id) => (
-            <div class="retro-border retro-shadow-lg overflow-hidden aspect-square">
-              <img
-                src={`/pic/gallery-${id}.png`}
-                alt={`卡蚯蚓的圖片 ${id}`}
-                class="w-full h-full object-cover hover:scale-105 transition-transform"
-                loading="lazy"
-              />
             </div>
           ))}
         </div>

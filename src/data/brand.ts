@@ -42,10 +42,10 @@ export const BRANDS: Record<'kacha' | 'worm', Brand> = {
   worm: {
     key: 'worm',
     label: '蚯蚓麵包屋',
-    logo: '/pic/bread-svgrepo-com_2.svg', // 麵包屋用麵包 SVG 作為 logo
+    logo: '/pic/bakery-icon.png',          // 麵包屋圖示（Navigation）
     logoAlt: '蚯蚓麵包屋 logo',
-    avatar: '/pic/text_white.png',        // 麵包屋主視覺用文字圖
-    avatarAlt: '蚯蚓麵包屋主視覺',
+    avatar: '/pic/bakery-logo-white.png',  // 麵包屋主視覺（白色標準字）
+    avatarAlt: '蚯蚓麵包屋標準字',
     heroTitle: '蚯蚓麵包屋',
     tagline1: 'To find the perfect words.',
     tagline2: 'To say less but to say more.',
