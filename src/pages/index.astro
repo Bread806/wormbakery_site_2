@@ -5,12 +5,9 @@ import Footer from '../components/Footer.astro';
 import LoadingScreen from '../components/LoadingScreen.astro';
 import StrudelPlayer from '../components/StrudelPlayer.astro';
 import Waveform from '../components/Waveform.astro';
-import { BRANDS } from '../data/brand';
-
-const brand = BRANDS.kacha; // 預設品牌，腳本會依實際選擇更新
 ---
 
-<BaseLayout title={brand.metaTitle} description={brand.metaDescription}>
+<BaseLayout title="卡蚯蚓的個人網站" description="卡蚯蚓的個人作品集：寫作、編劇、音聲台本與 VTuber Staff 相關作品。">
   <LoadingScreen />
   <Navigation />
 
@@ -18,28 +15,24 @@ const brand = BRANDS.kacha; // 預設品牌，腳本會依實際選擇更新
     <!-- Hero Section -->
     <section class="relative min-h-[70vh] flex items-center justify-center overflow-hidden bg-grid">
       <div class="relative z-10 text-center px-4">
-        <!-- 品牌主視覺圖：固定容器高度，object-contain 保持比例、object-cover 統一裁切 -->
-        <div id="hero-logo-container" class="mb-8 w-full max-w-md mx-auto h-48 md:h-64">
+        <!-- 主視覺圖 -->
+        <div class="mb-8 w-full max-w-md mx-auto h-48 md:h-64">
           <img
-            id="hero-image"
-            src={brand.avatar}
-            alt={brand.avatarAlt}
+            src="/pic/profile_1.png"
+            alt="卡蚯蚓的個人圖像"
             class="w-full h-full object-contain acid-chroma-strong"
           />
         </div>
 
         <!-- 品牌大字 -->
-        <h1
-          id="hero-title"
-          class="text-5xl md:text-7xl lg:text-8xl font-black mb-6 tracking-tighter acid-chroma"
-        >
-          {brand.heroTitle}
+        <h1 class="text-5xl md:text-7xl lg:text-8xl font-black mb-6 tracking-tighter acid-chroma">
+          卡蚯蚓
         </h1>
 
         <!-- Slogan -->
         <div class="space-y-2 font-mono text-lg md:text-2xl">
-          <p id="tagline-1">{brand.tagline1}</p>
-          <p id="tagline-2">{brand.tagline2}</p>
+          <p>To find the perfect words.</p>
+          <p>To say less but to say more.</p>
         </div>
 
         <!-- 條碼裝飾 -->
@@ -85,28 +78,4 @@ const brand = BRANDS.kacha; // 預設品牌，腳本會依實際選擇更新
   </main>
 
   <Footer />
-
-  <script>
-    import { BRANDS } from '../data/brand';
-    import { getBrand, onBrandChange } from '../lib/brandManager';
-
-    const heroTitle = document.getElementById('hero-title');
-    const heroImage = document.getElementById('hero-image') as HTMLImageElement | null;
-    const tagline1El = document.getElementById('tagline-1');
-    const tagline2El = document.getElementById('tagline-2');
-
-    function updateHero(brand: 'kacha' | 'worm') {
-      const data = BRANDS[brand];
-      if (heroTitle) heroTitle.textContent = data.heroTitle;
-      if (heroImage) {
-        heroImage.src = data.avatar;
-        heroImage.alt = data.avatarAlt;
-      }
-      if (tagline1El) tagline1El.textContent = data.tagline1;
-      if (tagline2El) tagline2El.textContent = data.tagline2;
-    }
-
-    updateHero(getBrand());
-    onBrandChange(updateHero);
-  </script>
 </BaseLayout>

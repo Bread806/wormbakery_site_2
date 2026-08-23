@@ -2,7 +2,6 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Navigation from '../components/Navigation.astro';
 import Footer from '../components/Footer.astro';
-import { BRANDS } from '../data/brand';
 
 const SKILLS = [
   { name: '情境劇', exp: 80, desc: '5~30 分鐘的第一人稱文本。主要以人物對話與台詞呈現劇情，極少音效。' },
@@ -18,29 +17,24 @@ const TIMELINE = [
   { year: '2025', events: ['鼠在不想離開你', 'Love Sick'] },
   { year: '2026', events: ['敬請期待 :D'] },
 ];
-
-const brand = BRANDS.kacha;
 ---
 
-<BaseLayout title={brand.metaTitle} description={brand.metaDescription}>
+<BaseLayout title="卡蚯蚓的個人網站" description="卡蚯蚓的個人作品集：寫作、編劇、音聲台本與 VTuber Staff 相關作品。">
   <Navigation />
 
   <main class="pt-20 pb-16">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <!-- Profile Header -->
       <section class="flex flex-col md:flex-row items-center gap-12 mb-20">
-        <div id="profile-avatar-container" class="relative w-64 h-64 retro-border retro-shadow-lg overflow-hidden flex items-center justify-center bg-[var(--bg)]">
+        <div class="relative w-64 h-64 retro-border retro-shadow-lg overflow-hidden flex items-center justify-center bg-[var(--bg)]">
           <img
-            id="profile-avatar"
-            src={brand.avatar}
-            alt={brand.avatarAlt}
+            src="/pic/profile_1.png"
+            alt="卡蚯蚓的個人圖像"
             class="max-w-full max-h-full object-contain p-4"
           />
         </div>
         <div class="flex-1 text-center md:text-left">
-          <h1 id="profile-name" class="text-5xl font-black mb-4 acid-chroma">
-            {brand.heroTitle}
-          </h1>
+          <h1 class="text-5xl font-black mb-4 acid-chroma">卡蚯蚓</h1>
           <p class="text-xl font-bold mb-6 opacity-80 font-mono">Writing / VTuber Staff</p>
           <div class="flex flex-wrap gap-3 justify-center md:justify-start">
             <span class="px-4 py-2 border-2 border-[var(--fg)] font-bold">台本設計</span>
@@ -52,10 +46,10 @@ const brand = BRANDS.kacha;
       <!-- 關於我 -->
       <section class="mb-20">
         <h2 class="text-4xl font-mono font-bold mb-8 acid-chroma">關於我</h2>
-        <div id="profile-intro" class="card-retro p-8 space-y-4">
-          {brand.profileIntro.map((paragraph) => (
-            <p class="text-lg leading-relaxed">{paragraph}</p>
-          ))}
+        <div class="card-retro p-8 space-y-4">
+          <p class="text-lg leading-relaxed">我叫做卡蚯蚓，可以稱呼我蚯蚓就好。喜歡寫作與編劇，同時也是喜歡各種聲音表演的聽眾。在網路上發表與撰寫短篇語音、長篇音聲作品與情境劇台本。在這個網站裡，你可以看到我曾參與過的作品以及我練習的文本。</p>
+          <p class="text-lg leading-relaxed">蚯蚓麵包屋是一個我用來發表實驗性質作品的計畫，多數作品會免費發表讓表演者練習。作品發表的頻率不固定，不過都會是我覺得富有意義的創作。</p>
+          <p class="text-lg leading-relaxed">聯絡台本委託可以見 Official SNS 頁面。委託會先經過一輪需求討論才會確認是否承接，造成不便請見諒。</p>
         </div>
       </section>
 
@@ -98,34 +92,4 @@ const brand = BRANDS.kacha;
   </main>
 
   <Footer />
-
-  <script>
-    import { BRANDS } from '../data/brand';
-    import { getBrand, onBrandChange } from '../lib/brandManager';
-
-    const avatarImg = document.getElementById('profile-avatar') as HTMLImageElement | null;
-    const nameEl = document.getElementById('profile-name');
-    const introEl = document.getElementById('profile-intro');
-
-    function updateProfile(brand: 'kacha' | 'worm') {
-      const data = BRANDS[brand];
-      if (avatarImg) {
-        avatarImg.src = data.avatar;
-        avatarImg.alt = data.avatarAlt;
-      }
-      if (nameEl) nameEl.textContent = data.heroTitle;
-      if (introEl) {
-        introEl.innerHTML = '';
-        data.profileIntro.forEach((p) => {
-          const pEl = document.createElement('p');
-          pEl.className = 'text-lg leading-relaxed';
-          pEl.textContent = p;
-          introEl.appendChild(pEl);
-        });
-      }
-    }
-
-    updateProfile(getBrand());
-    onBrandChange(updateProfile);
-  </script>
 </BaseLayout>

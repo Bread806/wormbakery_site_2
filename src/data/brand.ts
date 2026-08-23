@@ -1,29 +1,11 @@
-// 品牌資料層：卡蚯蚓（作者本人）與蚯蚓麵包屋（作品計畫）
-// 切換時僅改變 logo、大頭貼、文案、作品歸屬標籤，視覺排版保持不變
+// 品牌資料：卡蚯蚓（主站）+ 蚯蚓麵包屋（子頁面 /wormbakery/）
+// 不再支援即時品牌切換，麵包屋為獨立頁面
 
-export interface Brand {
-  key: 'kacha' | 'worm';
-  label: string;
-  logo: string;          // 導航與 hero 的標識圖
-  logoAlt: string;
-  avatar: string;        // Profile 主視覺
-  avatarAlt: string;
-  heroTitle: string;
-  tagline1: string;
-  tagline2: string;
-  profileIntro: string[];  // 關於我區塊的段落
-  metaTitle: string;
-  metaDescription: string;
-  workOwnershipNote: string;  // Works 頁的品牌歸屬說明
-}
-
-const GOOGLE_DOC_PARAMS = '?usp=sharing&ouid=115379523661572300748&rtpof=true&sd=true';
-
-export const BRANDS: Record<'kacha' | 'worm', Brand> = {
+export const BRANDS = {
   kacha: {
-    key: 'kacha',
+    key: 'kacha' as const,
     label: '卡蚯蚓',
-    logo: '/pic/profile_1.png',          // 卡蚯蚓用頭像作為 logo
+    logo: '/pic/profile_1.png',
     logoAlt: '卡蚯蚓大頭貼',
     avatar: '/pic/profile_1.png',
     avatarAlt: '卡蚯蚓的個人圖像',
@@ -37,14 +19,14 @@ export const BRANDS: Record<'kacha' | 'worm', Brand> = {
     ],
     metaTitle: '卡蚯蚓的個人網站',
     metaDescription: '卡蚯蚓的個人作品集：寫作、編劇、音聲台本與 VTuber Staff 相關作品。',
-    workOwnershipNote: '目前所有作品皆屬於卡蚯蚓。蚯蚓麵包屋為實驗台本計畫，尚未獨立發表作品。',
+    workOwnershipNote: '所有作品皆屬於卡蚯蚓。蚯蚓麵包屋為實驗台本計畫。',
   },
   worm: {
-    key: 'worm',
+    key: 'worm' as const,
     label: '蚯蚓麵包屋',
-    logo: '/pic/bakery-icon.png',          // 麵包屋圖示（Navigation）
+    logo: '/pic/bakery-icon.png',
     logoAlt: '蚯蚓麵包屋 logo',
-    avatar: '/pic/bakery-logo-white.png',  // 麵包屋主視覺（白色標準字）
+    avatar: '/pic/bakery-logo-white.png',
     avatarAlt: '蚯蚓麵包屋標準字',
     heroTitle: '蚯蚓麵包屋',
     tagline1: 'To find the perfect words.',
@@ -60,8 +42,9 @@ export const BRANDS: Record<'kacha' | 'worm', Brand> = {
   },
 };
 
-export const BRAND_KEYS = Object.keys(BRANDS) as Array<keyof typeof BRANDS>;
-export const DEFAULT_BRAND: keyof typeof BRANDS = 'kacha';
+export const DEFAULT_BRAND = 'kacha';
+
+const GOOGLE_DOC_PARAMS = '?usp=sharing&ouid=115379523661572300748&rtpof=true&sd=true';
 
 export function getUrlForDoc(docId: string): string {
   return `https://docs.google.com/document/d/${docId}/edit${GOOGLE_DOC_PARAMS}`;

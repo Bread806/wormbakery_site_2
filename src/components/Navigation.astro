@@ -1,24 +1,20 @@
 ---
-// 導航列：品牌切換器 + 主題切換 + 選單
-import { BRANDS, BRAND_KEYS } from '../data/brand';
+// 導航列：移除品牌切換器，改為單純導航（麵包屋成為獨立頁面）
 ---
 
 <nav class="fixed top-0 left-0 right-0 z-50 bg-[var(--bg)]/90 backdrop-blur-sm border-b-3 border-[var(--fg)]">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex items-center justify-between h-16">
-      <!-- Logo 區（品牌切換） -->
-      <a href="/" class="flex items-center gap-3" id="brand-logo-link">
+      <!-- Logo 區：永遠顯示卡蚯蚓 -->
+      <a href="/" class="flex items-center gap-3">
         <div class="w-10 h-10 retro-border rounded-full overflow-hidden flex-shrink-0">
           <img
-            id="brand-logo"
-            src={BRANDS.kacha.logo}
-            alt={BRANDS.kacha.logoAlt}
+            src="/pic/profile_1.png"
+            alt="卡蚯蚓大頭貼"
             class="w-full h-full object-cover"
           />
         </div>
-        <span id="brand-name" class="font-mono font-bold text-lg hidden sm:inline">
-          {BRANDS.kacha.label}
-        </span>
+        <span class="font-mono font-bold text-lg hidden sm:inline">卡蚯蚓</span>
         <!-- 小型聲波裝飾 -->
         <div class="hidden md:flex items-end gap-0.5 h-5" aria-hidden="true">
           <div class="w-1 bg-[var(--fg)] animate-blink" style="animation-delay: 0s"></div>
@@ -27,25 +23,13 @@ import { BRANDS, BRAND_KEYS } from '../data/brand';
         </div>
       </a>
 
-      <!-- 品牌切換器（桌面/手機都顯示） -->
-      <div class="flex items-center gap-2" role="group" aria-label="品牌切換">
-        {BRAND_KEYS.map((key) => (
-          <button
-            class="brand-toggle px-3 py-1 text-sm font-mono border-2 border-[var(--fg)] bg-[var(--bg)] hover:bg-[var(--fg)] hover:text-[var(--bg)] transition-colors"
-            data-brand={key}
-            aria-pressed={key === 'kacha' ? 'true' : 'false'}
-          >
-            {BRANDS[key].label}
-          </button>
-        ))}
-      </div>
-
-      <!-- 桌面選單 -->
+      <!-- 導航連結 -->
       <div class="hidden md:flex items-center gap-6">
         <a href="/" class="nav-link font-mono font-bold hover:acid-chroma transition-all" data-page="home">Home</a>
         <a href="/profile" class="nav-link font-mono font-bold hover:acid-chroma transition-all" data-page="profile">Profile</a>
         <a href="/works" class="nav-link font-mono font-bold hover:acid-chroma transition-all" data-page="works">Works</a>
         <a href="/sns" class="nav-link font-mono font-bold hover:acid-chroma transition-all" data-page="sns">Official SNS</a>
+        <a href="/wormbakery" class="nav-link font-mono font-bold text-accent-pink hover:acid-chroma transition-all" data-page="wormbakery">WormBakery</a>
         <button
           id="theme-toggle"
           class="p-2 border-2 border-[var(--fg)] hover:bg-[var(--fg)] hover:text-[var(--bg)] transition-colors"
@@ -77,6 +61,7 @@ import { BRANDS, BRAND_KEYS } from '../data/brand';
       <a href="/profile" class="nav-link-mobile text-2xl font-mono font-bold py-3 border-b-2 border-[var(--border)]" data-page="profile">Profile</a>
       <a href="/works" class="nav-link-mobile text-2xl font-mono font-bold py-3 border-b-2 border-[var(--border)]" data-page="works">Works</a>
       <a href="/sns" class="nav-link-mobile text-2xl font-mono font-bold py-3 border-b-2 border-[var(--border)]" data-page="sns">Official SNS</a>
+      <a href="/wormbakery" class="nav-link-mobile text-2xl font-mono font-bold py-3 border-b-2 border-[var(--border)] text-accent-pink" data-page="wormbakery">WormBakery</a>
       <button
         id="theme-toggle-mobile"
         class="mt-4 px-4 py-3 border-3 border-[var(--fg)] font-mono font-bold hover:bg-[var(--fg)] hover:text-[var(--bg)]"
@@ -88,41 +73,6 @@ import { BRANDS, BRAND_KEYS } from '../data/brand';
 </nav>
 
 <script>
-  import { BRANDS } from '../data/brand';
-  import { getBrand, setBrand, onBrandChange } from '../lib/brandManager';
-
-  // 品牌切換邏輯
-  const brandLogo = document.getElementById('brand-logo') as HTMLImageElement | null;
-  const brandName = document.getElementById('brand-name');
-  const brandToggles = document.querySelectorAll('.brand-toggle');
-
-  function updateBrandUI(brand: 'kacha' | 'worm') {
-    const data = BRANDS[brand];
-    if (brandLogo) {
-      brandLogo.src = data.logo;
-      brandLogo.alt = data.logoAlt;
-    }
-    if (brandName) brandName.textContent = data.label;
-    brandToggles.forEach((btn) => {
-      const isActive = (btn as HTMLElement).dataset.brand === brand;
-      btn.setAttribute('aria-pressed', isActive.toString());
-      (btn as HTMLElement).style.background = isActive ? 'var(--fg)' : 'var(--bg)';
-      (btn as HTMLElement).style.color = isActive ? 'var(--bg)' : 'var(--fg)';
-    });
-    document.title = data.metaTitle;
-  }
-
-  // 初始與監聽
-  updateBrandUI(getBrand());
-  onBrandChange(updateBrandUI);
-
-  brandToggles.forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const brand = (btn as HTMLElement).dataset.brand as 'kacha' | 'worm';
-      setBrand(brand);
-    });
-  });
-
   // 主題切換
   function toggleTheme() {
     const html = document.documentElement;
@@ -152,6 +102,8 @@ import { BRANDS, BRAND_KEYS } from '../data/brand';
     '/works/': 'works',
     '/sns': 'sns',
     '/sns/': 'sns',
+    '/wormbakery': 'wormbakery',
+    '/wormbakery/': 'wormbakery',
   };
   const currentPage = pageMap[currentPath] || pageMap[currentPath.replace(/\/$/, '')];
   if (currentPage) {
@@ -169,3 +121,9 @@ import { BRANDS, BRAND_KEYS } from '../data/brand';
     });
   });
 </script>
+
+<style>
+  .text-accent-pink {
+    color: var(--accent-pink);
+  }
+</style>
