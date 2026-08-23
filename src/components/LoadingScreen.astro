@@ -1,0 +1,80 @@
+---
+// 載入畫面：聲波 + 進度條 + Typewriter
+---
+
+<div
+  id="loading-screen"
+  class="fixed inset-0 z-[9999] bg-[var(--bg)] flex items-center justify-center"
+  role="status"
+  aria-live="polite"
+  aria-label="載入中"
+>
+  <div class="w-full max-w-md px-6">
+    <!-- 聲波裝飾 -->
+    <div class="flex justify-center mb-8">
+      {Array.from({ length: 12 }).map((_, i) => (
+        <div
+          class="loading-wave-bar w-2 bg-[var(--fg)]"
+          style={`height: ${Math.max(10, Math.sin(i / 3) * 40 + 30)}px; animation-delay: ${i * 0.1}s;`}
+        />
+      ))}
+    </div>
+
+    <!-- 進度條 -->
+    <div class="retro-border retro-shadow p-1 mb-4">
+      <div id="loading-progress" class="h-4 bg-[var(--fg)] transition-all duration-100 step-end" style="width: 0%"></div>
+    </div>
+
+    <!-- 打字機文字 -->
+    <p class="font-mono text-center animate-blink">please wait...</p>
+  </div>
+</div>
+
+<style>
+  @keyframes loading-wave {
+    0%, 100% { transform: scaleY(0.3); }
+    50% { transform: scaleY(1); }
+  }
+  .loading-wave-bar {
+    animation: loading-wave 0.8s steps(2) infinite;
+    transform-origin: bottom;
+  }
+</style>
+
+<script>
+  const loadingScreen = document.getElementById('loading-screen');
+  const progressBar = document.getElementById('loading-progress');
+
+  if (loadingScreen && progressBar) {
+    let progress = 0;
+    const interval = setInterval(() => {
+      progress += Math.random() * 15;
+      if (progress > 90) progress = 90;
+      progressBar.style.width = `${progress}%`;
+    }, 100);
+
+    // 預載關鍵圖片
+    const images = ['/pic/text_white.png', '/pic/profile_1.png', '/pic/bread-svgrepo-com_2.svg'];
+    Promise.all(
+      images.map(
+        (src) =>
+          new Promise((resolve) => {
+            const img = new Image();
+            img.src = src;
+            img.onload = resolve;
+            img.onerror = resolve;
+          })
+      )
+    ).then(() => {
+      clearInterval(interval);
+      progressBar.style.width = '100%';
+      setTimeout(() => {
+        loadingScreen.style.opacity = '0';
+        loadingScreen.style.transition = 'opacity 0.3s step-end';
+        setTimeout(() => {
+          loadingScreen.remove();
+        }, 300);
+      }, 500);
+    });
+  }
+</script>

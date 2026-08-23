@@ -1,0 +1,20 @@
+---
+// 聲波柱元件：CSS 模擬聲波，可用於 Hero、卡片 hover、Loading、品牌切換過渡
+interface Props {
+  bars?: number;        // 聲波柱數量
+  color?: string;       // CSS 顏色
+  class?: string;
+}
+
+const { bars = 24, color = 'var(--fg)', class: className = '' } = Astro.props;
+const barArray = Array.from({ length: bars }, (_, i) => i);
+---
+
+<div class={`waveform ${className}`} role="img" aria-label="聲波動畫">
+  {barArray.map((i) => (
+    <div
+      class="waveform-bar"
+      style={`background: ${color}; animation-delay: ${(i * 0.05).toFixed(2)}s;`}
+    />
+  ))}
+</div>

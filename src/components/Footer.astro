@@ -1,0 +1,55 @@
+---
+// Footer：Powered by Breadcrumb 風格，保留原意
+import { SNS_LINKS, FOOTER_CREDIT, GITHUB_REPO_URL } from '../data/sns';
+---
+
+<footer class="border-t-3 border-[var(--fg)] py-12 mt-20 bg-[var(--bg)]">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex flex-col items-center gap-6">
+      <!-- 回頂按鈕 -->
+      <button
+        id="back-to-top"
+        class="w-14 h-14 rounded-full border-3 border-[var(--fg)] retro-shadow hover:retro-hover flex items-center justify-center"
+        aria-label="回到頂部"
+      >
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 19V5M5 12l7-7 7 7" />
+        </svg>
+      </button>
+
+      <!-- 社群文字連結 -->
+      <div class="flex flex-wrap justify-center gap-4 text-sm font-mono">
+        {SNS_LINKS.filter((s) => s.url).map((sns) => (
+          <a
+            href={sns.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="hover:acid-chroma transition-all underline underline-offset-4"
+          >
+            {sns.name}
+          </a>
+        ))}
+      </div>
+
+      <!-- Powered by -->
+      <p class="text-sm font-mono text-center">
+        {FOOTER_CREDIT}
+        <br />
+        <a
+          href={GITHUB_REPO_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-xs opacity-70 hover:opacity-100 underline"
+        >
+          Source Code (AGPL-3.0)
+        </a>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('back-to-top')?.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+</script>

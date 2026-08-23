@@ -1,0 +1,261 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Navigation from '../components/Navigation.astro';
+import Footer from '../components/Footer.astro';
+import { getWorksByBrand, getWorksByCategory, CATEGORIES, getCategoryLabel, USAGE_RULES_URL } from '../data/works';
+import { BRANDS } from '../data/brand';
+
+// 預設渲染卡蚯蚓的作品（初始狀態），腳本會依品牌切換更新
+const defaultBrand = 'kacha';
+const defaultWorks = getWorksByBrand(defaultBrand);
+---
+
+<BaseLayout title="各式作品" description="卡蚯蚓的所有作品：公開台本、創作與委託。">
+  <Navigation />
+
+  <main class="pt-20 pb-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <!-- 頁面標題 -->
+      <h1 class="text-5xl font-mono font-black text-center mb-4 acid-chroma">各式作品</h1>
+      <p class="text-center text-lg mb-12">
+        使用「公開台本」時請遵守
+        <a href={USAGE_RULES_URL} target="_blank" rel="noopener noreferrer" class="underline underline-offset-4 font-bold hover:acid-chroma">
+          使用規範
+        </a>
+      </p>
+
+      <!-- 品牌歸屬提示 -->
+      <div id="brand-ownership-note" class="card-retro p-4 mb-8 text-center font-mono">
+        {BRANDS.kacha.workOwnershipNote}
+      </div>
+
+      <!-- 分類篩選 -->
+      <div class="flex flex-wrap justify-center gap-4 mb-12">
+        {CATEGORIES.map((cat) => (
+          <button
+            class="category-btn px-6 py-3 border-3 border-[var(--fg)] font-mono font-bold hover:bg-[var(--fg)] hover:text-[var(--bg)] transition-colors"
+            data-category={cat.id}
+            data-active={cat.id === 'all' ? 'true' : 'false'}
+          >
+            {cat.label}
+          </button>
+        ))}
+      </div>
+
+      <!-- 作品清單 -->
+      <div id="works-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {defaultWorks.map((work) => (
+          <article
+            class="work-card card-retro overflow-hidden cursor-pointer"
+            data-work-id={work.id}
+            data-category={Array.isArray(work.category) ? work.category.join(',') : work.category}
+          >
+            <!-- 封面 -->
+            <div class="relative h-48 overflow-hidden border-b-3 border-[var(--fg)]">
+              {work.image ? (
+                <img src={work.image} alt={work.title} class="w-full h-full object-cover" loading="lazy" />
+              ) : (
+                <div class="w-full h-full bg-[var(--fg)] flex items-center justify-center">
+                  <span class="text-[var(--bg)] font-barcode text-2xl">NO COVER</span>
+                </div>
+              )}
+            </div>
+
+            <!-- 內容 -->
+            <div class="p-5">
+              <h3 class="text-xl font-bold mb-2 line-clamp-2">{work.title}</h3>
+              <p class="text-sm opacity-80 mb-3 line-clamp-2">{work.description}</p>
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-mono px-2 py-1 border-2 border-[var(--fg)]">
+                  {getCategoryLabel(work.category)}
+                </span>
+                <!-- 條碼裝飾 -->
+                <span class="font-barcode text-xl opacity-60">#{String(work.id).padStart(3, '0')}</span>
+              </div>
+              <!-- 聲波裝飾（hover 時顯示） -->
+              <div class="mt-4 waveform opacity-0 group-hover:opacity-100 transition-opacity h-6">
+                {Array.from({ length: 12 }).map((_, i) => (
+                  <div class="waveform-bar" style={`animation-delay: ${i * 0.05}s`}></div>
+                ))}
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+
+      <!-- 空態（品牌切換後可能無作品） -->
+      <div id="works-empty" class="hidden text-center py-20">
+        <p class="text-2xl font-mono mb-4">此品牌尚無作品</p>
+        <p class="text-lg opacity-70">切換至「卡蚯蚓」查看更多作品</p>
+      </div>
+
+      <!-- 載入更多（未實作分頁，原站每頁10，可選） -->
+      <div class="text-center mt-16">
+        <button id="load-more" class="btn-retro hidden">載入更多作品</button>
+        <p id="all-shown" class="hidden font-mono">已顯示全部</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- 作品 Modal -->
+  <div id="work-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+    <div class="card-retro max-w-2xl w-full max-h-[90vh] overflow-y-auto p-8" role="dialog" aria-modal="true">
+      <button id="modal-close" class="absolute top-4 right-4 p-2 border-2 border-[var(--fg)] hover:bg-[var(--fg)] hover:text-[var(--bg)]" aria-label="關閉">
+        ✕
+      </button>
+      <div id="modal-image-container" class="mb-6">
+        <img id="modal-image" src="" alt="" class="w-full h-64 object-cover border-3 border-[var(--fg)]" />
+      </div>
+      <h2 id="modal-title" class="text-3xl font-bold mb-4 acid-chroma"></h2>
+      <p id="modal-desc" class="text-lg mb-6 leading-relaxed"></p>
+      <div class="flex flex-wrap gap-4">
+        <span id="modal-category" class="px-4 py-2 border-2 border-[var(--fg)] font-mono text-sm"></span>
+        <a id="modal-link" href="#" target="_blank" rel="noopener noreferrer" class="btn-retro hidden">文本 →</a>
+        <a id="modal-release" href="#" target="_blank" rel="noopener noreferrer" class="btn-retro hidden">聆聽 →</a>
+      </div>
+    </div>
+  </div>
+
+  <Footer />
+
+  <script>
+    import { getWorksByBrand, getWorksByCategory, getCategoryLabel } from '../data/works';
+    import { BRANDS } from '../data/brand';
+    import { getBrand, onBrandChange } from '../lib/brandManager';
+
+    let currentBrand: 'kacha' | 'worm' = 'kacha';
+    let currentCategory = 'all';
+
+    const worksContainer = document.getElementById('works-container');
+    const worksEmpty = document.getElementById('works-empty');
+    const brandNote = document.getElementById('brand-ownership-note');
+    const categoryBtns = document.querySelectorAll('.category-btn');
+    const modal = document.getElementById('work-modal');
+    const modalClose = document.getElementById('modal-close');
+    const modalTitle = document.getElementById('modal-title');
+    const modalDesc = document.getElementById('modal-desc');
+    const modalImage = document.getElementById('modal-image') as HTMLImageElement;
+    const modalImageContainer = document.getElementById('modal-image-container');
+    const modalCategory = document.getElementById('modal-category');
+    const modalLink = document.getElementById('modal-link');
+    const modalRelease = document.getElementById('modal-release');
+
+    function renderWorks(brand: 'kacha' | 'worm', category: string) {
+      const works = getWorksByCategory(brand, category);
+      if (!worksContainer || !worksEmpty) return;
+
+      if (works.length === 0) {
+        worksContainer.classList.add('hidden');
+        worksEmpty.classList.remove('hidden');
+        if (brandNote) brandNote.textContent = BRANDS[brand].workOwnershipNote;
+        return;
+      }
+
+      worksContainer.classList.remove('hidden');
+      worksEmpty.classList.add('hidden');
+      if (brandNote) brandNote.textContent = BRANDS[brand].workOwnershipNote;
+
+      worksContainer.innerHTML = works.map((work) => {
+        const imgHtml = work.image
+          ? `<img src="${work.image}" alt="${work.title}" class="w-full h-full object-cover" loading="lazy" />`
+          : `<div class="w-full h-full bg-[var(--fg)] flex items-center justify-center"><span class="text-[var(--bg)] font-barcode text-2xl">NO COVER</span></div>`;
+
+        return `
+          <article class="work-card card-retro overflow-hidden cursor-pointer" data-work-id="${work.id}">
+            <div class="relative h-48 overflow-hidden border-b-3 border-[var(--fg)]">${imgHtml}</div>
+            <div class="p-5">
+              <h3 class="text-xl font-bold mb-2 line-clamp-2">${work.title}</h3>
+              <p class="text-sm opacity-80 mb-3 line-clamp-2">${work.description}</p>
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-mono px-2 py-1 border-2 border-[var(--fg)]">${getCategoryLabel(work.category)}</span>
+                <span class="font-barcode text-xl opacity-60">#${String(work.id).padStart(3, '0')}</span>
+              </div>
+            </div>
+          </article>
+        `;
+      }).join('');
+
+      // 重新綁定點擊事件
+      document.querySelectorAll('.work-card').forEach((card) => {
+        card.addEventListener('click', () => {
+          const id = Number((card as HTMLElement).dataset.workId);
+          const work = works.find((w) => w.id === id);
+          if (work) openModal(work);
+        });
+      });
+    }
+
+    function openModal(work: ReturnType<typeof getWorksByBrand>[0]) {
+      if (!modal || !modalTitle || !modalDesc || !modalCategory) return;
+      modalTitle.textContent = work.title;
+      modalDesc.textContent = work.description;
+      modalCategory.textContent = getCategoryLabel(work.category);
+
+      if (work.image) {
+        modalImage.src = work.image;
+        modalImage.alt = work.title;
+        modalImageContainer?.classList.remove('hidden');
+      } else {
+        modalImageContainer?.classList.add('hidden');
+      }
+
+      if (work.link) {
+        modalLink?.setAttribute('href', work.link);
+        modalLink?.classList.remove('hidden');
+      } else {
+        modalLink?.classList.add('hidden');
+      }
+      if (work.release) {
+        modalRelease?.setAttribute('href', work.release);
+        modalRelease?.classList.remove('hidden');
+      } else {
+        modalRelease?.classList.add('hidden');
+      }
+
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeModal() {
+      modal?.classList.add('hidden');
+      modal?.classList.remove('flex');
+    }
+
+    // 品牌切換
+    function updateBrand(brand: 'kacha' | 'worm') {
+      currentBrand = brand;
+      renderWorks(brand, currentCategory);
+      // 更新 meta title / description
+      document.title = BRANDS[brand].metaTitle;
+      const metaDesc = document.querySelector('meta[name="description"]');
+      if (metaDesc) metaDesc.setAttribute('content', BRANDS[brand].metaDescription);
+    }
+
+    // 分類篩選
+    categoryBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const cat = (btn as HTMLElement).dataset.category || 'all';
+        currentCategory = cat;
+        categoryBtns.forEach((b) => {
+          const active = (b as HTMLElement).dataset.category === cat;
+          (b as HTMLElement).style.background = active ? 'var(--fg)' : 'var(--bg)';
+          (b as HTMLElement).style.color = active ? 'var(--bg)' : 'var(--fg)';
+        });
+        renderWorks(currentBrand, cat);
+      });
+    });
+
+    // Modal 關閉
+    modalClose?.addEventListener('click', closeModal);
+    modal?.addEventListener('click', (e) => {
+      if (e.target === modal) closeModal();
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeModal();
+    });
+
+    // 初始化
+    updateBrand(getBrand());
+    onBrandChange(updateBrand);
+  </script>
+</BaseLayout>

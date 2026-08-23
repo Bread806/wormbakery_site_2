@@ -1,0 +1,257 @@
+/* ============================================
+   Acid Design System — 蚯蚓麵包屋 / 卡蚯蚓
+   ============================================ */
+
+/* ---------- 1. Fonts ---------- */
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Libre+Barcode+128&family=Noto+Sans+TC:wght@400;500;700;900&display=swap');
+
+:root {
+  /* 亮主題（預設） */
+  --bg: #f3f3ff;
+  --fg: #101016;
+  --border: #565656;
+  --accent-red: #ff0000;
+  --accent-cyan: #00ffff;
+  --accent-pink: #ff007f;
+  --accent-lime: #39ff14;
+
+  --shadow-hard: 4px 4px 0 0 var(--fg);
+  --shadow-hard-lg: 8px 8px 0 0 var(--fg);
+
+  --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-barcode: 'Libre Barcode 128', cursive;
+  --font-sans: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+html[data-theme='dark'] {
+  --bg: #101016;
+  --fg: #ffffff;
+  --border: #a4a4a4;
+  --shadow-hard: 4px 4px 0 0 var(--fg);
+  --shadow-hard-lg: 8px 8px 0 0 var(--fg);
+}
+
+/* ---------- 2. Base ---------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  background-color: var(--bg);
+  color: var(--fg);
+  line-height: 1.6;
+  letter-spacing: -0.02em;
+  min-height: 100vh;
+  transition: background-color 0.3s step-end, color 0.3s step-end;
+}
+
+/* ---------- 3. Typography ---------- */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  letter-spacing: -0.05em;
+  line-height: 1.1;
+  margin: 0;
+}
+
+.font-barcode {
+  font-family: var(--font-barcode);
+  font-weight: 400;
+}
+
+/* ---------- 4. Acid特效：RGB 色像差 ---------- */
+.acid-chroma {
+  filter: drop-shadow(-2px 0 var(--accent-red)) drop-shadow(2px 0 var(--accent-cyan));
+}
+
+.acid-chroma-strong {
+  filter: drop-shadow(-4px 0 var(--accent-red)) drop-shadow(4px 0 var(--accent-cyan));
+}
+
+/* ---------- 5. RetroUI 硬邊語彙 ---------- */
+.retro-border {
+  border: 3px solid var(--fg);
+}
+
+.retro-shadow {
+  box-shadow: var(--shadow-hard);
+}
+
+.retro-shadow-lg {
+  box-shadow: var(--shadow-hard-lg);
+}
+
+.retro-hover:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 0 var(--fg);
+}
+
+.retro-hover:active {
+  transform: translate(0, 0);
+  box-shadow: 2px 2px 0 0 var(--fg);
+}
+
+/* ---------- 6. 按鈕 ---------- */
+.btn-retro {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 1rem;
+  text-transform: uppercase;
+  background: var(--bg);
+  color: var(--fg);
+  border: 3px solid var(--fg);
+  box-shadow: var(--shadow-hard);
+  cursor: pointer;
+  transition: transform 0.1s step-end, box-shadow 0.1s step-end,
+    background-color 0.2s step-end, color 0.2s step-end;
+  text-decoration: none;
+  user-select: none;
+}
+
+.btn-retro:hover {
+  background: var(--fg);
+  color: var(--bg);
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 0 var(--fg);
+}
+
+.btn-retro:active {
+  transform: translate(0, 0);
+  box-shadow: 2px 2px 0 0 var(--fg);
+}
+
+/* ---------- 7. 卡片 ---------- */
+.card-retro {
+  background: var(--bg);
+  border: 3px solid var(--fg);
+  box-shadow: var(--shadow-hard);
+  transition: transform 0.1s step-end, box-shadow 0.1s step-end;
+}
+
+.card-retro:hover {
+  transform: translate(-4px, -4px);
+  box-shadow: 8px 8px 0 0 var(--fg);
+}
+
+/* ---------- 8. 聲波柱 ---------- */
+@keyframes wave-bar {
+  0%, 100% { transform: scaleY(0.2); }
+  50% { transform: scaleY(1); }
+}
+
+.waveform {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 40px;
+}
+
+.waveform-bar {
+  width: 4px;
+  background: var(--fg);
+  transform-origin: bottom;
+  animation: wave-bar 0.6s steps(4) infinite;
+}
+
+.waveform-bar:nth-child(odd) {
+  animation-duration: 0.8s;
+}
+
+.waveform-bar:nth-child(3n) {
+  animation-duration: 0.5s;
+}
+
+.waveform-bar:nth-child(4n) {
+  animation-duration: 0.7s;
+}
+
+/* ---------- 9. 動畫（step-end 硬切） ---------- */
+@keyframes blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+.animate-blink {
+  animation: blink 1s step-end infinite;
+}
+
+@keyframes tick {
+  0%, 90% { transform: rotate(0deg); }
+  100% { transform: rotate(6deg); }
+}
+.animate-tick {
+  animation: tick 1s step-end infinite;
+}
+
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.animate-marquee {
+  animation: marquee 20s linear infinite;
+}
+
+/* ---------- 10. 背景質感 ---------- */
+.bg-noise {
+  position: relative;
+}
+.bg-noise::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E");
+  pointer-events: none;
+  mix-blend-mode: soft-light;
+  z-index: 1;
+}
+
+.bg-grid {
+  background-image: linear-gradient(to right, var(--border) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--border) 1px, transparent 1px);
+  background-size: 40px 40px;
+  opacity: 0.15;
+}
+
+/* ---------- 11. 響應式 ---------- */
+@media (max-width: 768px) {
+  .waveform {
+    height: 30px;
+    gap: 2px;
+  }
+  .waveform-bar {
+    width: 3px;
+  }
+}
+
+/* ---------- 12. prefers-reduced-motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

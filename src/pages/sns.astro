@@ -1,0 +1,50 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Navigation from '../components/Navigation.astro';
+import Footer from '../components/Footer.astro';
+import { SNS_LINKS, SNS_INTRO, SNS_FOOTER } from '../data/sns';
+---
+
+<BaseLayout title="社群連結" description="卡蚯蚓的社群連結：合作、委託、台本授權等事宜請透過以下方式聯絡。">
+  <Navigation />
+
+  <main class="pt-20 pb-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <!-- 頁面標題 -->
+      <h1 class="text-5xl font-mono font-black text-center mb-4 acid-chroma">社群連結</h1>
+      <p class="text-center text-lg mb-12 max-w-2xl mx-auto">{SNS_INTRO}</p>
+
+      <!-- SNS 卡片 -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+        {SNS_LINKS.map((sns) => (
+          <div class="card-retro p-8 text-center">
+            <div class="mb-4">
+              <p class="text-sm font-mono opacity-70 mb-2">{sns.name}</p>
+              <p class="font-mono font-bold text-xl">{sns.handle}</p>
+            </div>
+            <p class="text-sm opacity-80 mb-6 min-h-[3rem]">{sns.description}</p>
+            {sns.url ? (
+              <a href={sns.url} target="_blank" rel="noopener noreferrer" class="btn-retro w-full">
+                前往 →
+              </a>
+            ) : (
+              <button class="btn-retro w-full opacity-50 cursor-not-allowed" disabled>
+                無連結
+              </button>
+            )}
+          </div>
+        ))}
+      </div>
+
+      <!-- 結尾 -->
+      <div class="text-center">
+        <p class="text-2xl font-mono mb-6">{SNS_FOOTER}</p>
+        <div class="flex justify-center">
+          <img src="/pic/text_white.png" alt="蚯蚓麵包屋" class="h-16 object-contain opacity-50" />
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>

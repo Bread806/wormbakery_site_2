@@ -1,0 +1,149 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Navigation from '../components/Navigation.astro';
+import Footer from '../components/Footer.astro';
+import { BRANDS } from '../data/brand';
+
+const SKILLS = [
+  { name: '情境劇', exp: 80, desc: '5~30 分鐘的第一人稱文本。主要以人物對話與台詞呈現劇情，極少音效。' },
+  { name: '音聲作品', exp: 88, desc: '長度與尺度彈性，音效與台詞穿插表達故事。' },
+  { name: '會員語音', exp: 92, desc: '快節奏的故事，適合 1-5 分鐘的語音內容。' },
+  { name: '企劃文本', exp: 85, desc: '適合使用在 ASMR 直播或是個特殊企劃直播的文本。' },
+];
+
+const TIMELINE = [
+  { year: '2022', events: ['我與充滿包容力的姊姊撒嬌日常', '等待女朋友回家的時候被姊姊給襲擊了', '無法逃離獸人姊姊病嬌的愛'] },
+  { year: '2023', events: ['鄉間小路與多愁善感的姐姐', '慾兔', '我們的事'] },
+  { year: '2024', events: ['只想要你聽著我', '我才是最特別的納一位', '居酒屋的姊姊似乎討厭下雨天'] },
+  { year: '2025', events: ['鼠在不想離開你', 'Love Sick'] },
+  { year: '2026', events: ['敬請期待 :D'] },
+];
+
+const brand = BRANDS.kacha;
+---
+
+<BaseLayout title={brand.metaTitle} description={brand.metaDescription}>
+  <Navigation />
+
+  <main class="pt-20 pb-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <!-- Profile Header -->
+      <section class="flex flex-col md:flex-row items-center gap-12 mb-20">
+        <div id="profile-avatar-container" class="relative w-64 h-64 retro-border retro-shadow-lg overflow-hidden">
+          <img
+            id="profile-avatar"
+            src={brand.avatar}
+            alt={brand.avatarAlt}
+            class="w-full h-full object-cover"
+            style="object-position: 50% 10%;"
+          />
+        </div>
+        <div class="flex-1 text-center md:text-left">
+          <h1 id="profile-name" class="text-5xl font-black mb-4 acid-chroma">
+            {brand.heroTitle}
+          </h1>
+          <p class="text-xl font-bold mb-6 opacity-80 font-mono">Writing / VTuber Staff</p>
+          <div class="flex flex-wrap gap-3 justify-center md:justify-start">
+            <span class="px-4 py-2 border-2 border-[var(--fg)] font-bold">台本設計</span>
+            <span class="px-4 py-2 border-2 border-[var(--fg)] font-bold">VTuber窗口</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 關於我 -->
+      <section class="mb-20">
+        <h2 class="text-4xl font-mono font-bold mb-8 acid-chroma">關於我</h2>
+        <div id="profile-intro" class="card-retro p-8 space-y-4">
+          {brand.profileIntro.map((paragraph) => (
+            <p class="text-lg leading-relaxed">{paragraph}</p>
+          ))}
+        </div>
+      </section>
+
+      <!-- 承接委託 -->
+      <section class="mb-20">
+        <h2 class="text-4xl font-mono font-bold mb-8 acid-chroma">承接委託事項</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {SKILLS.map((skill) => (
+            <div class="card-retro p-6">
+              <div class="flex items-center justify-between mb-3">
+                <span class="text-xl font-bold">{skill.name}</span>
+                <span class="font-mono text-sm">{skill.exp}%</span>
+              </div>
+              <div class="h-3 retro-border overflow-hidden mb-3">
+                <div class="h-full bg-[var(--fg)]" style={`width: ${skill.exp}%`}></div>
+              </div>
+              <p class="text-sm opacity-80">{skill.desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <!-- 年表 -->
+      <section class="mb-20">
+        <h2 class="text-4xl font-mono font-bold mb-8 acid-chroma">部分參與作品（年表）</h2>
+        <div class="space-y-6">
+          {TIMELINE.map((item) => (
+            <div class="flex gap-6">
+              <div class="font-mono font-bold text-2xl w-20 flex-shrink-0">{item.year}</div>
+              <div class="flex-1 border-l-3 border-[var(--fg)] pl-6 space-y-2">
+                {item.events.map((event) => (
+                  <p class="text-lg">{event}</p>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <!-- 可愛圖片 -->
+      <section>
+        <h2 class="text-4xl font-mono font-bold mb-8 acid-chroma">其他關於我ㄉ可愛圖片</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {[1, 2, 3].map((id) => (
+            <div class="retro-border retro-shadow-lg overflow-hidden">
+              <img
+                src={`/pic/gallery-${id}.png`}
+                alt={`卡蚯蚓的圖片 ${id}`}
+                class="w-full h-full object-cover hover:scale-105 transition-transform"
+                loading="lazy"
+              />
+            </div>
+          ))}
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <Footer />
+
+  <script>
+    import { BRANDS } from '../data/brand';
+    import { getBrand, onBrandChange } from '../lib/brandManager';
+
+    const avatarImg = document.getElementById('profile-avatar') as HTMLImageElement | null;
+    const nameEl = document.getElementById('profile-name');
+    const introEl = document.getElementById('profile-intro');
+
+    function updateProfile(brand: 'kacha' | 'worm') {
+      const data = BRANDS[brand];
+      if (avatarImg) {
+        avatarImg.src = data.avatar;
+        avatarImg.alt = data.avatarAlt;
+      }
+      if (nameEl) nameEl.textContent = data.heroTitle;
+      if (introEl) {
+        introEl.innerHTML = '';
+        data.profileIntro.forEach((p) => {
+          const pEl = document.createElement('p');
+          pEl.className = 'text-lg leading-relaxed';
+          pEl.textContent = p;
+          introEl.appendChild(pEl);
+        });
+      }
+    }
+
+    updateProfile(getBrand());
+    onBrandChange(updateProfile);
+  </script>
+</BaseLayout>
