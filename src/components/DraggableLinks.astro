@@ -1,0 +1,141 @@
+---
+// 可拖曳小物件（YT / DC 連結）：漂浮硬邊圖示，可拖曳、hover 反色
+interface LinkItem {
+  id: string;
+  label: string;
+  url: string;
+  bgColor: string;   // CSS color
+  shadowColor: string;
+  icon: string;      // SVG path 或文字
+}
+
+const items: LinkItem[] = [
+  {
+    id: 'youtube',
+    label: 'YT',
+    url: 'https://www.youtube.com/@bread_sk8',  // 假設頻道；若錯誤請修正
+    bgColor: 'var(--accent-red)',
+    shadowColor: 'var(--accent-cyan)',
+    icon: '▶',
+  },
+  {
+    id: 'discord',
+    label: 'DC',
+    url: 'https://discord.com/users/bread_sk8', // 假設個人資料連結；若錯誤請修正
+    bgColor: 'var(--accent-cyan)',
+    shadowColor: 'var(--accent-pink)',
+    icon: '💬',
+  },
+];
+
+const positions = [
+  { bottom: '15%', right: '8%' },
+  { bottom: '35%', right: '12%' },
+];
+---
+
+<div class="fixed bottom-0 right-0 z-40 pointer-events-none" aria-label="可拖曳社群連結">
+  {items.map((item, idx) => (
+    <div
+      class={`draggable-item absolute pointer-events-auto`}
+      data-id={item.id}
+      style={`bottom: ${positions[idx]?.bottom ?? '10%'}; right: ${positions[idx]?.right ?? '10%'}; animation: float-item ${3 + idx}s steps(2) infinite;`}
+      role="button"
+      tabindex="0"
+      aria-label={`拖曳 ${item.label} 連結`}
+      data-url={item.url}
+    >
+      <div
+        class="w-16 h-16 border-3 border-[var(--fg)] bg-[var(--bg)] flex items-center justify-center text-2xl cursor-grab select-none"
+        style={`background:${item.bgColor}; color: var(--bg); box-shadow: 4px 4px 0 0 ${item.shadowColor};`}
+      >
+        {item.icon}
+      </div>
+      <p class="text-center text-xs font-mono mt-1 bg-[var(--bg)] px-1 border-2 border-[var(--fg)]">
+        {item.label}
+      </p>
+    </div>
+  ))}
+</div>
+
+<style>
+@keyframes float-item {
+  0%, 100% { transform: translateY(0) rotate(-2deg); }
+  50% { transform: translateY(-10px) rotate(2deg); }
+}
+
+.draggable-item {
+  transition: transform 0.1s step-end;
+}
+.draggable-item:hover {
+  transform: scale(1.1);
+}
+.draggable-item:active {
+  cursor: grabbing;
+}
+.draggable-item.dragging {
+  transition: none;
+  z-index: 50;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .draggable-item {
+    animation: none !important;
+  }
+}
+</style>
+
+<script>
+  const items = document.querySelectorAll('.draggable-item');
+  items.forEach((item) => {
+    let isDragging = false;
+    let startX = 0, startY = 0;
+    let offsetX = 0, offsetY = 0;
+    const el = item as HTMLElement;
+    const url = el.dataset.url;
+
+    function onPointerDown(e: PointerEvent) {
+      isDragging = true;
+      el.classList.add('dragging');
+      el.setPointerCapture(e.pointerId);
+      startX = e.clientX;
+      startY = e.clientY;
+      const rect = el.getBoundingClientRect();
+      offsetX = startX - rect.left;
+      offsetY = startY - rect.top;
+      e.preventDefault();
+    }
+
+    function onPointerMove(e: PointerEvent) {
+      if (!isDragging) return;
+      const x = e.clientX - offsetX;
+      const y = e.clientY - offsetY;
+      el.style.position = 'fixed';
+      el.style.left = `${x}px`;
+      el.style.top = `${y}px`;
+      el.style.bottom = 'auto';
+      el.style.right = 'auto';
+    }
+
+    function onPointerUp(e: PointerEvent) {
+      if (!isDragging) return;
+      isDragging = false;
+      el.classList.remove('dragging');
+      el.releasePointerCapture(e.pointerId);
+      // 拖曳後自動開啟連結（小彩蛋）
+      if (url) window.open(url, '_blank', 'noopener,noreferrer');
+    }
+
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        if (url) window.open(url, '_blank', 'noopener,noreferrer');
+        e.preventDefault();
+      }
+    }
+
+    el.addEventListener('pointerdown', onPointerDown);
+    document.addEventListener('pointermove', onPointerMove);
+    document.addEventListener('pointerup', onPointerUp);
+    el.addEventListener('keydown', onKeyDown);
+  });
+</script>

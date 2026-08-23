@@ -1,0 +1,59 @@
+---
+// 背景聲紋：慢速、低透明度，全站作為酸性背景裝飾
+interface Props {
+  waveCount?: number;  // 產生幾道背景聲波
+}
+
+const { waveCount = 8 } = Astro.props;
+const waves = Array.from({ length: waveCount }, (_, i) => {
+  const height = 20 + Math.random() * 60;
+  const left = (i / waveCount) * 100 + (Math.random() * 5 - 2.5);
+  const delay = i * 0.3;
+  return { height, left: Math.max(0, left), delay };
+});
+---
+
+<div class="background-waves" aria-hidden="true">
+  {waves.map((w) => (
+    <div
+      class="background-wave-bar"
+      style={`height: ${w.height}vh; left: ${w.left}%; animation-delay: ${w.delay}s;`}
+    />
+  ))}
+</div>
+
+<style>
+.background-waves {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  overflow: hidden;
+}
+
+.background-wave-bar {
+  position: absolute;
+  bottom: 0;
+  width: 3px;
+  background: var(--fg);
+  opacity: 0.06;
+  animation: bg-wave 4s steps(3) infinite;
+  transform-origin: bottom;
+}
+
+@keyframes bg-wave {
+  0%, 100% { transform: scaleY(0.3); }
+  50% { transform: scaleY(1); }
+}
+
+html[data-theme='dark'] .background-wave-bar {
+  opacity: 0.08;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .background-wave-bar {
+    animation: none;
+    transform: scaleY(0.5);
+  }
+}
+</style>

@@ -1,6 +1,8 @@
 ---
 // 基礎 Layout：含 SEO meta、品牌初始化、主題初始化
 import '../styles/global.css';
+import BackgroundWaves from '../components/BackgroundWaves.astro';
+import DraggableLinks from '../components/DraggableLinks.astro';
 
 export interface Props {
   title: string;
@@ -26,7 +28,9 @@ const { title, description } = Astro.props;
     <meta name="theme-color" content="#101016" />
   </head>
   <body class="bg-noise">
+    <BackgroundWaves />
     <slot />
+    <DraggableLinks />
     <script>
       // 品牌與主題初始化（在所有互動腳本之前）
       import { initBrand, onBrandChange, getBrand } from '../lib/brandManager';
