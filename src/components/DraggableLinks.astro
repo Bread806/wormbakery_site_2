@@ -1,19 +1,19 @@
 ---
-// 可拖曳小物件（YT / DC 連結）：漂浮硬邊圖示，可拖曳、hover 反色
+// 可拖曳小物件（YT / DC 連結）：限制在固定「空間容器」內移動
 interface LinkItem {
   id: string;
   label: string;
   url: string;
-  bgColor: string;   // CSS color
+  bgColor: string;
   shadowColor: string;
-  icon: string;      // SVG path 或文字
+  icon: string;
 }
 
 const items: LinkItem[] = [
   {
     id: 'youtube',
     label: 'YT',
-    url: 'https://www.youtube.com/@bread_sk8',  // 假設頻道；若錯誤請修正
+    url: 'https://www.youtube.com/@bread_sk8',
     bgColor: 'var(--accent-red)',
     shadowColor: 'var(--accent-cyan)',
     icon: '▶',
@@ -21,61 +21,116 @@ const items: LinkItem[] = [
   {
     id: 'discord',
     label: 'DC',
-    url: 'https://discord.com/users/bread_sk8', // 假設個人資料連結；若錯誤請修正
+    url: 'https://discord.com/users/bread_sk8',
     bgColor: 'var(--accent-cyan)',
     shadowColor: 'var(--accent-pink)',
     icon: '💬',
   },
 ];
-
-const positions = [
-  { bottom: '15%', right: '8%' },
-  { bottom: '35%', right: '12%' },
-];
 ---
 
-<div class="fixed bottom-0 right-0 z-40 pointer-events-none" aria-label="可拖曳社群連結">
-  {items.map((item, idx) => (
-    <div
-      class={`draggable-item absolute pointer-events-auto`}
-      data-id={item.id}
-      style={`bottom: ${positions[idx]?.bottom ?? '10%'}; right: ${positions[idx]?.right ?? '10%'}; animation: float-item ${3 + idx}s steps(2) infinite;`}
-      role="button"
-      tabindex="0"
-      aria-label={`拖曳 ${item.label} 連結`}
-      data-url={item.url}
-    >
-      <div
-        class="w-16 h-16 border-3 border-[var(--fg)] bg-[var(--bg)] flex items-center justify-center text-2xl cursor-grab select-none"
-        style={`background:${item.bgColor}; color: var(--bg); box-shadow: 4px 4px 0 0 ${item.shadowColor};`}
-      >
-        {item.icon}
-      </div>
-      <p class="text-center text-xs font-mono mt-1 bg-[var(--bg)] px-1 border-2 border-[var(--fg)]">
-        {item.label}
-      </p>
+<div class="draggable-space" aria-label="可拖曳社群連結區域">
+  <div class="space-boundary">
+    <p class="space-label">DRAG AREA</p>
+    <div class="space-inner" id="drag-container">
+      {items.map((item, idx) => (
+        <div
+          class="draggable-item"
+          data-id={item.id}
+          data-url={item.url}
+          style={`left: ${20 + idx * 40}%; top: ${20 + idx * 30}%; animation: float-item ${3 + idx}s steps(2) infinite;`}
+          role="button"
+          tabindex="0"
+          aria-label={`拖曳 ${item.label} 連結`}
+        >
+          <div
+            class="w-16 h-16 border-3 border-[var(--fg)] flex items-center justify-center text-2xl cursor-grab select-none"
+            style={`background:${item.bgColor}; color: var(--bg); box-shadow: 4px 4px 0 0 ${item.shadowColor};`}
+          >
+            {item.icon}
+          </div>
+          <p class="text-center text-xs font-mono mt-1 bg-[var(--bg)] px-1 border-2 border-[var(--fg)]">
+            {item.label}
+          </p>
+        </div>
+      ))}
     </div>
-  ))}
+  </div>
 </div>
 
 <style>
-@keyframes float-item {
-  0%, 100% { transform: translateY(0) rotate(-2deg); }
-  50% { transform: translateY(-10px) rotate(2deg); }
+/* 空間容器：固定在右下角的「房間」 */
+.draggable-space {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 40;
+  font-family: var(--font-mono);
 }
 
-.draggable-item {
-  transition: transform 0.1s step-end;
+.space-boundary {
+  width: 280px;
+  height: 280px;
+  border: 3px solid var(--fg);
+  background: var(--bg);
+  box-shadow: var(--shadow-hard);
+  padding: 12px;
+  position: relative;
 }
+
+.space-label {
+  position: absolute;
+  top: -20px;
+  left: 0;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  background: var(--bg);
+  padding: 0 8px;
+  border: 2px solid var(--fg);
+}
+
+.space-inner {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden; /* 關鍵：限制在邊界內 */
+  border: 2px dashed var(--border);
+}
+
+/* 可拖曳物件 */
+.draggable-item {
+  position: absolute;
+  width: 64px;
+  cursor: grab;
+  user-select: none;
+  transition: transform 0.1s step-end;
+  touch-action: none; /* 防止手機滾動干擾拖曳 */
+}
+
 .draggable-item:hover {
   transform: scale(1.1);
 }
+
 .draggable-item:active {
   cursor: grabbing;
 }
+
 .draggable-item.dragging {
   transition: none;
-  z-index: 50;
+  z-index: 10;
+  cursor: grabbing;
+}
+
+@keyframes float-item {
+  0%, 100% { transform: translateY(0) rotate(-2deg); }
+  50% { transform: translateY(-8px) rotate(2deg); }
+}
+
+@media (max-width: 768px) {
+  .space-boundary {
+    width: 200px;
+    height: 200px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -86,56 +141,81 @@ const positions = [
 </style>
 
 <script>
+  const container = document.getElementById('drag-container');
   const items = document.querySelectorAll('.draggable-item');
-  items.forEach((item) => {
-    let isDragging = false;
-    let startX = 0, startY = 0;
-    let offsetX = 0, offsetY = 0;
-    const el = item as HTMLElement;
-    const url = el.dataset.url;
 
-    function onPointerDown(e: PointerEvent) {
-      isDragging = true;
-      el.classList.add('dragging');
-      el.setPointerCapture(e.pointerId);
-      startX = e.clientX;
-      startY = e.clientY;
-      const rect = el.getBoundingClientRect();
-      offsetX = startX - rect.left;
-      offsetY = startY - rect.top;
-      e.preventDefault();
-    }
+  if (container) {
+    items.forEach((item) => {
+      let isDragging = false;
+      let startX = 0;
+      let startY = 0;
+      let offsetX = 0;
+      let offsetY = 0;
+      const el = item as HTMLElement;
+      const url = el.dataset.url;
 
-    function onPointerMove(e: PointerEvent) {
-      if (!isDragging) return;
-      const x = e.clientX - offsetX;
-      const y = e.clientY - offsetY;
-      el.style.position = 'fixed';
-      el.style.left = `${x}px`;
-      el.style.top = `${y}px`;
-      el.style.bottom = 'auto';
-      el.style.right = 'auto';
-    }
-
-    function onPointerUp(e: PointerEvent) {
-      if (!isDragging) return;
-      isDragging = false;
-      el.classList.remove('dragging');
-      el.releasePointerCapture(e.pointerId);
-      // 拖曳後自動開啟連結（小彩蛋）
-      if (url) window.open(url, '_blank', 'noopener,noreferrer');
-    }
-
-    function onKeyDown(e: KeyboardEvent) {
-      if (e.key === 'Enter' || e.key === ' ') {
-        if (url) window.open(url, '_blank', 'noopener,noreferrer');
+      function onPointerDown(e: PointerEvent) {
+        isDragging = true;
+        el.classList.add('dragging');
+        el.setPointerCapture(e.pointerId);
+        startX = e.clientX;
+        startY = e.clientY;
+        const rect = el.getBoundingClientRect();
+        const containerRect = container.getBoundingClientRect();
+        // 計算相對於容器的偏移
+        offsetX = startX - rect.left + container.scrollLeft;
+        offsetY = startY - rect.top + container.scrollTop;
         e.preventDefault();
       }
-    }
 
-    el.addEventListener('pointerdown', onPointerDown);
-    document.addEventListener('pointermove', onPointerMove);
-    document.addEventListener('pointerup', onPointerUp);
-    el.addEventListener('keydown', onKeyDown);
-  });
+      function onPointerMove(e: PointerEvent) {
+        if (!isDragging) return;
+
+        const containerRect = container.getBoundingClientRect();
+        const itemRect = el.getBoundingClientRect();
+        const itemWidth = itemRect.width;
+        const itemHeight = itemRect.height;
+
+        // 計算新位置（相對於容器）
+        let newX = e.clientX - containerRect.left - offsetX;
+        let newY = e.clientY - containerRect.top - offsetY;
+
+        // 邊界限制：不能超出容器
+        const maxX = containerRect.width - itemWidth;
+        const maxY = containerRect.height - itemHeight;
+
+        newX = Math.max(0, Math.min(newX, maxX));
+        newY = Math.max(0, Math.min(newY, maxY));
+
+        // 使用 px 定位，確保絕對精確
+        el.style.left = `${newX}px`;
+        el.style.top = `${newY}px`;
+        el.style.animation = 'none'; // 拖曳時停止漂浮動畫
+      }
+
+      function onPointerUp(e: PointerEvent) {
+        if (!isDragging) return;
+        isDragging = false;
+        el.classList.remove('dragging');
+        el.releasePointerCapture(e.pointerId);
+        // 恢復漂浮動畫
+        el.style.animation = '';
+
+        // 拖曳後自動開啟連結（小彩蛋）
+        if (url) window.open(url, '_blank', 'noopener,noreferrer');
+      }
+
+      function onKeyDown(e: KeyboardEvent) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          if (url) window.open(url, '_blank', 'noopener,noreferrer');
+          e.preventDefault();
+        }
+      }
+
+      el.addEventListener('pointerdown', onPointerDown);
+      document.addEventListener('pointermove', onPointerMove);
+      document.addEventListener('pointerup', onPointerUp);
+      el.addEventListener('keydown', onKeyDown);
+    });
+  }
 </script>

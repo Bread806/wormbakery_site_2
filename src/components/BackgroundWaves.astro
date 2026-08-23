@@ -1,59 +1,85 @@
 ---
-// 背景聲紋：慢速、低透明度，全站作為酸性背景裝飾
+// 背景聲紋：渦紋（螺旋波紋）動畫 - 像聲波擴散的同心圓環
 interface Props {
-  waveCount?: number;  // 產生幾道背景聲波
+  ringCount?: number;
 }
 
-const { waveCount = 8 } = Astro.props;
-const waves = Array.from({ length: waveCount }, (_, i) => {
-  const height = 20 + Math.random() * 60;
-  const left = (i / waveCount) * 100 + (Math.random() * 5 - 2.5);
-  const delay = i * 0.3;
-  return { height, left: Math.max(0, left), delay };
-});
+const { ringCount = 6 } = Astro.props;
+const rings = Array.from({ length: ringCount }, (_, i) => i);
 ---
 
-<div class="background-waves" aria-hidden="true">
-  {waves.map((w) => (
-    <div
-      class="background-wave-bar"
-      style={`height: ${w.height}vh; left: ${w.left}%; animation-delay: ${w.delay}s;`}
-    />
-  ))}
+<div class="background-ripples" aria-hidden="true">
+  <div class="ripple-container">
+    {rings.map((i) => (
+      <div
+        class="ripple-ring"
+        style={`animation-delay: ${i * 0.8}s;`}
+      />
+    ))}
+  </div>
 </div>
 
 <style>
-.background-waves {
+.background-ripples {
   position: fixed;
   inset: 0;
   pointer-events: none;
   z-index: -1;
   overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.background-wave-bar {
+.ripple-container {
+  position: relative;
+  width: 150vmax;
+  height: 150vmax;
+}
+
+.ripple-ring {
   position: absolute;
-  bottom: 0;
-  width: 3px;
-  background: var(--fg);
-  opacity: 0.06;
-  animation: bg-wave 4s steps(3) infinite;
-  transform-origin: bottom;
+  inset: 0;
+  border: 3px solid var(--fg);
+  border-radius: 50%;
+  opacity: 0;
+  animation: ripple-expand 6s cubic-bezier(0, 0.5, 0.5, 1) infinite;
 }
 
-@keyframes bg-wave {
-  0%, 100% { transform: scaleY(0.3); }
-  50% { transform: scaleY(1); }
+@keyframes ripple-expand {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+    border-width: 6px;
+  }
+  20% {
+    opacity: 0.08;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0;
+    border-width: 1px;
+  }
 }
 
-html[data-theme='dark'] .background-wave-bar {
-  opacity: 0.08;
+/* 多個環錯開時間形成連續渦紋 */
+.ripple-ring:nth-child(2) { animation-delay: 1.2s; }
+.ripple-ring:nth-child(3) { animation-delay: 2.4s; }
+.ripple-ring:nth-child(4) { animation-delay: 3.6s; }
+.ripple-ring:nth-child(5) { animation-delay: 4.8s; }
+.ripple-ring:nth-child(6) { animation-delay: 6s; }
+
+html[data-theme='dark'] .ripple-ring {
+  border-color: var(--fg);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .background-wave-bar {
+  .ripple-ring {
     animation: none;
-    transform: scaleY(0.5);
+    opacity: 0.03;
+    transform: scale(0.5);
   }
+  .ripple-ring:nth-child(2) { opacity: 0.05; transform: scale(0.7); }
+  .ripple-ring:nth-child(3) { opacity: 0.04; transform: scale(0.9); }
 }
 </style>
