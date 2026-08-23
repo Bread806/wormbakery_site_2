@@ -1,0 +1,111 @@
+---
+// 全站背景裝飾：顯眼但不搶戲的設計素材點綴
+const decorations = [
+  'Element060.png', 'Element061.png', 'Element062.png', 'Element063.png',
+  'Element064.png', 'Element065.png', 'Element066.png', 'Element067.png',
+  'Element068.png', 'Element069.png', 'Element070.png', 'Element071.png',
+  'HUD01.png', 'HUD02.png', 'HUD03.png', 'HUD04.png', 'HUD05.png',
+  'HUD06.png', 'HUD07.png', 'HUD08.png', 'HUD09.png',
+  'Diagrams02.png', 'Diagrams07.png', 'Diagrams21.png', 'Diagrams22.png',
+  'Diagrams048.png', 'Diagrams049.png',
+];
+
+// 更多點綴位置，更大尺寸
+const spots = [
+  { top: '5%', left: '3%', size: 120, rotate: -15 },
+  { top: '15%', right: '5%', size: 100, rotate: 20 },
+  { top: '25%', left: '10%', size: 140, rotate: 45 },
+  { top: '40%', right: '8%', size: 110, rotate: -30 },
+  { top: '55%', left: '5%', size: 130, rotate: 60 },
+  { bottom: '20%', right: '12%', size: 95, rotate: -45 },
+  { bottom: '10%', left: '15%', size: 125, rotate: 10 },
+  { top: '70%', right: '20%', size: 105, rotate: 30 },
+  { bottom: '30%', left: '25%', size: 115, rotate: -60 },
+  { top: '30%', left: '45%', size: 90, rotate: 75 },
+  { top: '50%', right: '30%', size: 135, rotate: -20 },
+  { bottom: '40%', left: '40%', size: 85, rotate: 40 },
+] as const;
+---
+
+<div class="bg-decorations" aria-hidden="true">
+  {spots.map((spot, i) => {
+    const deco = decorations[i % decorations.length];
+    return (
+      <div
+        class="bg-deco-item"
+        style={`
+          top: ${spot.top ?? 'auto'};
+          bottom: ${spot.bottom ?? 'auto'};
+          left: ${spot.left ?? 'auto'};
+          right: ${spot.right ?? 'auto'};
+          width: ${spot.size}px;
+          height: ${spot.size}px;
+          transform: rotate(${spot.rotate}deg);
+          animation-delay: ${i * 0.3}s;
+        `}
+      >
+        <img src={`/assets/deco/${deco}`} alt="" loading="lazy" />
+      </div>
+    );
+  })}
+</div>
+
+<style>
+.bg-decorations {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0; /* 改為 0，在背景之上但內容之下 */
+  overflow: hidden;
+}
+
+.bg-deco-item {
+  position: absolute;
+  opacity: 0.25; /* 大幅提高可見度 */
+  animation: deco-pulse 6s steps(2) infinite;
+}
+
+.bg-deco-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  /* 酸性風：紅青色偏 */
+  filter: drop-shadow(-2px 0 var(--accent-red)) drop-shadow(2px 0 var(--accent-cyan));
+}
+
+/* 暗主題：提高透明度 + 反轉顏色讓白色線稿可見 */
+html[data-theme='dark'] .bg-deco-item {
+  opacity: 0.35;
+}
+
+html[data-theme='dark'] .bg-deco-item img {
+  filter: invert(1) drop-shadow(-2px 0 var(--accent-red)) drop-shadow(2px 0 var(--accent-cyan));
+}
+
+@keyframes deco-pulse {
+  0%, 100% {
+    opacity: 0.15;
+  }
+  50% {
+    opacity: 0.3;
+    transform: scale(1.05);
+  }
+}
+
+/* 手機版減少數量但保持顯眼 */
+@media (max-width: 768px) {
+  .bg-deco-item:nth-child(n+7) {
+    display: none;
+  }
+  .bg-deco-item {
+    opacity: 0.3;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bg-deco-item {
+    animation: none;
+    opacity: 0.2;
+  }
+}
+</style>

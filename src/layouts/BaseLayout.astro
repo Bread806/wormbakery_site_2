@@ -2,6 +2,7 @@
 // 基礎 Layout：含 SEO meta、主題初始化（移除品牌切換器）
 import '../styles/global.css';
 import BackgroundWaves from '../components/BackgroundWaves.astro';
+import BackgroundDecorations from '../components/BackgroundDecorations.astro';
 
 export interface Props {
   title: string;
@@ -28,6 +29,7 @@ const { title, description } = Astro.props;
   </head>
   <body class="bg-noise">
     <BackgroundWaves />
+    <BackgroundDecorations />
     <slot />
     <script>
       // 主題初始化
