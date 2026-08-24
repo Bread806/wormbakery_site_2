@@ -61,6 +61,19 @@ const { boundsId = 'hero-section' } = Astro.props;
   🎵
 </button>
 
+<!-- Import Map：把 @strudel/soundfonts 的裸 import 全部解析回 @strudel/web@1.0.3 的同一個 module instance，
+     避免 registerSound 寫入第二份 sound registry（雙 instance 靜默失敗）。 -->
+<script type="importmap">
+{
+  "imports": {
+    "@strudel/webaudio": "https://cdn.jsdelivr.net/npm/@strudel/web@1.0.3/dist/index.mjs",
+    "@strudel/core": "https://cdn.jsdelivr.net/npm/@strudel/web@1.0.3/dist/index.mjs",
+    "sfumato": "https://cdn.jsdelivr.net/npm/sfumato@0.3.0/dist/sfumato.js",
+    "soundfont2-esm": "https://cdn.jsdelivr.net/npm/soundfont2-esm@0.6.0/lib/index.js"
+  }
+}
+</script>
+
 <script>
   import { SONGS } from '../data/songs';
 
@@ -94,13 +107,66 @@ const { boundsId = 'hero-section' } = Astro.props;
   // 動態載入 Strudel
   async function initStrudel() {
     if (strudelReady) return;
+    // Loading UI：首次播放前需要下載 soundfont 音色與底層音訊模組，避免以為卡住
+    if (currentTitle) currentTitle.textContent = '音色載入中…';
     try {
       // 必須指向 /dist/index.mjs（ESM）——裸 URL 會解析到 UMD，導致無 named exports
+      // 使用 jsDelivr 並 pin 版本，與上方 importmap 中的 URL 保持一致
       // @ts-ignore
-      strudelMod = (await import('https://unpkg.com/@strudel/web@1.0.3/dist/index.mjs')) as StrudelMod;
+      strudelMod = (await import('https://cdn.jsdelivr.net/npm/@strudel/web@1.0.3/dist/index.mjs')) as StrudelMod;
+      // @ts-ignore — 註冊 GM 音色與 909 鼓；prebake 會在 DSL 掛載完成後才執行，因此可安全使用 globalThis.samples / registerSound
+      await strudelMod?.initStrudel?.({
+        // @ts-ignore
+        prebake: async () => {
+          // 1. dirt-samples：bd/sd/hh/rm 等一般鼓聲（原本就有）
+          (globalThis as any).samples?.('github:tidalcycles/dirt-samples');
+          // 2. GM 音色：透過 importmap，@strudel/soundfonts 會共用 @strudel/web 的 registerSound
+          const soundfonts = (await import(
+            // @ts-ignore — CDN 動態匯入，無型別
+            'https://cdn.jsdelivr.net/npm/@strudel/soundfonts@1.0.1/dist/index.mjs'
+          )) as any;
+          soundfonts.registerSoundfonts?.();
+          // 3. Roland TR-909：以 registerSound 直接註冊常用鼓件（官方曲庫 geikha/tidal-drum-machines 上游）
+          //    檔案路徑含空格者需手動 encodeURI
+          const rs = (globalThis as any).registerSound;
+          if (typeof rs === 'function') {
+            const base = 'https://raw.githubusercontent.com/geikha/tidal-drum-machines/main/machines/';
+            const drum = (key: string, paths: string[]) =>
+              rs(key, async () => {
+                const urls = paths.map((p) => encodeURI(base + p));
+                return { samples: urls };
+              });
+            drum('909bd', ['RolandTR909/rolandtr909-bd/Bassdrum-01.wav']);
+            drum('909sd', ['RolandTR909/rolandtr909-sd/sd01.wav']);
+            drum('909hh', ['RolandTR909/rolandtr909-hh/hh01.wav']);
+            drum('909oh', ['RolandTR909/rolandtr909-oh/Hat Open.wav']);
+            drum('909rim', ['RolandTR909/rolandtr909-rim/rs01.wav']);
+            drum('909cp', ['RolandTR909/rolandtr909-cp/Clap.wav']);
+          }
+        },
+      });
+      // initStrudel 內部是 async 掛載 DSL 函數到 globalThis，但它本身不 await，
+      // 因此要輪詢等待 DSL（以 s() 為代表）就緒
+      const deadline = Date.now() + 20000;
       // @ts-ignore
-      await strudelMod?.initStrudel?.();
+      while (!(globalThis as any).s && Date.now() < deadline) {
+        await new Promise((r) => setTimeout(r, 100));
+      }
+      // @ts-ignore — Strudel 只掛 cpm，未掛 setcpm/setcps；歌曲 code 會用到 setcpm
+      const g = globalThis as any;
+      if (!g.setcpm && typeof g.cpm === 'function') {
+        g.setcpm = g.cpm;
+        g.setcps = g.cpm;
+      }
+      if (!g.s) {
+        throw new Error('Strudel DSL 未就緒');
+      }
       strudelReady = true;
+      // Loading 結束：恢復顯示當前歌曲（若已有曲目選取）
+      if (currentSongId) {
+        const song = SONGS.find((s) => s.id === currentSongId);
+        if (song && currentTitle) currentTitle.textContent = song.title;
+      }
     } catch (err) {
       console.error('Strudel 載入失敗：', err);
       if (currentTitle) currentTitle.textContent = '音訊載入失敗';

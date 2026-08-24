@@ -16,14 +16,14 @@ let chords = chord("<Dm7 G7>/4").dict('ireal')
 stack(
   // DRUMS
   stack(
-  s("bd").struct("x*<1 2> ~ <[~@2 x] x> ~"),
-  s("~ [rim, sd:<2 3>]").room("<.1 .2>"),
-  n("[0 0] <0 3>*<2!3 4>").s("hh"), 
+  s("909bd").struct("x*<1 2> ~ <[~@2 x] x> ~"),
+  s("~ [909rim, 909sd:<2 3>]").room("<.1 .2>"),
+  n("[0 0] <0 3>*<2!3 4>").s("909hh"),
   ).mask("<1 1 1 0>/4").gain(1),
 
   stack(
-    s("rim:3").gain(.5).room(.6).sustain(.8),
-    s("~ ~ hh ~").gain(.3),
+    s("rm:3").gain(.5).room(.6).sustain(.8),
+    s("~ ~ 909hh ~").gain(.3),
   ).mask("<0 0 0 1>/4"),
 
   chords.voicing().s("gm_epiano1:6")
@@ -49,10 +49,10 @@ setcpm(100/4);
 const cityChords = "< F^7 Em7 Dm7 C^7 >";
 
 const drums = stack(
-  s("bd*4").bank("RolandTR909").mask("<1 1 0 1>"),
-  s("~ sd ~ sd").bank("RolandTR909").gain(0.9).mask("<1 1 0 1>"),
-  s("hh*8").bank("RolandTR909").gain("0.6 0.4 0.7 0.4").mask("<1 1 1 1>"),
-  s("~ [~ oh] ~ ~").bank("RolandTR909").gain(0.5).mask("<0 0 1 0>")
+  s("909bd*4").mask("<1 1 0 1>"),
+  s("~ 909sd ~ 909sd").gain(0.9).mask("<1 1 0 1>"),
+  s("909hh*8").gain("0.6 0.4 0.7 0.4").mask("<1 1 1 1>"),
+  s("~ [~ 909oh] ~ ~").gain(0.5).mask("<0 0 1 0>")
 );
 
 const bass = chord(cityChords)
@@ -65,7 +65,7 @@ const bass = chord(cityChords)
 const sax = n("<0 [7 4] [9 [7 4]] [2 [4 2]]>")
   .scale("F:major")
   .struct("x [~ x] [x x ~ x] [x@1.5 ~ x@0.5]")
-  .s("gm_sax_1")
+  .s("gm_tenor_sax")
   .legato(0.9).attack(0.04).release(0.35)
   .room(0.3).delay(0.25).delaytime(0.28).gain(1.0)
   .mask("<1 1 0 1>");
@@ -73,7 +73,7 @@ const sax = n("<0 [7 4] [9 [7 4]] [2 [4 2]]>")
 const guitar = chord(cityChords)
   .dict("ireal").anchor("C3").voicing()
   .struct("x [x x] x [x x]")
-  .s("gm_nylon_guitar")
+  .s("gm_acoustic_guitar_nylon")
   .room(0.2).gain(0.45)
   .mask("<0 0 0 1>");
 
