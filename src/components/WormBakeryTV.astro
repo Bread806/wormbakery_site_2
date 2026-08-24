@@ -1,0 +1,337 @@
+---
+// WormBakery TV Gallery：模仿 109ichiki works category 的電視轉台檢視窗
+// - sticky 區塊：桌面滾輪 / 手機按鈕切換合輯
+// - 左上：曲目 ID 清單（切換合輯時整個換掉）
+// - 中央：電視螢幕顯示當前合輯封面
+// - 右下：Windows-form 風格 dialog 顯示曲目簡介
+import { ALBUMS } from '../data/albums';
+---
+
+<section id="wormbakery-tv" class="tv-section">
+  <!-- Sticky TV 視窗 -->
+  <div class="tv-sticky">
+    <!-- 電視外框 -->
+    <div class="tv-frame retro-border retro-shadow-lg bg-[var(--bg)]">
+      <!-- 左上：品牌標題 + 曲目 ID 清單 -->
+      <div class="tv-header">
+        <p class="tv-brand font-barcode text-xl opacity-70">WORM BAKERY</p>
+        <h3 class="tv-heading text-2xl md:text-3xl font-mono font-bold acid-chroma">works category</h3>
+        <ul id="tv-track-list" class="tv-track-list">
+          <!-- JS 動態填入當前合輯的曲目 -->
+        </ul>
+      </div>
+
+      <!-- 中央：電視螢幕 -->
+      <div class="tv-screen-container">
+        <div class="tv-screen retro-border">
+          <!-- 當前合輯封面 -->
+          <div id="tv-cover" class="tv-cover">
+            <img id="tv-cover-img" src={ALBUMS[0].coverImage} alt="" class="tv-cover-img" />
+          </div>
+          <!-- CRT 掃描線 -->
+          <div class="tv-scanlines" aria-hidden="true"></div>
+          <!-- 無訊號雜訊（切換時短暫顯示） -->
+          <div id="tv-static" class="tv-static hidden" aria-hidden="true"></div>
+          <!-- 電源 LED -->
+          <div class="tv-power-led" aria-hidden="true"></div>
+        </div>
+
+        <!-- 電視下方：時間碼 + 狀態 -->
+        <div class="tv-status font-mono text-xs">
+          <p class="tv-status-line">
+            <span id="tv-channel" class="tv-channel">CH 01</span>
+            <span class="opacity-60 mx-2">|</span>
+            <span id="tv-time-code">00:00:00:00</span>
+            <span class="opacity-60 mx-2">|</span>
+            <span class="tv-play-indicator animate-blink">▶ PLAY</span>
+          </p>
+          <!-- 進度條 -->
+          <div class="tv-progress">
+            {ALBUMS.map((_, i) => (
+              <span
+                class="tv-progress-segment"
+                data-album-index={i}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <!-- 右下：Windows-form 風格 dialog -->
+      <div id="tv-dialog" class="tv-dialog retro-border retro-shadow bg-[var(--bg)]">
+        <!-- 標題列 -->
+        <div class="tv-dialog-titlebar">
+          <span id="tv-dialog-title" class="font-mono text-sm font-bold">track_a.wav</span>
+          <button class="tv-dialog-close" aria-label="關閉" disabled>✕</button>
+        </div>
+        <!-- 內容 -->
+        <div class="tv-dialog-body">
+          <h4 id="tv-dialog-track-title" class="text-xl font-bold acid-chroma mb-2">病</h4>
+          <p id="tv-dialog-desc" class="text-sm leading-relaxed mb-4 opacity-90">
+            一位姊姊常常來看診，她發現與她談了戀愛的故事。
+          </p>
+          <!-- 製作名單 -->
+          <div id="tv-dialog-credits" class="tv-dialog-credits mb-4 hidden">
+            <p class="text-xs font-mono opacity-60 mb-1">CREDITS</p>
+            <ul id="tv-dialog-credits-list" class="text-xs font-mono space-y-0.5">
+              <!-- JS 填入 -->
+            </ul>
+          </div>
+          <!-- 連結按鈕 -->
+          <div class="flex flex-wrap gap-2">
+            <a id="tv-dialog-link" href="#" target="_blank" rel="noopener noreferrer" class="btn-retro text-xs px-3 py-1.5 hidden">文本 →</a>
+            <a id="tv-dialog-release" href="#" target="_blank" rel="noopener noreferrer" class="btn-retro text-xs px-3 py-1.5 hidden">聆聽 →</a>
+          </div>
+          <!-- 條碼 -->
+          <div class="tv-dialog-barcode font-barcode text-lg opacity-50 mt-4">
+            <span id="tv-dialog-barcode-text">TV.01.A</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 手機版切換控制（桌面隱藏） -->
+      <div class="tv-mobile-controls">
+        <button id="tv-prev" class="tv-nav-btn" aria-label="上一張合輯">◀</button>
+        <div class="tv-dots">
+          {ALBUMS.map((album, i) => (
+            <button
+              class="tv-dot"
+              data-album-index={i}
+              aria-label={`切換到 ${album.title}`}
+              aria-current={i === 0 ? 'true' : 'false'}
+            />
+          ))}
+        </div>
+        <button id="tv-next" class="tv-nav-btn" aria-label="下一張合輯">▶</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 滾動區域：每張合輯對應一個 scroll section（桌面用） -->
+  <div class="tv-scroll-area">
+    {ALBUMS.map((album) => (
+      <div class="tv-scroll-item" data-album-id={album.id}></div>
+    ))}
+  </div>
+</section>
+
+<script>
+  import { ALBUMS } from '../data/albums';
+
+  // 狀態
+  let currentAlbumIndex = 0;
+  let currentTrackId: string | null = null;
+  const isMobile = window.matchMedia('(max-width: 768px)').matches;
+
+  // DOM 元素
+  const section = document.getElementById('wormbakery-tv');
+  const scrollItems = document.querySelectorAll('.tv-scroll-item');
+  const coverImg = document.getElementById('tv-cover-img') as HTMLImageElement;
+  const staticOverlay = document.getElementById('tv-static');
+  const trackList = document.getElementById('tv-track-list');
+  const channelEl = document.getElementById('tv-channel');
+  const timeCodeEl = document.getElementById('tv-time-code');
+  const dialogTitle = document.getElementById('tv-dialog-title');
+  const dialogTrackTitle = document.getElementById('tv-dialog-track-title');
+  const dialogDesc = document.getElementById('tv-dialog-desc');
+  const dialogCredits = document.getElementById('tv-dialog-credits');
+  const dialogCreditsList = document.getElementById('tv-dialog-credits-list');
+  const dialogLink = document.getElementById('tv-dialog-link') as HTMLAnchorElement;
+  const dialogRelease = document.getElementById('tv-dialog-release') as HTMLAnchorElement;
+  const dialogBarcode = document.getElementById('tv-dialog-barcode-text');
+  const progressSegments = document.querySelectorAll('.tv-progress-segment');
+  const dots = document.querySelectorAll('.tv-dot');
+  const prevBtn = document.getElementById('tv-prev');
+  const nextBtn = document.getElementById('tv-next');
+
+  // 時間碼計數器（假時間，純視覺）
+  let frameCount = 0;
+  function updateTimeCode() {
+    frameCount++;
+    const seconds = Math.floor(frameCount / 30);
+    const frames = frameCount % 30;
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+    const pad = (n: number) => String(n).padStart(2, '0');
+    if (timeCodeEl) {
+      timeCodeEl.textContent = `${pad(hours)}:${pad(minutes % 60)}:${pad(seconds % 60)}:${pad(frames)}`;
+    }
+  }
+  setInterval(updateTimeCode, 33); // ~30fps
+
+  // 切換到指定合輯
+  function switchAlbum(index: number, trackId?: string) {
+    if (index < 0 || index >= ALBUMS.length) return;
+    if (index === currentAlbumIndex && trackId === currentTrackId) return;
+
+    // CRT 轉台效果
+    triggerChannelSwitch();
+
+    currentAlbumIndex = index;
+    const album = ALBUMS[index];
+
+    // 更新封面
+    if (coverImg) {
+      coverImg.src = album.coverImage;
+      coverImg.alt = album.title;
+    }
+
+    // 更新頻道顯示
+    if (channelEl) {
+      channelEl.textContent = `CH ${String(index + 1).padStart(2, '0')}`;
+    }
+
+    // 更新進度條與圓點
+    progressSegments.forEach((seg, i) => {
+      (seg as HTMLElement).classList.toggle('active', i === index);
+    });
+    dots.forEach((dot, i) => {
+      (dot as HTMLElement).classList.toggle('active', i === index);
+      dot.setAttribute('aria-current', i === index ? 'true' : 'false');
+    });
+
+    // 更新左上曲目清單
+    renderTrackList(album, trackId);
+
+    // 更新 dialog：選第一首或指定曲目
+    const track = trackId
+      ? album.tracks.find(t => t.id === trackId)
+      : album.tracks[0];
+    if (track) {
+      currentTrackId = track.id;
+      updateDialog(album, track);
+    }
+  }
+
+  // CRT 轉台效果
+  function triggerChannelSwitch() {
+    if (!staticOverlay) return;
+    staticOverlay.classList.remove('hidden');
+    // 短暫顯示雜訊後隱藏
+    setTimeout(() => {
+      staticOverlay?.classList.add('hidden');
+    }, 150);
+  }
+
+  // 渲染左上曲目清單
+  function renderTrackList(album: typeof ALBUMS[0], activeTrackId?: string) {
+    if (!trackList) return;
+    trackList.innerHTML = '';
+    album.tracks.forEach((track) => {
+      const li = document.createElement('li');
+      const btn = document.createElement('button');
+      btn.className = 'tv-track-item font-mono text-sm md:text-base';
+      btn.dataset.trackId = track.id;
+      btn.innerHTML = `${track.id}: ${track.title} <span class="tv-track-arrow">→</span>`;
+      if (track.id === activeTrackId || (!activeTrackId && track === album.tracks[0])) {
+        btn.classList.add('current');
+      }
+      btn.addEventListener('click', () => {
+        selectTrack(album, track.id);
+      });
+      li.appendChild(btn);
+      trackList.appendChild(li);
+    });
+  }
+
+  // 選擇曲目
+  function selectTrack(album: typeof ALBUMS[0], trackId: string) {
+    currentTrackId = trackId;
+    // 更新清單高亮
+    trackList?.querySelectorAll('.tv-track-item').forEach((btn) => {
+      const el = btn as HTMLElement;
+      el.classList.toggle('current', el.dataset.trackId === trackId);
+    });
+    // 更新 dialog
+    const track = album.tracks.find(t => t.id === trackId);
+    if (track) {
+      updateDialog(album, track);
+    }
+  }
+
+  // 更新右下 dialog
+  function updateDialog(album: typeof ALBUMS[0], track: typeof ALBUMS[0]['tracks'][0]) {
+    if (dialogTitle) dialogTitle.textContent = `${album.id}_${track.id}.wav`;
+    if (dialogTrackTitle) dialogTrackTitle.textContent = track.title;
+    if (dialogDesc) dialogDesc.textContent = track.description;
+    if (dialogBarcode) dialogBarcode.textContent = `TV.${String(ALBUMS.indexOf(album) + 1).padStart(2, '0')}.${track.id.toUpperCase()}`;
+
+    // 連結按鈕
+    if (track.link) {
+      dialogLink?.classList.remove('hidden');
+      dialogLink.href = track.link;
+    } else {
+      dialogLink?.classList.add('hidden');
+    }
+    if (track.release) {
+      dialogRelease?.classList.remove('hidden');
+      dialogRelease.href = track.release;
+    } else {
+      dialogRelease?.classList.add('hidden');
+    }
+
+    // 製作名單
+    if (track.credits && track.credits.length > 0 && dialogCredits && dialogCreditsList) {
+      dialogCredits.classList.remove('hidden');
+      dialogCreditsList.innerHTML = '';
+      track.credits.forEach((c) => {
+        const li = document.createElement('li');
+        li.textContent = `${c.role}: ${c.name}`;
+        dialogCreditsList.appendChild(li);
+      });
+    } else if (dialogCredits) {
+      dialogCredits.classList.add('hidden');
+    }
+  }
+
+  // 桌面：滾動切換
+  if (!isMobile && section && scrollItems.length > 0) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const index = parseInt((entry.target as HTMLElement).dataset.albumIndex || '0');
+            switchAlbum(index);
+          }
+        });
+      },
+      { threshold: 0.5 }
+    );
+
+    scrollItems.forEach((item, i) => {
+      (item as HTMLElement).dataset.albumIndex = String(i);
+      observer.observe(item);
+    });
+  }
+
+  // 手機：按鈕切換
+  prevBtn?.addEventListener('click', () => {
+    const newIndex = (currentAlbumIndex - 1 + ALBUMS.length) % ALBUMS.length;
+    switchAlbum(newIndex);
+    scrollToAlbum(newIndex);
+  });
+  nextBtn?.addEventListener('click', () => {
+    const newIndex = (currentAlbumIndex + 1) % ALBUMS.length;
+    switchAlbum(newIndex);
+    scrollToAlbum(newIndex);
+  });
+
+  // 圓點切換
+  dots.forEach((dot, i) => {
+    dot.addEventListener('click', () => {
+      switchAlbum(i);
+      scrollToAlbum(i);
+    });
+  });
+
+  // 滾動到指定合輯位置（手機用）
+  function scrollToAlbum(index: number) {
+    const item = scrollItems[index];
+    if (item && isMobile) {
+      item.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }
+
+  // 初始化
+  switchAlbum(0);
+</script>

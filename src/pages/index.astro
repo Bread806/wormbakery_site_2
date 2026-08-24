@@ -3,7 +3,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Navigation from '../components/Navigation.astro';
 import Footer from '../components/Footer.astro';
 import LoadingScreen from '../components/LoadingScreen.astro';
-import StrudelPlayer from '../components/StrudelPlayer.astro';
+import MiniStrudelPlayer from '../components/MiniStrudelPlayer.astro';
+import WormBakeryTV from '../components/WormBakeryTV.astro';
 import Waveform from '../components/Waveform.astro';
 ---
 
@@ -11,71 +12,46 @@ import Waveform from '../components/Waveform.astro';
   <LoadingScreen />
   <Navigation />
 
-  <main class="pt-20 pb-16">
-    <!-- Hero Section -->
-    <section class="relative min-h-[70vh] flex items-center justify-center overflow-hidden bg-grid">
-      <div class="relative z-10 text-center px-4">
-        <!-- 主視覺圖 -->
-        <div class="mb-8 w-full max-w-md mx-auto h-48 md:h-64">
-          <img
-            src="/pic/profile_1.png"
-            alt="卡蚯蚓的個人圖像"
-            class="w-full h-full object-contain acid-chroma-strong"
-          />
-        </div>
-
-        <!-- 品牌大字 -->
-        <h1 class="text-5xl md:text-7xl lg:text-8xl font-black mb-6 tracking-tighter acid-chroma">
-          卡蚯蚓
-        </h1>
-
-        <!-- Slogan -->
-        <div class="space-y-2 font-mono text-lg md:text-2xl">
-          <p>To find the perfect words.</p>
-          <p>To say less but to say more.</p>
-        </div>
-
-        <!-- 條碼裝飾 -->
-        <div class="mt-8 font-barcode text-4xl tracking-widest opacity-80">
-          ・WRITING・SCRIPT・VTUBER・
-        </div>
-
-        <!-- Hero 聲波 -->
-        <div class="mt-12 flex justify-center">
-          <Waveform bars={32} />
-        </div>
+  <!-- Hero Section：卡蚯蚓主視覺 -->
+  <section id="hero-section" class="relative min-h-[70vh] flex items-center justify-center overflow-hidden bg-grid pt-20">
+    <div class="relative z-10 text-center px-4">
+      <!-- 主視覺圖 -->
+      <div class="mb-8 w-full max-w-md mx-auto h-48 md:h-64">
+        <img
+          src="/pic/profile_1.png"
+          alt="卡蚯蚓的個人圖像"
+          class="w-full h-full object-contain acid-chroma-strong"
+        />
       </div>
-    </section>
 
-    <!-- 跑馬燈分隔線 -->
-    <div class="border-y-3 border-[var(--fg)] overflow-hidden py-3 my-8">
-      <div class="animate-marquee whitespace-nowrap font-mono text-2xl">
-        <span class="mx-8">WRITING</span>
-        <span class="mx-8">SCRIPT</span>
-        <span class="mx-8">AUDIO DRAMA</span>
-        <span class="mx-8">VTuber STAFF</span>
-        <span class="mx-8">SOUND</span>
-        <span class="mx-8">VOICE</span>
-        <span class="mx-8">TEXT</span>
-        <!-- 重複一次以達到無縫滾動 -->
-        <span class="mx-8">WRITING</span>
-        <span class="mx-8">SCRIPT</span>
-        <span class="mx-8">AUDIO DRAMA</span>
-        <span class="mx-8">VTuber STAFF</span>
-        <span class="mx-8">SOUND</span>
-        <span class="mx-8">VOICE</span>
-        <span class="mx-8">TEXT</span>
+      <!-- 品牌大字 -->
+      <h1 class="text-5xl md:text-7xl lg:text-8xl font-black mb-6 tracking-tighter acid-chroma">
+        卡蚯蚓
+      </h1>
+
+      <!-- Slogan -->
+      <div class="space-y-2 font-mono text-lg md:text-2xl">
+        <p>To find the perfect words.</p>
+        <p>To say less but to say more.</p>
+      </div>
+
+      <!-- 條碼裝飾 -->
+      <div class="mt-8 font-barcode text-4xl tracking-widest opacity-80">
+        ・WRITING・SCRIPT・VTUBER・
+      </div>
+
+      <!-- Hero 聲波 -->
+      <div class="mt-12 flex justify-center">
+        <Waveform bars={32} />
       </div>
     </div>
 
-    <!-- Strudel 播放器區 -->
-    <section class="max-w-4xl mx-auto px-4 sm:px-6">
-      <h2 class="text-4xl font-mono font-bold mb-4 acid-chroma text-center">
-        listen to some code
-      </h2>
-      <StrudelPlayer />
-    </section>
-  </main>
+    <!-- Mini Strudel 浮動播放器（可拖曳、可關閉） -->
+    <MiniStrudelPlayer boundsId="hero-section" />
+  </section>
+
+  <!-- WormBakery TV Gallery：電視轉台檢視合輯 -->
+  <WormBakeryTV />
 
   <Footer />
 </BaseLayout>

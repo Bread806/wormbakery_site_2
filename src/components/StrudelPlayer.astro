@@ -19,9 +19,6 @@ import { SONGS } from '../data/songs';
         <p id="current-song-title" class="text-xl font-bold acid-chroma">
           {SONGS[0]?.title ?? 'No song loaded'}
         </p>
-        <p id="current-song-desc" class="text-sm mt-2 opacity-80">
-          {SONGS[0]?.description ?? ''}
-        </p>
       </div>
 
       <!-- 播放時聲波 -->
@@ -43,10 +40,6 @@ import { SONGS } from '../data/songs';
         </button>
         <button id="btn-stop" class="btn-retro px-6">STOP</button>
       </div>
-
-      <p class="text-xs font-mono opacity-60">
-        * 播放音訊需點擊按鈕啟動（瀏覽器 autoplay 政策）
-      </p>
     </div>
 
     <!-- 歌單 -->
@@ -82,7 +75,6 @@ import { SONGS } from '../data/songs';
   const playText = document.getElementById('btn-play-text');
   const waveform = document.getElementById('play-waveform');
   const currentTitle = document.getElementById('current-song-title');
-  const currentDesc = document.getElementById('current-song-desc');
   const songItems = document.querySelectorAll('.song-item');
 
   // 動態載入 Strudel
@@ -104,7 +96,6 @@ import { SONGS } from '../data/songs';
     const song = SONGS.find((s) => s.id === songId);
     if (song) {
       if (currentTitle) currentTitle.textContent = song.title;
-      if (currentDesc) currentDesc.textContent = song.description || '';
     }
     // 更新歌單高亮
     songItems.forEach((item) => {

@@ -1,0 +1,511 @@
+---
+// Mini Strudel Player：Windows-form 風格的浮動迷你播放器
+// - 可拖曳（限制在 Hero section 範圍內）
+// - 可關閉（✕ 隱藏、🎵 按鈕重新開啟）
+// - 預設可見，位於 Hero 右下角
+//
+// 使用方式：在父元件中引入，並可透過 `boundsId` prop 指定拖曳邊界元素 ID，
+// 或在播放器元素上設置 `data-bounds="your-section-id"` 覆寫預設。
+import { SONGS } from '../data/songs';
+
+interface Props {
+  boundsId?: string;
+}
+
+const { boundsId = 'hero-section' } = Astro.props;
+---
+
+<!-- Mini Strudel Player (floating window) -->
+<div
+  id="mini-strudel"
+  class="mini-strudel retro-border retro-shadow bg-[var(--bg)]"
+  data-open="true"
+  data-bounds={boundsId}
+>
+  <!-- Title bar (draggable handle) -->
+  <div id="mini-strudel-header" class="mini-strudel-titlebar">
+    <span class="mini-strudel-title">NOW_PLAYING.wav</span>
+    <button id="mini-strudel-close" class="mini-strudel-close" aria-label="關閉">✕</button>
+  </div>
+
+  <!-- Body -->
+  <div class="mini-strudel-body">
+    <p id="mini-current-title" class="mini-strudel-song">{SONGS[0]?.title ?? ''}</p>
+    <div class="mini-strudel-controls">
+      <button id="mini-btn-play" class="mini-strudel-btn">▶</button>
+      <button id="mini-btn-stop" class="mini-strudel-btn">■</button>
+      <select id="mini-song-select" class="mini-strudel-select">
+        {SONGS.map((song) => (
+          <option value={song.id}>{song.title}</option>
+        ))}
+      </select>
+    </div>
+    <div id="mini-play-waveform" class="mini-strudel-waveform hidden">
+      {Array.from({ length: 12 }).map((_, i) => (
+        <div
+          class="waveform-bar mini-wave-bar"
+          style={`animation-delay: ${(i * 0.05).toFixed(2)}s;`}
+        />
+      ))}
+    </div>
+  </div>
+</div>
+
+<!-- Reopen button (in hero, hidden by default) -->
+<button id="mini-strudel-reopen" class="mini-strudel-reopen retro-border hidden" aria-label="開啟音樂播放器">
+  🎵
+</button>
+
+<script>
+  import { SONGS } from '../data/songs';
+
+  // ---------------------------------------------------------------------------
+  // 播放邏輯（移植自 StrudelPlayer.astro）
+  // ---------------------------------------------------------------------------
+  let strudelReady = false;
+  let currentSongId: string | null = null;
+  let isPlaying = false;
+
+  const miniPlayer = document.getElementById('mini-strudel');
+  const playBtn = document.getElementById('mini-btn-play');
+  const stopBtn = document.getElementById('mini-btn-stop');
+  const songSelect = document.getElementById('mini-song-select') as HTMLSelectElement | null;
+  const waveform = document.getElementById('mini-play-waveform');
+  const currentTitle = document.getElementById('mini-current-title');
+
+  // 動態載入 Strudel
+  async function initStrudel() {
+    if (strudelReady) return;
+    try {
+      // @ts-ignore
+      await import('https://unpkg.com/@strudel/web@1.0.3');
+      // @ts-ignore
+      await window.initStrudel();
+      strudelReady = true;
+    } catch (err) {
+      console.error('Strudel 載入失敗：', err);
+      if (currentTitle) currentTitle.textContent = '音訊載入失敗';
+    }
+  }
+
+  function updateUI(songId: string | null, playing: boolean) {
+    const song = SONGS.find((s) => s.id === songId);
+    if (song && currentTitle) {
+      currentTitle.textContent = song.title;
+    }
+    if (songSelect && songId) {
+      songSelect.value = songId;
+    }
+    if (waveform) {
+      waveform.classList.toggle('hidden', !playing);
+    }
+  }
+
+  async function playSong(songId: string) {
+    await initStrudel();
+    if (!strudelReady) return;
+
+    const song = SONGS.find((s) => s.id === songId);
+    if (!song) return;
+
+    // 停止前一首
+    if (isPlaying) {
+      // @ts-ignore
+      window.hush();
+      isPlaying = false;
+    }
+
+    currentSongId = songId;
+    isPlaying = true;
+    updateUI(songId, true);
+
+    try {
+      // @ts-ignore
+      const code = song.code;
+      // @ts-ignore
+      if (typeof window.evaluate === 'function') {
+        // @ts-ignore
+        await window.evaluate(code);
+      } else {
+        // fallback：避免直接 eval
+        // @ts-ignore
+        const pattern = new Function(`return (${code})`)();
+        // @ts-ignore
+        pattern.play();
+      }
+    } catch (err) {
+      console.error('播放失敗：', err);
+      if (currentTitle) currentTitle.textContent = '播放失敗';
+      isPlaying = false;
+      updateUI(songId, false);
+    }
+  }
+
+  function stopPlayback() {
+    if (!strudelReady) return;
+    // @ts-ignore
+    window.hush();
+    isPlaying = false;
+    updateUI(currentSongId, false);
+  }
+
+  playBtn?.addEventListener('click', () => {
+    if (isPlaying) {
+      stopPlayback();
+    } else if (currentSongId) {
+      playSong(currentSongId);
+    } else if (SONGS.length > 0) {
+      playSong(SONGS[0].id);
+    }
+  });
+
+  stopBtn?.addEventListener('click', stopPlayback);
+
+  songSelect?.addEventListener('change', () => {
+    const songId = songSelect.value;
+    if (songId) playSong(songId);
+  });
+
+  // 初始化第一首
+  if (SONGS.length > 0) {
+    currentSongId = SONGS[0].id;
+    updateUI(SONGS[0].id, false);
+  }
+
+  // ---------------------------------------------------------------------------
+  // 拖曳邏輯（滑鼠 + 觸控）
+  // ---------------------------------------------------------------------------
+  const header = document.getElementById('mini-strudel-header');
+
+  let dragOffsetX = 0;
+  let dragOffsetY = 0;
+  let isDragging = false;
+
+  function getBounds(): { left: number; top: number; right: number; bottom: number } {
+    const boundsId = miniPlayer?.dataset.bounds ?? 'hero-section';
+    const hero = document.getElementById(boundsId);
+    if (!hero || !miniPlayer) {
+      // 找不到邊界則退回視窗範圍
+      return { left: 0, top: 0, right: window.innerWidth, bottom: window.innerHeight };
+    }
+    const h = hero.getBoundingClientRect();
+    return { left: h.left, top: h.top, right: h.right, bottom: h.bottom };
+  }
+
+  function clampPosition(left: number, top: number) {
+    if (!miniPlayer) return { left, top };
+    // 拖曳中切為固定定位並清除衝突錨點
+    miniPlayer.classList.add('is-positioned');
+    const w = miniPlayer.offsetWidth;
+    const h = miniPlayer.offsetHeight;
+    const b = getBounds();
+    const clampedLeft = Math.max(b.left, Math.min(left, b.right - w));
+    const clampedTop = Math.max(b.top, Math.min(top, b.bottom - h));
+    return { left: clampedLeft, top: clampedTop };
+  }
+
+  function setPosition(left: number, top: number) {
+    if (!miniPlayer) return;
+    const { left: l, top: t } = clampPosition(left, top);
+    miniPlayer.style.left = `${l}px`;
+    miniPlayer.style.top = `${t}px`;
+  }
+
+  function startDrag(clientX: number, clientY: number) {
+    if (!miniPlayer) return;
+    const rect = miniPlayer.getBoundingClientRect();
+    dragOffsetX = clientX - rect.left;
+    dragOffsetY = clientY - rect.top;
+    isDragging = true;
+    document.body.style.userSelect = 'none';
+  }
+
+  function doDrag(clientX: number, clientY: number) {
+    if (!isDragging || !miniPlayer) return;
+    setPosition(clientX - dragOffsetX, clientY - dragOffsetY);
+  }
+
+  function endDrag() {
+    isDragging = false;
+    document.body.style.userSelect = '';
+  }
+
+  // 滑鼠事件
+  header?.addEventListener('mousedown', (e) => {
+    startDrag(e.clientX, e.clientY);
+    e.preventDefault();
+  });
+  document.addEventListener('mousemove', (e) => doDrag(e.clientX, e.clientY));
+  document.addEventListener('mouseup', endDrag);
+
+  // 觸控事件
+  header?.addEventListener('touchstart', (e) => {
+    if (e.touches.length > 0) {
+      startDrag(e.touches[0].clientX, e.touches[0].clientY);
+      e.preventDefault();
+    }
+  }, { passive: false });
+  document.addEventListener('touchmove', (e) => {
+    if (isDragging && e.touches.length > 0) {
+      doDrag(e.touches[0].clientX, e.touches[0].clientY);
+      e.preventDefault();
+    }
+  }, { passive: false });
+  document.addEventListener('touchend', endDrag);
+
+  // 視窗縮放時重新夾緊位置，避免超出 Hero 邊界
+  window.addEventListener('resize', () => {
+    if (!miniPlayer) return;
+    const left = parseFloat(miniPlayer.style.left || `${miniPlayer.getBoundingClientRect().left}`);
+    const top = parseFloat(miniPlayer.style.top || `${miniPlayer.getBoundingClientRect().top}`);
+    setPosition(left, top);
+  });
+
+  // ---------------------------------------------------------------------------
+  // 關閉 / 重新開啟邏輯
+  // ---------------------------------------------------------------------------
+  const closeBtn = document.getElementById('mini-strudel-close');
+  const reopenBtn = document.getElementById('mini-strudel-reopen');
+
+  function closePlayer() {
+    stopPlayback();
+    if (miniPlayer) {
+      miniPlayer.dataset.open = 'false';
+      miniPlayer.classList.add('hidden');
+    }
+    reopenBtn?.classList.remove('hidden');
+  }
+
+  function openPlayer() {
+    if (miniPlayer) {
+      miniPlayer.dataset.open = 'true';
+      miniPlayer.classList.remove('hidden');
+    }
+    reopenBtn?.classList.add('hidden');
+  }
+
+  closeBtn?.addEventListener('click', closePlayer);
+  reopenBtn?.addEventListener('click', openPlayer);
+</script>
+
+<!--
+================================================================================
+以下 CSS 請複製貼上至 src/styles/global.css 檔案末尾
+================================================================================
+
+/* ---------- 13. Mini Strudel Player（浮動迷你播放器） ---------- */
+.mini-strudel {
+  position: fixed;
+  /* 預設位於視窗右下角；嵌入 Hero 後會自動重新夾緊到 Hero 範圍內 */
+  right: 20px;
+  bottom: 20px;
+  z-index: 1000;
+  min-width: 200px;
+  max-width: 260px;
+  user-select: none;
+}
+
+/* JS 開始拖曳/定位後改由 left/top 控制，清除預設錨點避免衝突 */
+.mini-strudel.is-positioned {
+  right: auto;
+  bottom: auto;
+}
+
+/* Hero section 需為 position: relative，讓 JS 能正確計算邊界 */
+#hero-section {
+  position: relative;
+}
+
+.mini-strudel-titlebar {
+  background: var(--fg);
+  color: var(--bg);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 0.875rem;
+  padding: 4px 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: move;
+  user-select: none;
+  letter-spacing: 0.05em;
+}
+
+.mini-strudel-close {
+  background: var(--fg);
+  color: var(--bg);
+  border: none;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 0.875rem;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+
+.mini-strudel-close:hover {
+  background: var(--bg);
+  color: var(--fg);
+}
+
+.mini-strudel-body {
+  padding: 12px;
+}
+
+.mini-strudel-song {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 1rem;
+  margin: 0 0 8px 0;
+  /* 可搭配 .acid-chroma 產生 RGB 色像差 */
+}
+
+.mini-strudel-controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.mini-strudel-btn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  color: var(--fg);
+  border: 2px solid var(--fg);
+  box-shadow: 2px 2px 0 0 var(--fg);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 0.875rem;
+  cursor: pointer;
+  user-select: none;
+  transition: transform 0.1s step-end, box-shadow 0.1s step-end,
+    background-color 0.1s step-end, color 0.1s step-end;
+  flex-shrink: 0;
+}
+
+.mini-strudel-btn:hover {
+  background: var(--fg);
+  color: var(--bg);
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0 0 var(--fg);
+}
+
+.mini-strudel-btn:active {
+  transform: translate(0, 0);
+  box-shadow: 1px 1px 0 0 var(--fg);
+}
+
+.mini-strudel-select {
+  flex: 1;
+  min-width: 0;
+  background: var(--bg);
+  color: var(--fg);
+  border: 2px solid var(--fg);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 0.75rem;
+  padding: 4px 6px;
+  cursor: pointer;
+  box-shadow: inset 2px 2px 0 0 rgba(0, 0, 0, 0.1);
+}
+
+.mini-strudel-select:focus {
+  outline: none;
+  background: var(--fg);
+  color: var(--bg);
+}
+
+.mini-strudel-waveform {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 24px;
+  margin-top: 8px;
+}
+
+.mini-wave-bar {
+  width: 3px;
+  /* 繼承 .waveform-bar 的動畫，此處僅覆寫高度 */
+  height: 20px;
+}
+
+.mini-strudel-reopen {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 999;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--bg);
+  color: var(--fg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  cursor: pointer;
+  box-shadow: var(--shadow-hard);
+  user-select: none;
+  transition: transform 0.1s step-end, box-shadow 0.1s step-end;
+}
+
+.mini-strudel-reopen:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 0 var(--fg);
+  background: var(--fg);
+  color: var(--bg);
+}
+
+.mini-strudel-reopen:active {
+  transform: translate(0, 0);
+  box-shadow: 2px 2px 0 0 var(--fg);
+}
+
+/* 行動裝置：縮小尺寸並微調位置 */
+@media (max-width: 768px) {
+  .mini-strudel {
+    min-width: 160px;
+    max-width: 200px;
+    right: 12px;
+    bottom: 12px;
+  }
+
+  .mini-strudel-btn {
+    width: 28px;
+    height: 28px;
+    font-size: 0.75rem;
+  }
+
+  .mini-strudel-select {
+    font-size: 0.6875rem;
+  }
+
+  .mini-strudel-reopen {
+    right: 12px;
+    bottom: 12px;
+    width: 36px;
+    height: 36px;
+    font-size: 1rem;
+  }
+}
+
+/* 超小螢幕可考慮預設隱藏（取消註解即可） */
+/*
+@media (max-width: 480px) {
+  .mini-strudel {
+    display: none;
+  }
+  .mini-strudel-reopen {
+    display: none;
+  }
+}
+*/
+-->

@@ -1,53 +1,13 @@
-// Strudel 歌曲資料（讀取自 src/song/*.txt）
-
-export interface Song {
-  id: string;
-  title: string;
-  code: string;  // Strudel 程式碼
-}
-
-export const SONGS: Song[] = [
-  {
-    id: 'vibe',
-    title: 'Vibe',
-    code: `setcpm(38)
-let chords = chord("<Dm7 G7>/4").dict('ireal')
-
-stack(
-  // DRUMS
-  stack(
-  s("bd").struct("x*<1 2> ~ <[~@2 x] x> ~"),
-  s("~ [rim, sd:<2 3>]").room("<.1 .2>"),
-  n("[0 0] <0 3>*<2!3 4>").s("hh"), 
-  ).mask("<1 1 1 0>/4").gain(1),
-
-  stack(
-    s("rim:3").gain(.5).room(.6).sustain(.8),
-    s("~ ~ hh ~").gain(.3),
-  ).mask("<0 0 0 1>/4"),
-
-  chords.voicing().s("gm_epiano1:6")
-  .phaser("<2 3>")
-  .gain(".8")
-  .delay(.5)
-  .room(.5),
-
-  chords.offset(-2).voicing().s("gm_acoustic_bass:4")
-  .struct("<~ x> ~ x ~ ~ x ~ ~")
-  .gain(.4)
-  .room(.2)
-  .lpf("500 800"),
-)`,
-  },
-  {
-    id: '4bar_sax',
-    title: '4bar Sax',
-    code: `// City-Pop 完整版（100 BPM）
+// City-Pop 完整版（100 BPM）
 // 結構：前 2 小節完整 → 第 3 小節留白 → 第 4 小節全回來（4 小節循環）
+// 元素：鼓、Funk 貝斯、薩克斯風、尼龍吉他、合成器 Pad、Glockenspiel
+// 節奏：每個樂器以 1 小節為單位落拍，和弦用 < > 每小節輪換，mask 控制 4 小節留白
 setcpm(100/4);
 
+// 4 小節循環的和弦進行（每小節換一個）
 const cityChords = "< F^7 Em7 Dm7 C^7 >";
 
+// 1. 鼓：four-on-the-floor + 軍鼓 2/4 + 變化 hi-hat + open hat 過門（第 3 小節鼓留白）
 const drums = stack(
   s("bd*4").bank("RolandTR909").mask("<1 1 0 1>"),
   s("~ sd ~ sd").bank("RolandTR909").gain(0.9).mask("<1 1 0 1>"),
@@ -55,6 +15,7 @@ const drums = stack(
   s("~ [~ oh] ~ ~").bank("RolandTR909").gain(0.5).mask("<0 0 1 0>")
 );
 
+// 2. 貝斯：Funk 切分（16 分音符跳動低音線）
 const bass = chord(cityChords)
   .rootNotes(2)
   .struct("x [~ x] x [x ~]")
@@ -62,6 +23,7 @@ const bass = chord(cityChords)
   .lpf(800).lpenv(3).decay(0.18).sustain(0.1).gain(0.95)
   .mask("<1 1 0 1>");
 
+// 3. 薩克斯風：經典 riff（附點 + 切分 + 短長對比），legato 連音
 const sax = n("<0 [7 4] [9 [7 4]] [2 [4 2]]>")
   .scale("F:major")
   .struct("x [~ x] [x x ~ x] [x@1.5 ~ x@0.5]")
@@ -70,6 +32,7 @@ const sax = n("<0 [7 4] [9 [7 4]] [2 [4 2]]>")
   .room(0.3).delay(0.25).delaytime(0.28).gain(1.0)
   .mask("<1 1 0 1>");
 
+// 4. 尼龍弦吉他：分解和弦（第 4 小節加入層次）
 const guitar = chord(cityChords)
   .dict("ireal").anchor("C3").voicing()
   .struct("x [x x] x [x x]")
@@ -77,12 +40,14 @@ const guitar = chord(cityChords)
   .room(0.2).gain(0.45)
   .mask("<0 0 0 1>");
 
+// 5. 合成器 Pad：帶節奏的長音（前兩拍進、第三拍休止）
 const pad = chord(cityChords)
   .dict("ireal").anchor("C4").voicing()
   .struct("x ~ ~ x")
   .s("sawtooth").lpf(1200).release(1.5).gain(0.45)
   .mask("<1 1 0 1>");
 
+// 6. Glockenspiel 點綴（高八度加亮）
 const embellishment = n("7 9 11 12")
   .scale("F:major")
   .struct("~ ~ ~ [x*2]")
@@ -90,6 +55,4 @@ const embellishment = n("7 9 11 12")
   .off(1/8, x => x.add(note(12)).gain(0.4))
   .mask("<1 1 1 1>");
 
-stack(drums, bass, sax, guitar, pad, embellishment)`,
-  },
-];
+stack(drums, bass, sax, guitar, pad, embellishment)

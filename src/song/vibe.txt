@@ -1,0 +1,35 @@
+setcpm(38)
+let chords = chord("<Dm7 G7>/4").dict('ireal')
+
+stack(
+  // DRUMS
+  stack(
+  s("bd").struct("x*<1 2> ~ <[~@2 x] x> ~"),
+  s("~ [rim, sd:<2 3>]").room("<.1 .2>"),
+  n("[0 0] <0 3>*<2!3 4>").s("hh"), 
+  ).mask("<1 1 1 0>/4").gain(1),
+  
+
+  stack(
+    s("rim:3").gain(.5).room(.6).sustain(.8),         // ride cymbal 輕輕掃
+    s("~ ~ hh ~").gain(.3),            // 稀疏 hi-hat
+  ).mask("<0 0 0 1>/4"),
+
+  // Piano
+  chords.voicing().s("gm_epiano1:6")
+  .phaser("<2 3>")
+  .gain(".8")
+  .delay(.5)
+  .room(.5),
+  
+  // BASS
+  chords.offset(-2).voicing().s("gm_acoustic_bass:4")
+  .struct("<~ x> ~ x ~ ~ x ~ ~")
+  .gain(.4)
+  .room(.2)
+  .lpf("500 800"),
+  
+)
+ 
+
+

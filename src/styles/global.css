@@ -259,3 +259,612 @@ h6 {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ============================================
+   13. Mini Strudel Player（浮動迷你播放器）
+   ============================================ */
+.mini-strudel {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 1000;
+  min-width: 200px;
+  max-width: 260px;
+  user-select: none;
+}
+
+.mini-strudel.is-positioned {
+  right: auto;
+  bottom: auto;
+}
+
+#hero-section {
+  position: relative;
+}
+
+.mini-strudel-titlebar {
+  background: var(--fg);
+  color: var(--bg);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 0.875rem;
+  padding: 4px 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: move;
+  user-select: none;
+  letter-spacing: 0.05em;
+}
+
+.mini-strudel-close {
+  background: var(--fg);
+  color: var(--bg);
+  border: none;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 0.875rem;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+
+.mini-strudel-close:hover {
+  background: var(--bg);
+  color: var(--fg);
+}
+
+.mini-strudel-body {
+  padding: 12px;
+}
+
+.mini-strudel-song {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 1rem;
+  margin: 0 0 8px 0;
+}
+
+.mini-strudel-controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.mini-strudel-btn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  color: var(--fg);
+  border: 2px solid var(--fg);
+  box-shadow: 2px 2px 0 0 var(--fg);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 0.875rem;
+  cursor: pointer;
+  user-select: none;
+  transition: transform 0.1s step-end, box-shadow 0.1s step-end,
+    background-color 0.1s step-end, color 0.1s step-end;
+  flex-shrink: 0;
+}
+
+.mini-strudel-btn:hover {
+  background: var(--fg);
+  color: var(--bg);
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0 0 var(--fg);
+}
+
+.mini-strudel-btn:active {
+  transform: translate(0, 0);
+  box-shadow: 1px 1px 0 0 var(--fg);
+}
+
+.mini-strudel-select {
+  flex: 1;
+  min-width: 0;
+  background: var(--bg);
+  color: var(--fg);
+  border: 2px solid var(--fg);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 0.75rem;
+  padding: 4px 6px;
+  cursor: pointer;
+  box-shadow: inset 2px 2px 0 0 rgba(0, 0, 0, 0.1);
+}
+
+.mini-strudel-select:focus {
+  outline: none;
+  background: var(--fg);
+  color: var(--bg);
+}
+
+.mini-strudel-waveform {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 24px;
+  margin-top: 8px;
+}
+
+.mini-wave-bar {
+  width: 3px;
+  height: 20px;
+}
+
+.mini-strudel-reopen {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 999;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--bg);
+  color: var(--fg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  cursor: pointer;
+  box-shadow: var(--shadow-hard);
+  user-select: none;
+  transition: transform 0.1s step-end, box-shadow 0.1s step-end;
+}
+
+.mini-strudel-reopen:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 0 var(--fg);
+  background: var(--fg);
+  color: var(--bg);
+}
+
+.mini-strudel-reopen:active {
+  transform: translate(0, 0);
+  box-shadow: 2px 2px 0 0 var(--fg);
+}
+
+@media (max-width: 768px) {
+  .mini-strudel {
+    min-width: 160px;
+    max-width: 200px;
+    right: 12px;
+    bottom: 12px;
+  }
+  .mini-strudel-btn {
+    width: 28px;
+    height: 28px;
+    font-size: 0.75rem;
+  }
+  .mini-strudel-select {
+    font-size: 0.6875rem;
+  }
+  .mini-strudel-reopen {
+    right: 12px;
+    bottom: 12px;
+    width: 36px;
+    height: 36px;
+    font-size: 1rem;
+  }
+}
+
+/* ============================================
+   14. WormBakery TV Gallery（電視轉台）
+   ============================================ */
+.tv-section {
+  position: relative;
+}
+
+/* Sticky 視窗 */
+.tv-sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  z-index: 10;
+}
+
+/* 電視外框 */
+.tv-frame {
+  position: relative;
+  width: 100%;
+  max-width: 1100px;
+  height: min(90vh, 750px);
+  padding: 1.5rem;
+  display: grid;
+  grid-template-columns: 1fr 1.5fr 1fr;
+  grid-template-rows: auto 1fr auto;
+  gap: 1rem;
+}
+
+/* 左上：品牌 + 標題 + 曲目清單 */
+.tv-header {
+  grid-column: 1;
+  grid-row: 1 / 3;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.tv-brand {
+  letter-spacing: 0.1em;
+}
+
+.tv-heading {
+  margin: 0;
+  line-height: 1.1;
+}
+
+.tv-track-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  overflow-y: auto;
+  max-height: 300px;
+}
+
+.tv-track-item {
+  background: none;
+  border: none;
+  padding: 4px 8px;
+  text-align: left;
+  cursor: pointer;
+  color: var(--fg);
+  opacity: 0.7;
+  transition: opacity 0.1s step-end, background-color 0.1s step-end;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.tv-track-item:hover {
+  opacity: 1;
+  background: var(--fg);
+  color: var(--bg);
+}
+
+.tv-track-item.current {
+  opacity: 1;
+  font-weight: 700;
+}
+
+.tv-track-arrow {
+  display: inline-block;
+  margin-left: 4px;
+}
+
+.tv-track-item.current .tv-track-arrow {
+  display: inline-block;
+  color: var(--accent-pink);
+}
+
+/* 中央：電視螢幕 */
+.tv-screen-container {
+  grid-column: 2;
+  grid-row: 1 / 3;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.tv-screen {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  background: #0a0a0f;
+  overflow: hidden;
+  border-width: 4px;
+}
+
+.tv-cover {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tv-cover-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* CRT 色差效果 */
+  filter: contrast(1.1) saturate(1.2);
+}
+
+/* CRT 掃描線 */
+.tv-scanlines {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.15) 0px,
+    rgba(0, 0, 0, 0.15) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  z-index: 2;
+}
+
+/* 無訊號雜訊 */
+.tv-static {
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 100px 100px;
+  animation: static-flicker 0.15s steps(2) infinite;
+  z-index: 3;
+  opacity: 0.8;
+}
+
+@keyframes static-flicker {
+  0%, 100% { opacity: 0.8; }
+  50% { opacity: 0.6; }
+}
+
+/* 電源 LED */
+.tv-power-led {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent-lime, #39ff14);
+  box-shadow: 0 0 6px var(--accent-lime, #39ff14);
+  z-index: 4;
+}
+
+/* 電視狀態列 */
+.tv-status {
+  padding: 0.5rem 0;
+}
+
+.tv-status-line {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.tv-channel {
+  font-weight: 700;
+  color: var(--accent-cyan, #00ffff);
+}
+
+.tv-play-indicator {
+  color: var(--accent-red, #ff0000);
+}
+
+/* 進度條 */
+.tv-progress {
+  display: flex;
+  gap: 4px;
+  margin-top: 0.5rem;
+}
+
+.tv-progress-segment {
+  flex: 1;
+  height: 4px;
+  background: var(--border);
+  opacity: 0.3;
+  transition: opacity 0.1s step-end, background-color 0.1s step-end;
+}
+
+.tv-progress-segment.active {
+  background: var(--accent-pink, #ff007f);
+  opacity: 1;
+}
+
+/* 右下：Windows-form 風格 dialog */
+.tv-dialog {
+  grid-column: 3;
+  grid-row: 1 / 3;
+  max-width: 300px;
+  align-self: end;
+  justify-self: end;
+  display: flex;
+  flex-direction: column;
+  max-height: 100%;
+  overflow-y: auto;
+}
+
+.tv-dialog-titlebar {
+  background: var(--fg);
+  color: var(--bg);
+  font-family: var(--font-mono);
+  padding: 4px 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+}
+
+.tv-dialog-close {
+  background: var(--fg);
+  color: var(--bg);
+  border: none;
+  font-family: var(--font-mono);
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: not-allowed;
+  opacity: 0.5;
+  font-size: 0.75rem;
+  padding: 0;
+  line-height: 1;
+}
+
+.tv-dialog-body {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.tv-dialog-credits {
+  border-top: 2px solid var(--border);
+  padding-top: 0.5rem;
+}
+
+.tv-dialog-credits ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.tv-dialog-barcode {
+  letter-spacing: 0.2em;
+  user-select: none;
+}
+
+/* 手機版切換控制 */
+.tv-mobile-controls {
+  grid-column: 1 / 4;
+  grid-row: 3;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding-top: 0.5rem;
+}
+
+.tv-nav-btn {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  color: var(--fg);
+  border: 2px solid var(--fg);
+  box-shadow: 2px 2px 0 0 var(--fg);
+  font-family: var(--font-mono);
+  cursor: pointer;
+  user-select: none;
+  transition: transform 0.1s step-end, box-shadow 0.1s step-end;
+}
+
+.tv-nav-btn:hover {
+  background: var(--fg);
+  color: var(--bg);
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0 0 var(--fg);
+}
+
+.tv-nav-btn:active {
+  transform: translate(0, 0);
+  box-shadow: 1px 1px 0 0 var(--fg);
+}
+
+.tv-dots {
+  display: flex;
+  gap: 8px;
+}
+
+.tv-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--border);
+  border: none;
+  cursor: pointer;
+  opacity: 0.5;
+  transition: opacity 0.1s step-end, background-color 0.1s step-end, transform 0.1s step-end;
+  padding: 0;
+}
+
+.tv-dot.active {
+  background: var(--accent-pink, #ff007f);
+  opacity: 1;
+  transform: scale(1.2);
+}
+
+/* 滾動區域（桌面用，手機隱藏） */
+.tv-scroll-area {
+  display: block;
+}
+
+.tv-scroll-item {
+  height: 100vh;
+  /* 用於滾動偵測，不可見 */
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* 手機：取消 sticky，改用按鈕切換 */
+@media (max-width: 768px) {
+  .tv-sticky {
+    position: relative;
+    height: auto;
+    padding: 1rem;
+  }
+
+  .tv-frame {
+    height: auto;
+    min-height: 0;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto auto;
+    gap: 0.75rem;
+    padding: 1rem;
+  }
+
+  .tv-header {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .tv-screen-container {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .tv-dialog {
+    grid-column: 1;
+    grid-row: 3;
+    max-width: 100%;
+    align-self: stretch;
+    justify-self: stretch;
+  }
+
+  .tv-mobile-controls {
+    display: flex;
+    grid-column: 1;
+    grid-row: 4;
+  }
+
+  .tv-scroll-area {
+    display: none;
+  }
+
+  .tv-track-list {
+    max-height: 150px;
+  }
+}
+
+/* 桌面：手機控制隱藏 */
+@media (min-width: 769px) {
+  .tv-mobile-controls {
+    display: none !important;
+  }
+}

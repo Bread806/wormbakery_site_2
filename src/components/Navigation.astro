@@ -29,7 +29,6 @@
         <a href="/profile" class="nav-link font-mono font-bold hover:acid-chroma transition-all" data-page="profile">Profile</a>
         <a href="/works" class="nav-link font-mono font-bold hover:acid-chroma transition-all" data-page="works">Works</a>
         <a href="/sns" class="nav-link font-mono font-bold hover:acid-chroma transition-all" data-page="sns">Official SNS</a>
-        <a href="/wormbakery" class="nav-link font-mono font-bold text-accent-pink hover:acid-chroma transition-all" data-page="wormbakery">WormBakery</a>
         <button
           id="theme-toggle"
           class="p-2 border-2 border-[var(--fg)] hover:bg-[var(--fg)] hover:text-[var(--bg)] transition-colors"
@@ -61,7 +60,6 @@
       <a href="/profile" class="nav-link-mobile text-2xl font-mono font-bold py-3 border-b-2 border-[var(--border)]" data-page="profile">Profile</a>
       <a href="/works" class="nav-link-mobile text-2xl font-mono font-bold py-3 border-b-2 border-[var(--border)]" data-page="works">Works</a>
       <a href="/sns" class="nav-link-mobile text-2xl font-mono font-bold py-3 border-b-2 border-[var(--border)]" data-page="sns">Official SNS</a>
-      <a href="/wormbakery" class="nav-link-mobile text-2xl font-mono font-bold py-3 border-b-2 border-[var(--border)] text-accent-pink" data-page="wormbakery">WormBakery</a>
       <button
         id="theme-toggle-mobile"
         class="mt-4 px-4 py-3 border-3 border-[var(--fg)] font-mono font-bold hover:bg-[var(--fg)] hover:text-[var(--bg)]"
@@ -102,8 +100,6 @@
     '/works/': 'works',
     '/sns': 'sns',
     '/sns/': 'sns',
-    '/wormbakery': 'wormbakery',
-    '/wormbakery/': 'wormbakery',
   };
   const currentPage = pageMap[currentPath] || pageMap[currentPath.replace(/\/$/, '')];
   if (currentPage) {
