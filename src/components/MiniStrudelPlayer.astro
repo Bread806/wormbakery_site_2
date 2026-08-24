@@ -92,15 +92,14 @@ const { boundsId = 'hero-section' } = Astro.props;
   const currentTitle = document.getElementById('mini-current-title');
   const volumeInput = document.getElementById('mini-volume') as HTMLInputElement | null;
 
-  // 音量狀態：0~1，套用到 pattern 的 gain
+  // 音量狀態：0~1，串接在歌曲 code 尾端（.gain()），播放/調整皆透過 playSong 重新 evaluate
   let currentVolume = 1;
-  // 目前播放中的 pattern 引用（預留，音量調整實際是停止後重播）
-  let activePattern: any = null;
 
   // @ts-ignore — @strudel/web 的 module 型別未安裝，全部以 any 使用
   type StrudelMod = {
     initStrudel?: () => Promise<void>;
-    evaluate?: (code: string) => Promise<unknown>;
+    // 匯出的 evaluate(code, autoPlay=true) 不回傳 pattern（原始碼無 return）
+    evaluate?: (code: string, autoPlay?: boolean) => Promise<undefined>;
     hush?: () => void;
     getAudioContext?: () => AudioContext | null;
   };
@@ -204,26 +203,19 @@ const { boundsId = 'hero-section' } = Astro.props;
 
     try {
       const code = song.code;
-      // @ts-ignore — evaluate 為 @strudel/web 的 ESM 匯出，會 transpile DSL 並回傳 pattern
+      // @ts-ignore — evaluate 為 @strudel/web 的匯出；實際簽名是 evaluate(code, autoPlay=true)，
+      // 內部 transpile 後只在 autoPlay 為真時呼叫 .play()，且「沒有 return」——不回傳 pattern
       const evaluate = strudelMod?.evaluate;
       if (typeof evaluate !== 'function') {
         throw new Error('Strudel evaluate 不可用');
       }
-      // evaluate(code, false)：不 auto-play，先設 gain 再手動 play，避免音量閃跳
-      // @ts-ignore — evaluate 回傳 { pattern, mode, meta }
-      const res = await evaluate(code, false);
-      const pattern = res && res.pattern;
-      if (pattern && typeof pattern.play === 'function') {
-        // 保留引用（僅做狀態參考；實際音量變更是透過 playSong 重新 evaluate）
-        activePattern = pattern;
-        // 以當前音量播放（.gain() 是 pattern transformation，需在 play 前設定）
-        if (typeof pattern.gain === 'function') {
-          // @ts-ignore
-          pattern.gain(Math.max(0, Math.min(1, currentVolume)));
-        }
-        // @ts-ignore
-        pattern.play();
-      }
+      // 音量以「串接在 code 尾端」的方式套用：.gain() 是 transformation，必須在排程前掛上，
+      // 且 evaluate 拿不到 pattern 物件，無法播放後再調整。歌曲 code 皆以 stack(...) 運算式結尾，
+      // 跨行成員鏈（stack(...)\n.gain(v)）為合法語法，transpiler 會把最後一個運算式轉成 return。
+      // 這樣第一次發聲就帶正確音量，避免先大聲再被覆蓋的閃跳。
+      const gainValue = Math.max(0, Math.min(1, currentVolume));
+      // @ts-ignore — autoPlay=true：由 evaluate 內部對最終 pattern 呼叫 .play()
+      await evaluate(`${code}\n.gain(${gainValue})`, true);
     } catch (err) {
       console.error('播放失敗：', err);
       if (currentTitle) currentTitle.textContent = '播放失敗';

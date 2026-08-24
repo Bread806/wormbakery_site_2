@@ -1,12 +1,18 @@
 // Strudel 歌曲資料（讀取自 src/song/*.txt）
+//
+// ⚠️ 約定：每首歌的 code 必須以「單一運算式」結尾（如 stack(...)），
+// 因為 MiniStrudelPlayer 會在尾端串接 .gain(音量) 再 evaluate——
+// transpiler 只會對最後一個運算式敘述做 return，若以宣告或註解結尾會壞。
 
 export interface Song {
   id: string;
   title: string;
   code: string;  // Strudel 程式碼
+  disabled?: boolean;  // true = 不匯出至播放器（保留 code 以便日後修復）
 }
 
-export const SONGS: Song[] = [
+// 完整歌曲清單（含暫時停用的曲目）
+const ALL_SONGS: Song[] = [
   {
     id: 'vibe',
     title: 'Vibe',
@@ -40,8 +46,10 @@ stack(
 )`,
   },
   {
+    // 暫時停用：sax 音色待實聽確認後再開放（移除 disabled: true 即可恢復）
     id: '4bar_sax',
     title: '4bar Sax',
+    disabled: true,
     code: `// City-Pop 完整版（100 BPM）
 // 結構：前 2 小節完整 → 第 3 小節留白 → 第 4 小節全回來（4 小節循環）
 setcpm(100/4);
@@ -93,3 +101,6 @@ const embellishment = n("7 9 11 12")
 stack(drums, bass, sax, guitar, pad, embellishment)`,
   },
 ];
+
+// 匯出給播放器使用的曲目（過濾掉 disabled）
+export const SONGS: Song[] = ALL_SONGS.filter((s) => !s.disabled);
