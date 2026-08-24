@@ -6,7 +6,7 @@
  * SDK 的型別與 helper 對單一 query endpoint 是不必要的依賴重量。
  */
 
-export type MonthStatus = 'open' | 'inquire' | 'busy';
+export type MonthStatus = 'inquire' | 'busy';
 
 export interface MonthLight {
   /** 1–12 */
@@ -103,9 +103,8 @@ async function fetchMonthCounts(): Promise<Record<string, number>> {
 }
 
 /**
- * 由委託數推導燈號。刻意設計成純函式：
- * 日後若要加「手動把某月覆寫為 open」的機制，
- * 只需在呼叫端先查覆寫表、查不到再 fallback 到這裡，不必改動其他邏輯。
+ * 由委託數推導燈號（兩態：inquire / busy）。刻意設計成純函式，
+ * 日後若要加第三態或手動覆寫，只需在呼叫端先查覆寫表再 fallback 到這裡。
  */
 function deriveStatus(count: number): MonthStatus {
   return count >= BUSY_THRESHOLD ? 'busy' : 'inquire';

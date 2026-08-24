@@ -15,13 +15,12 @@ const SKILLS = [
 const lights = await getYearLights();
 const today = getTaipeiToday();
 
-const STATUS_META: Record<MonthStatus, { label: string; zh: string }> = {
-  open: { label: 'OPEN', zh: '特殊開放' },
-  inquire: { label: 'INQUIRE', zh: '可洽詢' },
-  busy: { label: 'BUSY', zh: '滿檔' },
+// 兩態燈號：各對應一卷卡帶（public/pic/），圖例則用小燈表示
+const STATUS_META: Record<MonthStatus, { label: string; zh: string; img: string; light: string }> = {
+  inquire: { label: 'INQUIRE', zh: '可洽詢', img: '/pic/g_cassettetape_1.png', light: 'var(--accent-lime)' },
+  busy: { label: 'BUSY', zh: '滿檔', img: '/pic/p_cassettetape_1.png', light: 'var(--accent-red)' },
 };
-// 圖例順序：預設值優先顯示，open 最後（目前尚無手動覆寫機制）
-const LEGEND_ORDER: MonthStatus[] = ['inquire', 'busy', 'open'];
+const LEGEND_ORDER: MonthStatus[] = ['inquire', 'busy'];
 
 const pad = (n: number): string => String(n).padStart(2, '0');
 ---
@@ -29,8 +28,11 @@ const pad = (n: number): string => String(n).padStart(2, '0');
 <BaseLayout title="承接委託 | 卡蚯蚓的個人網站" description="卡蚯蚓的承接委託事項，以及依工作紀錄自動更新的年度接單狀態燈號表。">
   <Navigation />
 
-  <main class="pt-20 pb-16">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+  <main class="pt-20 pb-16 relative overflow-hidden">
+    <!-- 委託區背景紋理：Diagrams029 線稿，低透明度 + 依主題混合模式，純裝飾 -->
+    <div class="diagram-bg" aria-hidden="true"></div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
       <!-- 頁首 -->
       <section class="mb-20">
         <h1 class="text-5xl font-black mb-3 acid-chroma">COMMISSION</h1>
@@ -57,40 +59,57 @@ const pad = (n: number): string => String(n).padStart(2, '0');
         </div>
       </section>
 
-      <!-- 區塊二：年度接單狀態燈號表 -->
+      <!-- 區塊二：年度接單狀態（卡帶燈號牆） -->
       <section class="mb-20">
         <h2 class="text-4xl font-mono font-bold mb-8 acid-chroma">年度接單狀態 {lights.year}</h2>
 
-        <!-- 圖例 -->
-        <div class="flex flex-wrap gap-x-8 gap-y-3 mb-8 font-mono text-sm font-bold">
+        <!-- 圖例：小燈號（綠 = 可洽詢、紅 = 滿檔） -->
+        <div class="flex flex-wrap gap-x-8 gap-y-3 mb-10 font-mono text-sm font-bold">
           {LEGEND_ORDER.map((s) => (
             <span class="flex items-center gap-2">
-              <span class={`inline-block w-5 h-5 border-2 border-[var(--fg)] status-block status-${s}`} aria-hidden="true"></span>
+              <span
+                class="inline-block w-3.5 h-3.5 border-2 border-[var(--fg)]"
+                style={`background-color: ${STATUS_META[s].light}; box-shadow: 0 0 8px 1px ${STATUS_META[s].light};`}
+                aria-hidden="true"
+              ></span>
               {STATUS_META[s].label}（{STATUS_META[s].zh}）
             </span>
           ))}
         </div>
 
-        <!-- 一年 12 格：手機 2 欄、平板 3 欄、桌機 4 欄 -->
-        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
+        <!-- 一年 12 卷卡帶：手機 3 欄、平板 4 欄、桌機 6 欄 -->
+        <div class="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-x-4 gap-y-10">
           {lights.months.map((m) => {
             const isNow = m.month === today.month;
+            const meta = STATUS_META[m.status];
             return (
-              <div class={`card-retro p-5 flex flex-col gap-4 ${isNow ? 'status-now' : ''}`}>
-                <div class="flex items-center justify-between gap-2">
-                  <span class="font-mono font-black text-2xl tracking-tight">{pad(m.month)}</span>
-                  <span class="font-mono text-[10px] font-bold border-2 border-[var(--fg)] px-1.5 py-0.5">
-                    {STATUS_META[m.status].label}
+              <div
+                class={`relative retro-hover ${isNow ? 'status-now' : ''}`}
+                role="img"
+                aria-label={`${lights.year} 年 ${m.month} 月：${meta.label}（${meta.zh}），委託 ${m.count} 件`}
+              >
+                <img
+                  src={meta.img}
+                  alt=""
+                  class="w-full h-auto"
+                  width="750"
+                  height="476"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <!-- 月份壓在卡帶頂部的橫線標籤區（寫在標籤上的概念）。
+                     色片用固定黑底白字：卡帶圖本身是固定配色（白底不透明），
+                     不跟主題變色才能保證兩種色帶、兩種主題下都可讀 -->
+                <span class="absolute top-[22%] left-1/2 -translate-x-1/2 -translate-y-1/2 bg-black text-white font-mono font-black text-xl leading-none px-2 py-1 pointer-events-none select-none">
+                  {pad(m.month)}
+                </span>
+                {isNow && (
+                  <span class="absolute -top-2 -right-2 animate-blink bg-[var(--accent-lime)] text-[var(--fg)] font-mono font-black text-[10px] leading-none px-1.5 py-1">
+                    NOW
                   </span>
-                </div>
-                <div
-                  class={`retro-border h-14 status-block status-${m.status}`}
-                  role="img"
-                  aria-label={`${lights.year} 年 ${m.month} 月：${STATUS_META[m.status].label}（${STATUS_META[m.status].zh}），委託 ${m.count} 件`}
-                >
-                </div>
-                <div class="flex items-center justify-between font-mono text-xs opacity-70 min-h-4">
-                  <span>COUNT: {m.count}</span>
+                )}
+                <div class="mt-2 flex items-center justify-between font-mono text-xs">
+                  <span class="font-bold">{meta.label}</span>
                   {isNow && (
                     <span class="animate-blink font-bold" style={`color: var(--accent-lime)`}>◀ NOW</span>
                   )}
@@ -100,7 +119,7 @@ const pad = (n: number): string => String(n).padStart(2, '0');
           })}
         </div>
 
-        <p class="font-mono text-xs opacity-60 mt-10 leading-relaxed">
+        <p class="font-mono text-xs opacity-60 mt-12 leading-relaxed">
           LAST SYNC: {lights.syncedAt.slice(0, 10)} UTC · SOURCE: NOTION WORKLOG<br />
           燈號依 Notion 工作紀錄於網站建置時自動更新；當月委託 ≥ 2 件即為滿檔。
         </p>

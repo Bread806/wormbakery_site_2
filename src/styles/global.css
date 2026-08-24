@@ -987,28 +987,32 @@ html[data-theme='light'] .tv-track-item {
 }
 
 /* ============================================
-   14. Commission 燈號表（年度接單狀態）
+   14. Commission 燈號牆（年度接單狀態）
    ============================================ */
 
-/* 燈號三色：open 淺藍僅供未來手動覆寫機制使用，
-   inquire 黃是預設值、busy 紅沿用酸性紅以維持全站色彩一致性 */
-.status-open {
-  --status: #7dd3fc;
-}
-.status-inquire {
-  --status: #ffd60a;
-}
-.status-busy {
-  --status: var(--accent-red);
-}
-
-/* 燈號色塊：顏色一律由 .status-* 提供，元件端只負責尺寸與框線 */
-.status-block {
-  background-color: var(--status);
-}
-
-/* 當前月份強調：outline 不佔版位，硬邊螢光綠延續酸性語彙 */
+/* 兩態燈號由卡帶圖片承載（g_cassettetape_1 = inquire、p_cassettetape_1 = busy），
+   圖例用小燈；CSS 只負責「當前月份」的強調：
+   outline 不佔版位，硬邊螢光綠延續酸性語彙 */
 .status-now {
   outline: 3px solid var(--accent-lime);
   outline-offset: 3px;
+}
+
+/* 委託區背景紋理：Diagrams029 是黑底白線稿。
+   亮主題用 multiply——白底乘任何色＝消失，只留深色線條；
+   暗主題用 screen——黑底疊任何色＝消失，只留亮色線條。
+   低透明度讓它只是「不太明顯」的質感，不搶內容 */
+.diagram-bg {
+  position: absolute;
+  inset: 0;
+  background-image: url('/pic/Diagrams029.png');
+  background-repeat: repeat;
+  background-size: 900px auto;
+  opacity: 0.07;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+}
+
+html[data-theme='dark'] .diagram-bg {
+  mix-blend-mode: screen;
 }
