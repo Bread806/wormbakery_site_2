@@ -28,11 +28,8 @@ const pad = (n: number): string => String(n).padStart(2, '0');
 <BaseLayout title="承接委託 | 卡蚯蚓的個人網站" description="卡蚯蚓的承接委託事項，以及依工作紀錄自動更新的年度接單狀態燈號表。">
   <Navigation />
 
-  <main class="pt-20 pb-16 relative overflow-hidden">
-    <!-- 委託區背景紋理：Diagrams029 線稿，低透明度 + 依主題混合模式，純裝飾 -->
-    <div class="diagram-bg" aria-hidden="true"></div>
-
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+  <main class="pt-20 pb-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <!-- 頁首 -->
       <section class="mb-20">
         <h1 class="text-5xl font-black mb-3 acid-chroma">COMMISSION</h1>
@@ -81,17 +78,19 @@ const pad = (n: number): string => String(n).padStart(2, '0');
         <div class="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-x-4 gap-y-10">
           {lights.months.map((m) => {
             const isNow = m.month === today.month;
+            // 已過的月份整格淡化到 10%，視覺上退到背景
+            const isPast = m.month < today.month;
             const meta = STATUS_META[m.status];
             return (
               <div
-                class={`relative retro-hover ${isNow ? 'status-now' : ''}`}
+                class={`relative retro-hover ${isPast ? 'opacity-10' : ''}`}
                 role="img"
                 aria-label={`${lights.year} 年 ${m.month} 月：${meta.label}（${meta.zh}），委託 ${m.count} 件`}
               >
                 <img
                   src={meta.img}
                   alt=""
-                  class="w-full h-auto"
+                  class="w-full h-auto opacity-90 saturate-[.7]"
                   width="750"
                   height="476"
                   loading="lazy"
@@ -120,8 +119,7 @@ const pad = (n: number): string => String(n).padStart(2, '0');
         </div>
 
         <p class="font-mono text-xs opacity-60 mt-12 leading-relaxed">
-          LAST SYNC: {lights.syncedAt.slice(0, 10)} UTC · SOURCE: NOTION WORKLOG<br />
-          燈號依 Notion 工作紀錄於網站建置時自動更新；當月委託 ≥ 2 件即為滿檔。
+          LAST SYNC: {lights.syncedAt.slice(0, 10)} UTC · SOURCE: NOTION WORKLOG
         </p>
       </section>
     </div>

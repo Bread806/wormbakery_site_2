@@ -1,6 +1,6 @@
 ---
 // Footer：Powered by Breadcrumb 風格，保留原意
-import { SNS_LINKS, FOOTER_CREDIT, GITHUB_REPO_URL } from '../data/sns';
+import { FOOTER_CREDIT } from '../data/sns';
 ---
 
 <footer class="border-t-3 border-[var(--fg)] py-12 mt-20 bg-[var(--bg)]">
@@ -17,32 +17,9 @@ import { SNS_LINKS, FOOTER_CREDIT, GITHUB_REPO_URL } from '../data/sns';
         </svg>
       </button>
 
-      <!-- 社群文字連結 -->
-      <div class="flex flex-wrap justify-center gap-4 text-sm font-mono">
-        {SNS_LINKS.filter((s) => s.url).map((sns) => (
-          <a
-            href={sns.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="hover:acid-chroma transition-all underline underline-offset-4"
-          >
-            {sns.name}
-          </a>
-        ))}
-      </div>
-
       <!-- Powered by -->
       <p class="text-sm font-mono text-center">
         {FOOTER_CREDIT}
-        <br />
-        <a
-          href={GITHUB_REPO_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          class="text-xs opacity-70 hover:opacity-100 underline"
-        >
-          Source Code (AGPL-3.0)
-        </a>
       </p>
     </div>
   </div>

@@ -22,15 +22,23 @@ import { SNS_LINKS, SNS_INTRO, SNS_FOOTER } from '../data/sns';
               <p class="text-sm font-mono opacity-70 mb-2">{sns.name}</p>
               <p class="font-mono font-bold text-xl">{sns.handle}</p>
             </div>
-            <p class="text-sm opacity-80 mb-6 min-h-[3rem]">{sns.description}</p>
-            {sns.url ? (
+            {sns.description && (
+              <p class="text-sm opacity-80 mb-6 min-h-[3rem]">{sns.description}</p>
+            )}
+            {sns.url && (
               <a href={sns.url} target="_blank" rel="noopener noreferrer" class="btn-retro w-full">
-                前往 →
+                {sns.handle} →
               </a>
-            ) : (
-              <button class="btn-retro w-full opacity-50 cursor-not-allowed" disabled>
-                無連結
-              </button>
+            )}
+            {sns.extra && (
+              <a
+                href={sns.extra.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                class={`btn-retro w-full ${sns.url ? 'mt-3' : ''}`}
+              >
+                {sns.extra.handle} →
+              </a>
             )}
           </div>
         ))}

@@ -3,9 +3,14 @@
 export interface SnsLink {
   id: string;
   name: string;
+  /** 顯示用的帳號文字（無連結的卡片也會顯示） */
   handle: string;
+  /** 顯示用說明；空字串 = 不顯示 */
   description: string;
-  url: string;         // 空字串表示不可點
+  /** 主要連結；空字串 = 不顯示按鈕 */
+  url: string;
+  /** 同一張卡內的次要連結（例如同一人的另一個帳號） */
+  extra?: { handle: string; url: string };
   color: 'cyan' | 'pink' | 'lime';
 }
 
@@ -14,8 +19,9 @@ export const SNS_LINKS: SnsLink[] = [
     id: 'twitter',
     name: 'Twitter(X)',
     handle: '@bread_sk8',
-    description: '關於我ㄉ雜七雜八',
+    description: '',
     url: 'https://x.com/bread_sk8',
+    extra: { handle: '@wormbakery', url: 'https://x.com/wormbakery' },
     color: 'cyan',
   },
   {

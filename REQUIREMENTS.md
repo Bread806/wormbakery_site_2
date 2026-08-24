@@ -356,9 +356,12 @@ export const BRANDS = {
   色片固定配色、不跟主題變色，保證可讀。
 - 格線：手機 3 欄／平板 4 欄／桌機 6 欄；卡帶下方標 `INQUIRE/BUSY`，不顯示件數。
 - 當前月份格以螢光綠 outline 強調，右上角貼 `animate-blink` 的 NOW 貼紙。
+- 卡帶圖整體輕微淡化（`opacity-90 saturate-[.7]`）降低突兀感；
+  **已過的月份**（當月之前）整格透明度降到 10% 退至視覺背景。
 - 圖例列於表格上方：小綠燈／小紅燈（方型 LED + 同色光暈），不直接拿卡帶圖當圖例。
-- 區塊背景鋪 `Diagrams029.png` 線稿紋理：低透明度（0.07），
-  亮主題 `mix-blend-mode: multiply`、暗主題 `screen`，讓黑底白線稿在兩種主題下都低調。
+- 區塊背景鋪 `Diagrams07.png` 線稿紋理：整區只出現一次（no-repeat + cover 置中），
+  低透明度（0.07），亮主題 `mix-blend-mode: multiply`、暗主題 `screen`，
+  讓黑底白線稿在兩種主題下都低調。
 - 頁尾標注 `LAST SYNC` 日期（build 時間）提醒資料新舊。
 
 ### 14.3 資料來源（Notion）
