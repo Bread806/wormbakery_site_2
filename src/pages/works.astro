@@ -2,10 +2,11 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Navigation from '../components/Navigation.astro';
 import Footer from '../components/Footer.astro';
-import { getWorksByCategory, getCategoryLabel, USAGE_RULES_URL } from '../data/works';
+import { WORKS, getCategoryLabel } from '../data/works';
 
-// 只顯示委託作品（依使用者要求：works 只留委託）
-const commissionWorks = getWorksByCategory('kacha', 'commission');
+// 只顯示指定的 6 部作品
+const DISPLAY_IDS = [19, 10, 21, 22, 25, 26];
+const displayWorks = WORKS.filter((w) => DISPLAY_IDS.includes(w.id));
 ---
 
 <BaseLayout title="各式作品" description="卡蚯蚓的委託作品集。">
@@ -14,19 +15,11 @@ const commissionWorks = getWorksByCategory('kacha', 'commission');
   <main class="pt-20 pb-16">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <!-- 頁面標題 -->
-      <h1 class="text-5xl font-mono font-black text-center mb-4 acid-chroma">各式作品</h1>
-      <p class="text-center text-lg mb-12">
-        本頁面僅收錄委託作品。公開台本與創作練習請參考蚯蚓麵包屋。
-      </p>
-
-      <!-- 品牌歸屬提示 -->
-      <div class="card-retro p-4 mb-8 text-center font-mono">
-        所有作品皆屬於卡蚯蚓。蚯蚓麵包屋為實驗台本計畫。
-      </div>
+      <h1 class="text-5xl font-mono font-black text-center mb-12 acid-chroma">各式作品</h1>
 
       <!-- 作品清單 -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {commissionWorks.map((work) => (
+        {displayWorks.map((work) => (
           <article
             class="work-card card-retro overflow-hidden cursor-pointer"
             data-work-id={work.id}
@@ -62,20 +55,6 @@ const commissionWorks = getWorksByCategory('kacha', 'commission');
           </article>
         ))}
       </div>
-
-      <!-- 使用規範 -->
-      <div class="max-w-3xl mx-auto mt-12 pt-8 border-t-3 border-[var(--fg)]">
-        <h2 class="text-2xl font-mono font-bold mb-3">使用規範</h2>
-        <p class="text-sm opacity-80 mb-2">1. 歡迎使用公開台本進行練習。</p>
-        <p class="text-sm opacity-80 mb-2">2. 公開發表請取得卡蚯蚓同意。</p>
-        <p class="text-sm opacity-80">
-          3. 詳細說明請見「
-          <a href={USAGE_RULES_URL} target="_blank" rel="noopener noreferrer" class="underline underline-offset-4 font-bold hover:acid-chroma">
-            使用規範文件
-          </a>
-          」
-        </p>
-      </div>
     </div>
   </main>
 
@@ -101,9 +80,10 @@ const commissionWorks = getWorksByCategory('kacha', 'commission');
   <Footer />
 
   <script>
-    import { getWorksByCategory, getCategoryLabel } from '../data/works';
+    import { WORKS, getCategoryLabel } from '../data/works';
 
-    const works = getWorksByCategory('kacha', 'commission');
+    const DISPLAY_IDS = [19, 10, 21, 22, 25, 26];
+    const works = WORKS.filter((w) => DISPLAY_IDS.includes(w.id));
     const modal = document.getElementById('work-modal');
     const modalClose = document.getElementById('modal-close');
     const modalTitle = document.getElementById('modal-title');

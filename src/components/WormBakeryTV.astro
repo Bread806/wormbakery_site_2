@@ -4,9 +4,6 @@
 // - 下方電視機：滾輪 / 按鈕切換合輯
 // - 圖片撐滿 + 左上曲目清單 + 右下 windows-form 簡介
 import { ALBUMS } from '../data/albums';
-import { BRANDS } from '../data/brand';
-
-const worm = BRANDS.worm;
 ---
 
 <!-- 品牌區：獨立 section，大大的 logo + 簡介 -->
@@ -19,12 +16,8 @@ const worm = BRANDS.worm;
         class="bakery-logo-img acid-chroma-strong"
       />
     </div>
-    <div class="bakery-brand-taglines font-mono text-lg md:text-2xl">
-      <p>{worm.tagline1}</p>
-      <p>{worm.tagline2}</p>
-    </div>
     <p class="bakery-brand-intro text-sm md:text-base leading-relaxed opacity-80 mt-4 max-w-2xl mx-auto">
-      {worm.profileIntro[0]}
+      蚯蚓麵包屋是用來記錄愛與成長的地方，希望你喜歡。
     </p>
   </div>
 </section>
@@ -38,9 +31,8 @@ const worm = BRANDS.worm;
       <!-- 上方文字標題（無圖片 logo） -->
       <div class="tv-top-bar">
         <p class="tv-wordmark font-mono font-bold text-2xl md:text-3xl tracking-tight acid-chroma">
-          wormbakery
+          released
         </p>
-        <p class="tv-sub font-barcode text-base opacity-70">WORKS CATEGORY</p>
       </div>
 
       <!-- 中央：電視螢幕（圖片撐滿 + overlay） -->
@@ -81,7 +73,6 @@ const worm = BRANDS.worm;
                 <ul id="tv-dialog-credits-list" class="text-xs font-mono space-y-0.5"></ul>
               </div>
               <div class="flex flex-wrap gap-1">
-                <a id="tv-dialog-link" href="#" target="_blank" rel="noopener noreferrer" class="btn-retro text-xs px-2 py-1 hidden">文本 →</a>
                 <a id="tv-dialog-release" href="#" target="_blank" rel="noopener noreferrer" class="btn-retro text-xs px-2 py-1 hidden">聆聽 →</a>
               </div>
               <div class="tv-dialog-barcode font-barcode text-sm opacity-50 mt-2">
@@ -159,7 +150,6 @@ const worm = BRANDS.worm;
   const dialogDesc = document.getElementById('tv-dialog-desc');
   const dialogCredits = document.getElementById('tv-dialog-credits');
   const dialogCreditsList = document.getElementById('tv-dialog-credits-list');
-  const dialogLink = document.getElementById('tv-dialog-link') as HTMLAnchorElement;
   const dialogRelease = document.getElementById('tv-dialog-release') as HTMLAnchorElement;
   const dialogBarcode = document.getElementById('tv-dialog-barcode-text');
   const progressSegments = document.querySelectorAll('.tv-progress-segment');
@@ -254,12 +244,6 @@ const worm = BRANDS.worm;
     if (dialogDesc) dialogDesc.textContent = track.description;
     if (dialogBarcode) dialogBarcode.textContent = `TV.${String(ALBUMS.indexOf(album) + 1).padStart(2, '0')}.${track.id.toUpperCase()}`;
 
-    if (track.link) {
-      dialogLink?.classList.remove('hidden');
-      dialogLink.href = track.link;
-    } else {
-      dialogLink?.classList.add('hidden');
-    }
     if (track.release) {
       dialogRelease?.classList.remove('hidden');
       dialogRelease.href = track.release;

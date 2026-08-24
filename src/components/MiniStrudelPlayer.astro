@@ -48,6 +48,11 @@ const { boundsId = 'hero-section' } = Astro.props;
         />
       ))}
     </div>
+    <!-- Volume 拉桿 -->
+    <div class="mini-strudel-volume">
+      <span class="mini-volume-icon">🔉</span>
+      <input id="mini-volume" class="mini-volume-range" type="range" min="0" max="1" step="0.01" value="1" aria-label="音量" />
+    </div>
   </div>
 </div>
 
@@ -60,7 +65,7 @@ const { boundsId = 'hero-section' } = Astro.props;
   import { SONGS } from '../data/songs';
 
   // ---------------------------------------------------------------------------
-  // 播放邏輯（移植自 StrudelPlayer.astro）
+  // 播放邏輯（移植自 StrudelPlayer.astro，修正執行方式）
   // ---------------------------------------------------------------------------
   let strudelReady = false;
   let currentSongId: string | null = null;
@@ -72,15 +77,28 @@ const { boundsId = 'hero-section' } = Astro.props;
   const songSelect = document.getElementById('mini-song-select') as HTMLSelectElement | null;
   const waveform = document.getElementById('mini-play-waveform');
   const currentTitle = document.getElementById('mini-current-title');
+  const volumeInput = document.getElementById('mini-volume') as HTMLInputElement | null;
+
+  // 音量狀態：0~1，套用到 pattern 的 gain
+  let currentVolume = 1;
+
+  // @ts-ignore — @strudel/web 的 module 型別未安裝，全部以 any 使用
+  type StrudelMod = {
+    initStrudel?: () => Promise<void>;
+    evaluate?: (code: string) => Promise<unknown>;
+    hush?: () => void;
+    getAudioContext?: () => AudioContext | null;
+  };
+  let strudelMod: StrudelMod | null = null;
 
   // 動態載入 Strudel
   async function initStrudel() {
     if (strudelReady) return;
     try {
       // @ts-ignore
-      await import('https://unpkg.com/@strudel/web@1.0.3');
+      strudelMod = (await import('https://unpkg.com/@strudel/web@1.0.3')) as StrudelMod;
       // @ts-ignore
-      await window.initStrudel();
+      await strudelMod?.initStrudel?.();
       strudelReady = true;
     } catch (err) {
       console.error('Strudel 載入失敗：', err);
@@ -109,8 +127,7 @@ const { boundsId = 'hero-section' } = Astro.props;
     if (!song) return;
 
     if (isPlaying) {
-      // @ts-ignore
-      window.hush();
+      strudelMod?.hush?.();
       isPlaying = false;
     }
 
@@ -119,18 +136,16 @@ const { boundsId = 'hero-section' } = Astro.props;
     updateUI(songId, true);
 
     try {
-      // @ts-ignore
       const code = song.code;
-      // @ts-ignore
-      if (typeof window.evaluate === 'function') {
-        // @ts-ignore
-        await window.evaluate(code);
-      } else {
-        // @ts-ignore
-        const pattern = new Function(`return (${code})`)();
-        // @ts-ignore
-        pattern.play();
+      // @ts-ignore — evaluate 為 @strudel/web 的 ESM 匯出，會解析 DSL 並自動播放
+      const evaluate = strudelMod?.evaluate;
+      if (typeof evaluate !== 'function') {
+        throw new Error('Strudel evaluate 不可用');
       }
+      // 套用音量：將 code 尾端接上 .gain(音量)，再執行播放
+      // （若 code 以純 pattern 表達式結尾，.gain() 可直接串接）
+      const gainValue = Math.max(0, Math.min(1, currentVolume));
+      await evaluate(`${code}\n.gain(${gainValue}).play()`);
     } catch (err) {
       console.error('播放失敗：', err);
       if (currentTitle) currentTitle.textContent = '播放失敗';
@@ -141,8 +156,7 @@ const { boundsId = 'hero-section' } = Astro.props;
 
   function stopPlayback() {
     if (!strudelReady) return;
-    // @ts-ignore
-    window.hush();
+    strudelMod?.hush?.();
     isPlaying = false;
     updateUI(currentSongId, false);
   }
@@ -162,6 +176,16 @@ const { boundsId = 'hero-section' } = Astro.props;
   songSelect?.addEventListener('change', () => {
     const songId = songSelect.value;
     if (songId) playSong(songId);
+  });
+
+  // 音量拉桿：更新目標音量，拖曳結束（change）時才重新套用避免卡頓
+  volumeInput?.addEventListener('input', () => {
+    currentVolume = Number(volumeInput.value);
+  });
+  volumeInput?.addEventListener('change', () => {
+    if (isPlaying && currentSongId) {
+      playSong(currentSongId);
+    }
   });
 
   if (SONGS.length > 0) {

@@ -234,6 +234,15 @@ export const WORKS: Work[] = [
     image: '/work_pic/work_want.jpg',
     brandId: 'kacha',
   },
+  {
+    id: 26,
+    title: '羞澀的新婚之夜～小雪在你懷中低聲呢喃的愛',
+    category: 'commission',
+    description: 'Project:雪白薄紗｜Voice:小雪Yukichan｜Script:卡蚯蚓',
+    release: 'https://www.dlsite.com/maniax/work/=/product_id/RJ01592874.html',
+    image: '/work_pic/work_yukichan.png',
+    brandId: 'kacha',
+  },
 ];
 
 export const CATEGORIES = [

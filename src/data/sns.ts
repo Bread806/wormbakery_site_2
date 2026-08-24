@@ -36,8 +36,8 @@ export const SNS_LINKS: SnsLink[] = [
   },
 ];
 
-export const SNS_INTRO = '合作、委託，或是台本使用相關授權相關事宜，歡迎使用以下社群連結與我聯絡🥳。';
-export const SNS_FOOTER = '期待收到您的聯繫🙏🏻';
+export const SNS_INTRO = '合作、委託，或是台本使用相關授權相關事宜，歡迎使用以下社群連結與我聯絡。';
+export const SNS_FOOTER = '期待收到您的聯繫';
 export const FOOTER_CREDIT = 'Powered by Bread_sk8';
 
 export const GITHUB_REPO_URL = 'https://github.com/Bread-ou/wormbakery_site_2';
