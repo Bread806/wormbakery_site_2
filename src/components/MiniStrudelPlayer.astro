@@ -95,8 +95,9 @@ const { boundsId = 'hero-section' } = Astro.props;
   async function initStrudel() {
     if (strudelReady) return;
     try {
+      // 必須指向 /dist/index.mjs（ESM）——裸 URL 會解析到 UMD，導致無 named exports
       // @ts-ignore
-      strudelMod = (await import('https://unpkg.com/@strudel/web@1.0.3')) as StrudelMod;
+      strudelMod = (await import('https://unpkg.com/@strudel/web@1.0.3/dist/index.mjs')) as StrudelMod;
       // @ts-ignore
       await strudelMod?.initStrudel?.();
       strudelReady = true;
@@ -137,15 +138,20 @@ const { boundsId = 'hero-section' } = Astro.props;
 
     try {
       const code = song.code;
-      // @ts-ignore — evaluate 為 @strudel/web 的 ESM 匯出，會解析 DSL 並自動播放
+      // @ts-ignore — evaluate 為 @strudel/web 的 ESM 匯出，會 transpile DSL 並回傳 pattern
       const evaluate = strudelMod?.evaluate;
       if (typeof evaluate !== 'function') {
         throw new Error('Strudel evaluate 不可用');
       }
-      // 套用音量：將 code 尾端接上 .gain(音量)，再執行播放
-      // （若 code 以純 pattern 表達式結尾，.gain() 可直接串接）
-      const gainValue = Math.max(0, Math.min(1, currentVolume));
-      await evaluate(`${code}\n.gain(${gainValue}).play()`);
+      // evaluate 會執行 code（並自動 .play()），回傳 { pattern, ... }
+      // @ts-ignore
+      const res = await evaluate(code);
+      // @ts-ignore — 以指定音量重新排程（evaluate 自動 play 的結果會被覆蓋）
+      const pattern = res && res.pattern;
+      if (pattern && typeof pattern.gain === 'function' && typeof pattern.play === 'function') {
+        // @ts-ignore
+        pattern.gain(Math.max(0, Math.min(1, currentVolume))).play();
+      }
     } catch (err) {
       console.error('播放失敗：', err);
       if (currentTitle) currentTitle.textContent = '播放失敗';
