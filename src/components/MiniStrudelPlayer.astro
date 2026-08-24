@@ -15,7 +15,7 @@ interface Props {
 const { boundsId = 'hero-section' } = Astro.props;
 ---
 
-<!-- Mini Strudel Player (floating window) -->
+<!-- Mini Strudel Player (floating window, absolutely positioned inside Hero) -->
 <div
   id="mini-strudel"
   class="mini-strudel retro-border retro-shadow bg-[var(--bg)]"
@@ -51,7 +51,7 @@ const { boundsId = 'hero-section' } = Astro.props;
   </div>
 </div>
 
-<!-- Reopen button (in hero, hidden by default) -->
+<!-- Reopen button (absolute inside hero, hidden by default) -->
 <button id="mini-strudel-reopen" class="mini-strudel-reopen retro-border hidden" aria-label="開啟音樂播放器">
   🎵
 </button>
@@ -108,7 +108,6 @@ const { boundsId = 'hero-section' } = Astro.props;
     const song = SONGS.find((s) => s.id === songId);
     if (!song) return;
 
-    // 停止前一首
     if (isPlaying) {
       // @ts-ignore
       window.hush();
@@ -127,7 +126,6 @@ const { boundsId = 'hero-section' } = Astro.props;
         // @ts-ignore
         await window.evaluate(code);
       } else {
-        // fallback：避免直接 eval
         // @ts-ignore
         const pattern = new Function(`return (${code})`)();
         // @ts-ignore
@@ -166,65 +164,64 @@ const { boundsId = 'hero-section' } = Astro.props;
     if (songId) playSong(songId);
   });
 
-  // 初始化第一首
   if (SONGS.length > 0) {
     currentSongId = SONGS[0].id;
     updateUI(SONGS[0].id, false);
   }
 
   // ---------------------------------------------------------------------------
-  // 拖曳邏輯（滑鼠 + 觸控）
+  // 拖曳邏輯：改用 absolute 定位（以 Hero 為參考容器），限制在 Hero 內
   // ---------------------------------------------------------------------------
   const header = document.getElementById('mini-strudel-header');
+  const boundsId = miniPlayer?.dataset.bounds ?? 'hero-section';
+  const hero = document.getElementById(boundsId);
 
   let dragOffsetX = 0;
   let dragOffsetY = 0;
   let isDragging = false;
 
-  function getBounds(): { left: number; top: number; right: number; bottom: number } {
-    const boundsId = miniPlayer?.dataset.bounds ?? 'hero-section';
-    const hero = document.getElementById(boundsId);
-    if (!hero || !miniPlayer) {
-      // 找不到邊界則退回視窗範圍
-      return { left: 0, top: 0, right: window.innerWidth, bottom: window.innerHeight };
-    }
-    const h = hero.getBoundingClientRect();
-    return { left: h.left, top: h.top, right: h.right, bottom: h.bottom };
+  // 取得 Hero 邊界（absolute 定位下，參考座標是 Hero 的左上角）
+  function getBounds() {
+    if (!hero || !miniPlayer) return null;
+    const rect = hero.getBoundingClientRect();
+    return {
+      width: hero.clientWidth,
+      height: hero.clientHeight,
+      rect,
+    };
   }
 
-  function clampPosition(left: number, top: number) {
-    if (!miniPlayer) return { left, top };
-    // 拖曳中切為固定定位並清除衝突錨點
-    miniPlayer.classList.add('is-positioned');
-    const w = miniPlayer.offsetWidth;
-    const h = miniPlayer.offsetHeight;
-    const b = getBounds();
-    const clampedLeft = Math.max(b.left, Math.min(left, b.right - w));
-    const clampedTop = Math.max(b.top, Math.min(top, b.bottom - h));
-    return { left: clampedLeft, top: clampedTop };
-  }
-
-  function setPosition(left: number, top: number) {
-    if (!miniPlayer) return;
-    const { left: l, top: t } = clampPosition(left, top);
-    miniPlayer.style.left = `${l}px`;
-    miniPlayer.style.top = `${t}px`;
-  }
-
+  // 拖曳開始
   function startDrag(clientX: number, clientY: number) {
-    if (!miniPlayer) return;
-    const rect = miniPlayer.getBoundingClientRect();
-    dragOffsetX = clientX - rect.left;
-    dragOffsetY = clientY - rect.top;
+    if (!miniPlayer || !hero) return;
+    const heroRect = hero.getBoundingClientRect();
+    const miniRect = miniPlayer.getBoundingClientRect();
+    // 記錄滑鼠在視窗內的偏移
+    dragOffsetX = clientX - miniRect.left;
+    dragOffsetY = clientY - miniRect.top;
     isDragging = true;
     document.body.style.userSelect = 'none';
   }
 
+  // 拖曳中
   function doDrag(clientX: number, clientY: number) {
-    if (!isDragging || !miniPlayer) return;
-    setPosition(clientX - dragOffsetX, clientY - dragOffsetY);
+    if (!isDragging || !miniPlayer || !hero) return;
+    const heroRect = hero.getBoundingClientRect();
+    // 計算新位置（相對於 Hero）
+    let newLeft = clientX - heroRect.left - dragOffsetX;
+    let newTop = clientY - heroRect.top - dragOffsetY;
+    // 限制在 Hero 內
+    const maxLeft = hero.clientWidth - miniPlayer.offsetWidth;
+    const maxTop = hero.clientHeight - miniPlayer.offsetHeight;
+    newLeft = Math.max(0, Math.min(newLeft, maxLeft));
+    newTop = Math.max(0, Math.min(newTop, maxTop));
+    miniPlayer.style.left = `${newLeft}px`;
+    miniPlayer.style.top = `${newTop}px`;
+    // 清除預設錨點
+    miniPlayer.classList.add('is-positioned');
   }
 
+  // 拖曳結束
   function endDrag() {
     isDragging = false;
     document.body.style.userSelect = '';
@@ -253,12 +250,13 @@ const { boundsId = 'hero-section' } = Astro.props;
   }, { passive: false });
   document.addEventListener('touchend', endDrag);
 
-  // 視窗縮放時重新夾緊位置，避免超出 Hero 邊界
+  // 視窗縮放時重新夾緊
   window.addEventListener('resize', () => {
-    if (!miniPlayer) return;
-    const left = parseFloat(miniPlayer.style.left || `${miniPlayer.getBoundingClientRect().left}`);
-    const top = parseFloat(miniPlayer.style.top || `${miniPlayer.getBoundingClientRect().top}`);
-    setPosition(left, top);
+    if (!miniPlayer || !hero || !isDragging) return;
+    doDrag(
+      (miniPlayer.getBoundingClientRect().left + dragOffsetX),
+      (miniPlayer.getBoundingClientRect().top + dragOffsetY)
+    );
   });
 
   // ---------------------------------------------------------------------------
