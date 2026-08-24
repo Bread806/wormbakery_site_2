@@ -50,7 +50,7 @@ const { boundsId = 'hero-section' } = Astro.props;
     </div>
     <!-- Volume 拉桿 -->
     <div class="mini-strudel-volume">
-      <span class="mini-volume-icon">🔉</span>
+      <span class="mini-volume-icon">vol</span>
       <input id="mini-volume" class="mini-volume-range" type="range" min="0" max="1" step="0.01" value="1" aria-label="音量" />
     </div>
   </div>
@@ -94,6 +94,8 @@ const { boundsId = 'hero-section' } = Astro.props;
 
   // 音量狀態：0~1，套用到 pattern 的 gain
   let currentVolume = 1;
+  // 目前播放中的 pattern 引用（預留，音量調整實際是停止後重播）
+  let activePattern: any = null;
 
   // @ts-ignore — @strudel/web 的 module 型別未安裝，全部以 any 使用
   type StrudelMod = {
@@ -126,22 +128,20 @@ const { boundsId = 'hero-section' } = Astro.props;
             'https://cdn.jsdelivr.net/npm/@strudel/soundfonts@1.0.1/dist/index.mjs'
           )) as any;
           soundfonts.registerSoundfonts?.();
-          // 3. Roland TR-909：以 registerSound 直接註冊常用鼓件（官方曲庫 geikha/tidal-drum-machines 上游）
-          //    檔案路徑含空格者需手動 encodeURI
-          const rs = (globalThis as any).registerSound;
-          if (typeof rs === 'function') {
-            const base = 'https://raw.githubusercontent.com/geikha/tidal-drum-machines/main/machines/';
-            const drum = (key: string, paths: string[]) =>
-              rs(key, async () => {
-                const urls = paths.map((p) => encodeURI(base + p));
-                return { samples: urls };
-              });
-            drum('909bd', ['RolandTR909/rolandtr909-bd/Bassdrum-01.wav']);
-            drum('909sd', ['RolandTR909/rolandtr909-sd/sd01.wav']);
-            drum('909hh', ['RolandTR909/rolandtr909-hh/hh01.wav']);
-            drum('909oh', ['RolandTR909/rolandtr909-oh/Hat Open.wav']);
-            drum('909rim', ['RolandTR909/rolandtr909-rim/rs01.wav']);
-            drum('909cp', ['RolandTR909/rolandtr909-cp/Clap.wav']);
+          // 3. Roland TR-909：用 samples() 註冊一份 map（key -> url 陣列），這是 superdough 官方
+          //    支援格式（與 samples('github:...') 解析後產物一致）；路徑含空格以 encodeURI 編碼
+          const smp = (globalThis as any).samples;
+          if (typeof smp === 'function') {
+            const BASE = 'https://raw.githubusercontent.com/geikha/tidal-drum-machines/main/machines/';
+            const url = (p: string) => encodeURI(BASE + p);
+            smp({
+              '909bd': [url('RolandTR909/rolandtr909-bd/Bassdrum-01.wav')],
+              '909sd': [url('RolandTR909/rolandtr909-sd/sd01.wav')],
+              '909hh': [url('RolandTR909/rolandtr909-hh/hh01.wav')],
+              '909oh': [url('RolandTR909/rolandtr909-oh/Hat Open.wav')],
+              '909rim': [url('RolandTR909/rolandtr909-rim/rs01.wav')],
+              '909cp': [url('RolandTR909/rolandtr909-cp/Clap.wav')],
+            });
           }
         },
       });
@@ -209,14 +209,20 @@ const { boundsId = 'hero-section' } = Astro.props;
       if (typeof evaluate !== 'function') {
         throw new Error('Strudel evaluate 不可用');
       }
-      // evaluate 會執行 code（並自動 .play()），回傳 { pattern, ... }
-      // @ts-ignore
-      const res = await evaluate(code);
-      // @ts-ignore — 以指定音量重新排程（evaluate 自動 play 的結果會被覆蓋）
+      // evaluate(code, false)：不 auto-play，先設 gain 再手動 play，避免音量閃跳
+      // @ts-ignore — evaluate 回傳 { pattern, mode, meta }
+      const res = await evaluate(code, false);
       const pattern = res && res.pattern;
-      if (pattern && typeof pattern.gain === 'function' && typeof pattern.play === 'function') {
+      if (pattern && typeof pattern.play === 'function') {
+        // 保留引用（僅做狀態參考；實際音量變更是透過 playSong 重新 evaluate）
+        activePattern = pattern;
+        // 以當前音量播放（.gain() 是 pattern transformation，需在 play 前設定）
+        if (typeof pattern.gain === 'function') {
+          // @ts-ignore
+          pattern.gain(Math.max(0, Math.min(1, currentVolume)));
+        }
         // @ts-ignore
-        pattern.gain(Math.max(0, Math.min(1, currentVolume))).play();
+        pattern.play();
       }
     } catch (err) {
       console.error('播放失敗：', err);
@@ -250,14 +256,22 @@ const { boundsId = 'hero-section' } = Astro.props;
     if (songId) playSong(songId);
   });
 
-  // 音量拉桿：更新目標音量，拖曳結束（change）時才重新套用避免卡頓
+  // 音量拉桿：strudel 的 .gain() 是 pattern transformation（產生新 pattern，不會即時影響已播放的），
+  // 因此要「停止 → 重新 evaluate」才會生效。用防抖避免拖曳中頻繁重載。
+  let volumeTimer: ReturnType<typeof setTimeout> | null = null;
+  function applyVolume() {
+    if (!isPlaying || !currentSongId) return;
+    playSong(currentSongId);
+  }
   volumeInput?.addEventListener('input', () => {
     currentVolume = Number(volumeInput.value);
+    if (volumeTimer) clearTimeout(volumeTimer);
+    volumeTimer = setTimeout(applyVolume, 120); // 120ms 防抖
   });
   volumeInput?.addEventListener('change', () => {
-    if (isPlaying && currentSongId) {
-      playSong(currentSongId);
-    }
+    currentVolume = Number(volumeInput.value);
+    if (volumeTimer) clearTimeout(volumeTimer);
+    applyVolume();
   });
 
   if (SONGS.length > 0) {
