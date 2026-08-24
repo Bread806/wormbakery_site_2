@@ -56,7 +56,7 @@
 - 提供一個**全局切換器**（建議放在 Navigation 固定位置），讓使用者在「卡蚯蚓」與「蚯蚓麵包屋」
   兩個品牌身分間切換。
 - 切換時**視覺設計、排版、配色、字體、頁面結構皆不變**，僅以下項目因身分改變：
-  1. **Logo**（navbar 與 hero 的標識圖形 / 標題文字）→ 兩身分各一套 logo 素材。
+  1. **Logo**（navbar 與 hero 的標識圖形 / 標題文字）→ 兩身分各一套 logo 素材。e
   2. **大頭貼 / 主視覺圖**（hero、profile 的頭像）→ 各自不同。
   3. **頁面標題、slogan** → 兩套。
   4. **Profile 自我介紹主文字** → 依身分切換（「我是卡蚯蚓…」vs「蚯蚓麵包屋是…」）。
@@ -322,7 +322,6 @@ export const BRANDS = {
 - [ ] 聲波設計落實於 Hero、卡片、Loading 等（§5）。
 - [ ] 品牌切換（卡蚯蚓 ↔ 蚯蚓麵包屋）會切換 logo/大頭貼/作品資訊，且視覺排版不變、可持久化。
 - [ ] 所有原文字、作品清單、SNS 連結、Google doc / YouTube 連結完整保留。
-- [ ] 亮 / 暗主題可切換。
 - [ ] 響應式（桌面 + 手機）。
 - [ ] 載入遮罩、回頂、跑馬燈等互動正常。
 
@@ -334,6 +333,47 @@ export const BRANDS = {
 2. 視窗（dialog）方式是否引入可拖曳視窗，或採整齊卡片（估時間）。
 3. 是否做即時聲波（Web Audio）彩蛋，或僅用靜態「聲波柱」動畫。
 4. Astro vs React 的架構最終決定（推薦 Astro；若要最小成本遷移用 React）。
+
+---
+
+## 14. Commission 頁面與年度燈號表（v2 新增）
+
+### 14.1 需求
+- 「承接委託事項」區塊自 Profile 頁**整體遷移**至新路由 `/commission`（Profile 不留連結或痕跡）。
+- 頁面包含兩個區塊：
+  1. **承接委託事項**：四張技能卡片，內容與樣式沿用原 Profile 版本。
+  2. **年度接單狀態燈號表**：以「年」為單位顯示 **12 格燈號（一個月一格）**，
+     手機 2 欄／平板 3 欄／桌機 4 欄。非日曆，是視覺化狀態表。
+
+### 14.2 燈號邏輯
+| 燈號 | 條件 | 色碼 |
+|------|------|------|
+| `busy`（滿檔） | 當月委託 ≥ 2 件 | `var(--accent-red)` |
+| `inquire`（可洽詢，預設） | 當月委託 < 2 件或無資料 | `#ffd60a` |
+| `open`（特殊開放） | 僅供日後手動覆寫機制使用，現階段不會自動觸發 | `#7dd3fc` |
+
+- 當前月份格以螢光綠 outline + `animate-blink` 的 NOW 標記強調。
+- 圖例列於表格上方；格內顯示月份、燈號標籤與 `COUNT: n`。
+- 頁尾標注 `LAST SYNC` 日期（build 時間）提醒資料新舊。
+
+### 14.3 資料來源（Notion）
+- Build 時以原生 fetch 查詢 Notion（不安裝 SDK）：
+  `POST /v1/data_sources/{id}/query`，`Notion-Version: 2025-09-03`，
+  處理 `has_more` / `next_cursor` 分頁。
+- 計數欄位：工作紀錄的 `動工時間`（date）取 `.start` 前 7 字元歸屬月份；
+  未填日期的紀錄跳過。整表皆為委託專案，不需其他過濾條件。
+- 容錯降級：無 token / API 失敗 / 逾時 → 全部回退黃燈 + `console.warn`，
+  **build 不得失敗**。
+- Notion 端零改動：不加欄位、不建表。日後若需手動鎖某月為 open，
+  再補一張覆寫表並在 `deriveStatus()` 前插入查表邏輯。
+
+### 14.4 部署
+- `.github/workflows/deploy.yml`：push 到 `rebuild` + 每天 UTC 22:00 cron +
+  手動觸發。部署來源釘 `ref: rebuild`（排程一律跑預設分支的 workflow 檔，
+  不釘 ref 會抓到落後的 main）。日後改回 main 部署需同步改 branches 與 ref。
+- Secrets：`NOTION_TOKEN`（必要）、`NOTION_DATA_SOURCE_ID`（選填，有內建預設值）。
+- 首次啟用需在 repo Settings → Pages 將 source 切換為 **GitHub Actions**。
+- 自訂網域由 `public/CNAME` 進入 build 產物維持。
 
 ---
 

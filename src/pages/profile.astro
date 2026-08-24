@@ -3,13 +3,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Navigation from '../components/Navigation.astro';
 import Footer from '../components/Footer.astro';
 
-const SKILLS = [
-  { name: '情境劇', exp: 80, desc: '5~30 分鐘的第一人稱文本。主要以人物對話與台詞呈現劇情，極少音效。' },
-  { name: '音聲作品', exp: 88, desc: '長度與尺度彈性，音效與台詞穿插表達故事。' },
-  { name: '會員語音', exp: 92, desc: '快節奏的故事，適合 1-5 分鐘的語音內容。' },
-  { name: '企劃文本', exp: 85, desc: '適合使用在 ASMR 直播或是個特殊企劃直播的文本。' },
-];
-
 const TIMELINE = [
   { year: '2022', events: ['我與充滿包容力的姊姊撒嬌日常', '等待女朋友回家的時候被姊姊給襲擊了', '無法逃離獸人姊姊病嬌的愛'] },
   { year: '2023', events: ['鄉間小路與多愁善感的姐姐', '慾兔', '我們的事'] },
@@ -49,25 +42,6 @@ const TIMELINE = [
         <div class="card-retro p-8 space-y-4">
           <p class="text-lg leading-relaxed">我叫做卡蚯蚓，可以稱呼我蚯蚓就好。喜歡寫作與編劇，同時也是喜歡各種聲音表演的聽眾。在網路上發表與撰寫短篇語音、長篇音聲作品與情境劇台本。在這個網站裡，你可以看到我曾參與過的作品。</p>
           <p class="text-lg leading-relaxed">委託會先經過一輪需求討論才會確認是否承接，造成不便請見諒。</p>
-        </div>
-      </section>
-
-      <!-- 承接委託 -->
-      <section class="mb-20">
-        <h2 class="text-4xl font-mono font-bold mb-8 acid-chroma">承接委託事項</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {SKILLS.map((skill) => (
-            <div class="card-retro p-6">
-              <div class="flex items-center justify-between mb-3">
-                <span class="text-xl font-bold">{skill.name}</span>
-                <span class="font-mono text-sm">{skill.exp}%</span>
-              </div>
-              <div class="h-3 retro-border overflow-hidden mb-3">
-                <div class="h-full bg-[var(--fg)]" style={`width: ${skill.exp}%`}></div>
-              </div>
-              <p class="text-sm opacity-80">{skill.desc}</p>
-            </div>
-          ))}
         </div>
       </section>
 

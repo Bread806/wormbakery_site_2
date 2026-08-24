@@ -1,8 +1,15 @@
-name: Deploy to GitHub Pages
+name: Build & Deploy to GitHub Pages
 
+# 部署來源固定為 rebuild 分支（目前的主力開發分支）。
+# 排程觸發時 GitHub 一律跑「預設分支」上的 workflow 檔，
+# 因此 checkout 明確釘 ref: rebuild，避免 cron 抓到落後的 main 蓋掉新站。
+# 日後若要改從 main 部署：把 branches 與下面的 ref 一起換掉即可。
 on:
   push:
-    branches: [rebuild]  # 之後可改為 main
+    branches: [rebuild]
+  schedule:
+    # 每天 UTC 22:00（台北時間早上 6 點）自動重建，同步 Notion 燈號
+    - cron: '0 22 * * *'
   workflow_dispatch:
 
 permissions:
@@ -10,9 +17,10 @@ permissions:
   pages: write
   id-token: write
 
+# 同一時間只允許一個部署在跑，排程與手動觸發不會互相踩踏
 concurrency:
-  group: 'pages'
-  cancel-in-progress: false
+  group: github-pages
+  cancel-in-progress: true
 
 jobs:
   build:
@@ -20,30 +28,34 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: rebuild
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: 'npm'
+          cache: npm
 
-      - name: Install dependencies
-        run: npm ci
+      - run: npm ci
 
-      - name: Build with Astro
+      - name: Build
         run: npm run build
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_DATA_SOURCE_ID: ${{ secrets.NOTION_DATA_SOURCE_ID }}
 
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
         with:
-          path: ./dist
+          path: dist
 
   deploy:
+    needs: build
+    runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
     steps:
       - name: Deploy to GitHub Pages
         id: deployment

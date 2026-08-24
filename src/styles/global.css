@@ -985,3 +985,30 @@ html[data-theme='light'] .tv-track-item {
     display: none !important;
   }
 }
+
+/* ============================================
+   14. Commission 燈號表（年度接單狀態）
+   ============================================ */
+
+/* 燈號三色：open 淺藍僅供未來手動覆寫機制使用，
+   inquire 黃是預設值、busy 紅沿用酸性紅以維持全站色彩一致性 */
+.status-open {
+  --status: #7dd3fc;
+}
+.status-inquire {
+  --status: #ffd60a;
+}
+.status-busy {
+  --status: var(--accent-red);
+}
+
+/* 燈號色塊：顏色一律由 .status-* 提供，元件端只負責尺寸與框線 */
+.status-block {
+  background-color: var(--status);
+}
+
+/* 當前月份強調：outline 不佔版位，硬邊螢光綠延續酸性語彙 */
+.status-now {
+  outline: 3px solid var(--accent-lime);
+  outline-offset: 3px;
+}

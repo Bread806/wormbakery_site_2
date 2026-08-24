@@ -1,0 +1,112 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Navigation from '../components/Navigation.astro';
+import Footer from '../components/Footer.astro';
+import { getYearLights, getTaipeiToday, type MonthStatus } from '../lib/notion';
+
+// 自 profile 遷移而來的承接委託事項（內容維持原樣）
+const SKILLS = [
+  { name: '情境劇', exp: 80, desc: '5~30 分鐘的第一人稱文本。主要以人物對話與台詞呈現劇情，極少音效。' },
+  { name: '音聲作品', exp: 88, desc: '長度與尺度彈性，音效與台詞穿插表達故事。' },
+  { name: '會員語音', exp: 92, desc: '快節奏的故事，適合 1-5 分鐘的語音內容。' },
+  { name: '企劃文本', exp: 85, desc: '適合使用在 ASMR 直播或是個特殊企劃直播的文本。' },
+];
+
+const lights = await getYearLights();
+const today = getTaipeiToday();
+
+const STATUS_META: Record<MonthStatus, { label: string; zh: string }> = {
+  open: { label: 'OPEN', zh: '特殊開放' },
+  inquire: { label: 'INQUIRE', zh: '可洽詢' },
+  busy: { label: 'BUSY', zh: '滿檔' },
+};
+// 圖例順序：預設值優先顯示，open 最後（目前尚無手動覆寫機制）
+const LEGEND_ORDER: MonthStatus[] = ['inquire', 'busy', 'open'];
+
+const pad = (n: number): string => String(n).padStart(2, '0');
+---
+
+<BaseLayout title="承接委託 | 卡蚯蚓的個人網站" description="卡蚯蚓的承接委託事項，以及依工作紀錄自動更新的年度接單狀態燈號表。">
+  <Navigation />
+
+  <main class="pt-20 pb-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <!-- 頁首 -->
+      <section class="mb-20">
+        <h1 class="text-5xl font-black mb-3 acid-chroma">COMMISSION</h1>
+        <p class="text-xl font-bold mb-4 opacity-80 font-mono">承接委託 / 年度接單狀態</p>
+        <div class="font-barcode text-3xl opacity-50" aria-hidden="true">commission status {lights.year}</div>
+      </section>
+
+      <!-- 區塊一：承接委託事項 -->
+      <section class="mb-20">
+        <h2 class="text-4xl font-mono font-bold mb-8 acid-chroma">承接委託事項</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {SKILLS.map((skill) => (
+            <div class="card-retro p-6">
+              <div class="flex items-center justify-between mb-3">
+                <span class="text-xl font-bold">{skill.name}</span>
+                <span class="font-mono text-sm">{skill.exp}%</span>
+              </div>
+              <div class="h-3 retro-border overflow-hidden mb-3">
+                <div class="h-full bg-[var(--fg)]" style={`width: ${skill.exp}%`}></div>
+              </div>
+              <p class="text-sm opacity-80">{skill.desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <!-- 區塊二：年度接單狀態燈號表 -->
+      <section class="mb-20">
+        <h2 class="text-4xl font-mono font-bold mb-8 acid-chroma">年度接單狀態 {lights.year}</h2>
+
+        <!-- 圖例 -->
+        <div class="flex flex-wrap gap-x-8 gap-y-3 mb-8 font-mono text-sm font-bold">
+          {LEGEND_ORDER.map((s) => (
+            <span class="flex items-center gap-2">
+              <span class={`inline-block w-5 h-5 border-2 border-[var(--fg)] status-block status-${s}`} aria-hidden="true"></span>
+              {STATUS_META[s].label}（{STATUS_META[s].zh}）
+            </span>
+          ))}
+        </div>
+
+        <!-- 一年 12 格：手機 2 欄、平板 3 欄、桌機 4 欄 -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
+          {lights.months.map((m) => {
+            const isNow = m.month === today.month;
+            return (
+              <div class={`card-retro p-5 flex flex-col gap-4 ${isNow ? 'status-now' : ''}`}>
+                <div class="flex items-center justify-between gap-2">
+                  <span class="font-mono font-black text-2xl tracking-tight">{pad(m.month)}</span>
+                  <span class="font-mono text-[10px] font-bold border-2 border-[var(--fg)] px-1.5 py-0.5">
+                    {STATUS_META[m.status].label}
+                  </span>
+                </div>
+                <div
+                  class={`retro-border h-14 status-block status-${m.status}`}
+                  role="img"
+                  aria-label={`${lights.year} 年 ${m.month} 月：${STATUS_META[m.status].label}（${STATUS_META[m.status].zh}），委託 ${m.count} 件`}
+                >
+                </div>
+                <div class="flex items-center justify-between font-mono text-xs opacity-70 min-h-4">
+                  <span>COUNT: {m.count}</span>
+                  {isNow && (
+                    <span class="animate-blink font-bold" style={`color: var(--accent-lime)`}>◀ NOW</span>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        <p class="font-mono text-xs opacity-60 mt-10 leading-relaxed">
+          LAST SYNC: {lights.syncedAt.slice(0, 10)} UTC · SOURCE: NOTION WORKLOG<br />
+          燈號依 Notion 工作紀錄於網站建置時自動更新；當月委託 ≥ 2 件即為滿檔。
+        </p>
+      </section>
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>
