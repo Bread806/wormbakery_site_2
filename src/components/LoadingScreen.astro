@@ -1,5 +1,6 @@
 ---
-// 載入畫面：聲波 + 進度條 + Typewriter
+// 載入畫面：worm-bakery 環狀文字輪 + 進度環 + 中心擴散退場
+// 僅在硬刷新（F5 / Ctrl+R）時播放；一般導航直接跳過
 ---
 
 <div
@@ -9,72 +10,139 @@
   aria-live="polite"
   aria-label="載入中"
 >
-  <div class="w-full max-w-md px-6">
-    <!-- 聲波裝飾 -->
-    <div class="flex justify-center mb-8">
-      {Array.from({ length: 12 }).map((_, i) => (
-        <div
-          class="loading-wave-bar w-2 bg-[var(--fg)]"
-          style={`height: ${Math.max(10, Math.sin(i / 3) * 40 + 30)}px; animation-delay: ${i * 0.1}s;`}
-        />
-      ))}
+  <div class="wheel-ring">
+    <!-- 進度環：conic-gradient 由 JS 填色 -->
+    <div id="wheel-progress" class="wheel-progress"></div>
+
+    <!-- 環狀文字輪：SVG textPath 沿圓排列，外層旋轉 -->
+    <div class="wheel-text">
+      <svg viewBox="0 0 200 200" class="wheel-svg">
+        <defs>
+          <!-- 文字貼附的圓形路徑：半徑 80，圓心 (100,100) -->
+          <path id="wheel-circle-path" d="M 100,100 m -80,0 a 80,80 0 1,1 160,0 a 80,80 0 1,1 -160,0" fill="none" />
+        </defs>
+        <text class="wheel-text-content" font-family="monospace" font-weight="bold" font-size="13" letter-spacing="2" fill="var(--fg)">
+          <textPath href="#wheel-circle-path" startOffset="0">
+            worm — bakery — worm — bakery — worm — bakery —
+          </textPath>
+        </text>
+      </svg>
     </div>
 
-    <!-- 進度條 -->
-    <div class="retro-border retro-shadow p-1 mb-4">
-      <div id="loading-progress" class="h-4 bg-[var(--fg)] transition-all duration-100 step-end" style="width: 0%"></div>
-    </div>
-
-    <!-- 打字機文字 -->
-    <p class="font-mono text-center animate-blink">please wait...</p>
+    <!-- 中央輪框 -->
+    <div class="wheel-hub"></div>
   </div>
 </div>
 
 <style>
-  @keyframes loading-wave {
-    0%, 100% { transform: scaleY(0.3); }
-    50% { transform: scaleY(1); }
+  .wheel-ring {
+    position: relative;
+    width: 200px;
+    height: 200px;
   }
-  .loading-wave-bar {
-    animation: loading-wave 0.8s steps(2) infinite;
-    transform-origin: bottom;
+  /* 進度環：conic-gradient 背景由 JS 動態更新；用 mask 挖成 10px 寬的外環 */
+  .wheel-progress {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: conic-gradient(var(--fg) 0deg, transparent 0deg);
+    -webkit-mask: radial-gradient(circle, transparent 90px, #000 92px);
+            mask: radial-gradient(circle, transparent 90px, #000 92px);
+  }
+  /* 環狀文字輪：整個 SVG 旋轉 */
+  .wheel-text {
+    position: absolute;
+    inset: 0;
+    animation: wheel-spin 3s linear infinite;
+  }
+  .wheel-svg {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+  .wheel-text-content {
+    text-transform: uppercase;
+  }
+  /* 中央輪框：內圓邊框，呼應滑板輪的輪轂 */
+  .wheel-hub {
+    position: absolute;
+    inset: 55px;
+    border: 2px solid var(--fg);
+    border-radius: 50%;
+  }
+  @keyframes wheel-spin {
+    to { transform: rotate(360deg); }
+  }
+  /* 退場動畫：從中心 scale 放大 + opacity 淡出，露出底層內容
+     easeOutQuint 曲線提供阻尼感：起步快、尾段平緩收束 */
+  #loading-screen.exiting {
+    transform: scale(15);
+    opacity: 0;
+    transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+                opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+    pointer-events: none;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .wheel-text { animation: none; }
   }
 </style>
 
 <script>
   const loadingScreen = document.getElementById('loading-screen');
-  const progressBar = document.getElementById('loading-progress');
+  const wheelProgress = document.getElementById('wheel-progress');
 
-  if (loadingScreen && progressBar) {
-    let progress = 0;
-    const interval = setInterval(() => {
-      progress += Math.random() * 15;
-      if (progress > 90) progress = 90;
-      progressBar.style.width = `${progress}%`;
-    }, 100);
+  if (loadingScreen && wheelProgress) {
+    // Navigation Timing API：判斷進入方式
+    // reload = F5 / Ctrl+R；navigate = 點連結；back_forward = 回上一頁
+    const navEntry = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined;
+    const navType = navEntry?.type ?? 'navigate';
 
-    // 預載關鍵圖片
-    const images = ['/pic/bakery-logo-white.png', '/pic/profile_1.png', '/pic/bakery-icon.png'];
-    Promise.all(
-      images.map(
-        (src) =>
-          new Promise((resolve) => {
-            const img = new Image();
-            img.src = src;
-            img.onload = resolve;
-            img.onerror = resolve;
-          })
-      )
-    ).then(() => {
-      clearInterval(interval);
-      progressBar.style.width = '100%';
-      setTimeout(() => {
-        loadingScreen.style.opacity = '0';
-        loadingScreen.style.transition = 'opacity 0.3s step-end';
+    // 只在硬刷新時播放動畫，其餘直接跳過
+    if (navType !== 'reload') {
+      loadingScreen.remove();
+    } else {
+      let progress = 0;
+      const MIN_DURATION = 2200;
+      const startTime = performance.now();
+
+      const updateProgress = () => {
+        const deg = (progress / 100) * 360;
+        wheelProgress.style.background = `conic-gradient(var(--fg) ${deg}deg, transparent ${deg}deg)`;
+      };
+
+      const interval = setInterval(() => {
+        progress += Math.random() * 12;
+        if (progress > 90) progress = 90;
+        updateProgress();
+      }, 120);
+
+      // 預載關鍵圖片
+      const images = ['/pic/bakery-logo-white.png', '/pic/profile_1.png', '/pic/bakery-icon.png'];
+      const preloadPromise = Promise.all(
+        images.map(
+          (src) =>
+            new Promise((resolve) => {
+              const img = new Image();
+              img.src = src;
+              img.onload = resolve;
+              img.onerror = resolve;
+            })
+        )
+      );
+
+      // 強制等最短播放時間 + 圖片預載都完成才放行
+      Promise.all([preloadPromise, new Promise((r) => setTimeout(r, MIN_DURATION))]).then(() => {
+        clearInterval(interval);
+        progress = 100;
+        updateProgress();
+        // 進度環填滿後停一下，再從中心擴散退場
         setTimeout(() => {
-          loadingScreen.remove();
-        }, 300);
-      }, 500);
-    });
+          loadingScreen.classList.add('exiting');
+          setTimeout(() => {
+            loadingScreen.remove();
+          }, 600);
+        }, 350);
+      });
+    }
   }
 </script>
