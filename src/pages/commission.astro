@@ -15,10 +15,10 @@ const SKILLS = [
 const lights = await getYearLights();
 const today = getTaipeiToday();
 
-// 兩態燈號：各對應一卷卡帶（public/pic/），圖例則用小燈表示
-const STATUS_META: Record<MonthStatus, { label: string; zh: string; img: string; light: string }> = {
-  inquire: { label: 'INQUIRE', zh: '可洽詢', img: '/pic/g_cassettetape_1.png', light: 'var(--accent-lime)' },
-  busy: { label: 'BUSY', zh: '滿檔', img: '/pic/p_cassettetape_1.png', light: 'var(--accent-red)' },
+// 兩態燈號：進度條填充（busy 滿、inquire 空），顏色用站內 acid 色票
+const STATUS_META: Record<MonthStatus, { label: string; abbr: string; zh: string; light: string; barFill: number; barColor: string }> = {
+  inquire: { label: 'INQUIRE', abbr: 'INQ', zh: '可洽詢', light: 'var(--accent-lime)', barFill: 0, barColor: 'var(--accent-lime)' },
+  busy: { label: 'BUSY', abbr: 'BSY', zh: '滿檔', light: 'var(--accent-red)', barFill: 100, barColor: 'var(--accent-red)' },
 };
 const LEGEND_ORDER: MonthStatus[] = ['inquire', 'busy'];
 
@@ -56,7 +56,7 @@ const pad = (n: number): string => String(n).padStart(2, '0');
         </div>
       </section>
 
-      <!-- 區塊二：年度接單狀態（卡帶燈號牆） -->
+      <!-- 區塊二：年度接單狀態（Windows Form 視窗 + 資料夾 + 進度條） -->
       <section class="mb-20">
         <h2 class="text-4xl font-mono font-bold mb-8 acid-chroma">年度接單狀態 {lights.year}</h2>
 
@@ -74,53 +74,71 @@ const pad = (n: number): string => String(n).padStart(2, '0');
           ))}
         </div>
 
-        <!-- 一年 12 卷卡帶：手機 3 欄、平板 4 欄、桌機 6 欄 -->
-        <div class="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-x-4 gap-y-10">
-          {lights.months.map((m) => {
-            const isNow = m.month === today.month;
-            // 已過的月份整格淡化到 10%，視覺上退到背景
-            const isPast = m.month < today.month;
-            const meta = STATUS_META[m.status];
-            return (
-              <div
-                class={`relative retro-hover ${isPast ? 'opacity-10' : ''}`}
-                role="img"
-                aria-label={`${lights.year} 年 ${m.month} 月：${meta.label}（${meta.zh}），委託 ${m.count} 件`}
-              >
-                <img
-                  src={meta.img}
-                  alt=""
-                  class="w-full h-auto opacity-90 saturate-[.7]"
-                  width="750"
-                  height="476"
-                  loading="lazy"
-                  decoding="async"
-                />
-                <!-- 月份壓在卡帶頂部的橫線標籤區（寫在標籤上的概念）。
-                     色片用固定黑底白字：卡帶圖本身是固定配色（白底不透明），
-                     不跟主題變色才能保證兩種色帶、兩種主題下都可讀 -->
-                <span class="absolute top-[22%] left-1/2 -translate-x-1/2 -translate-y-1/2 bg-black text-white font-mono font-black text-xl leading-none px-2 py-1 pointer-events-none select-none">
-                  {pad(m.month)}
-                </span>
-                {isNow && (
-                  <span class="absolute -top-2 -right-2 animate-blink bg-[var(--accent-lime)] text-[var(--fg)] font-mono font-black text-[10px] leading-none px-1.5 py-1">
-                    NOW
-                  </span>
-                )}
-                <div class="mt-2 flex items-center justify-between font-mono text-xs">
-                  <span class="font-bold">{meta.label}</span>
-                  {isNow && (
-                    <span class="animate-blink font-bold" style={`color: var(--accent-lime)`}>◀ NOW</span>
-                  )}
-                </div>
-              </div>
-            );
-          })}
-        </div>
+        <!-- Windows Form 視窗：12 個月份資料夾 + 進度條 -->
+        <div class="commission-form retro-border retro-shadow">
+          <!-- 標題列：應用程式名 + 視窗控制鈕 -->
+          <div class="commission-form-titlebar">
+            <span class="commission-form-title">COMMISSION_STATUS_{lights.year}.EXE</span>
+            <span class="commission-form-controls" aria-hidden="true">
+              <span class="commission-form-btn">_</span>
+              <span class="commission-form-btn">▢</span>
+              <span class="commission-form-btn">✕</span>
+            </span>
+          </div>
 
-        <p class="font-mono text-xs opacity-60 mt-12 leading-relaxed">
-          LAST SYNC: {lights.syncedAt.slice(0, 10)} UTC · SOURCE: NOTION WORKLOG
-        </p>
+          <!-- 內容區：一年 12 格資料夾（手機 3 欄、平板 4 欄、桌機 6 欄） -->
+          <div class="commission-form-body">
+            <div class="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-x-4 gap-y-8 relative z-10">
+              {lights.months.map((m) => {
+                const isNow = m.month === today.month;
+                const isPast = m.month < today.month;
+                const meta = STATUS_META[m.status];
+                return (
+                  <div
+                    class={`folder-item retro-hover ${isPast ? 'opacity-60' : ''} ${isNow ? 'is-now' : ''}`}
+                    role="img"
+                    aria-label={`${lights.year} 年 ${m.month} 月：${meta.label}（${meta.zh}），委託 ${m.count} 件`}
+                  >
+                    <!-- 資料夾 icon：tab + 本體，月份數字嵌在 tab 上，本體顯示狀態縮寫 -->
+                    <div class="folder-icon">
+                      <div class="folder-tab">
+                        <span class="folder-tab-label">{pad(m.month)}</span>
+                      </div>
+                      <div class="folder-body">
+                        {isNow ? (
+                          <pre class="folder-body-ascii" aria-label="NOW">{`>>>\nNOW\n<<<`}</pre>
+                        ) : (
+                          <span class="folder-body-label">{meta.abbr}</span>
+                        )}
+                      </div>
+                    </div>
+                    <!-- 進度條：inquire 空、busy 滿 -->
+                    <div class="commission-bar" aria-hidden="true">
+                      <div
+                        class="commission-bar-fill"
+                        style={`width: ${meta.barFill}%; background-color: ${meta.barColor};`}
+                      ></div>
+                    </div>
+                    <!-- 狀態標籤 -->
+                    <div class="mt-2 flex items-center justify-between font-mono text-xs">
+                      <span class="font-bold">{meta.label}</span>
+                    </div>
+                    {isNow && (
+                      <span class="now-led" aria-label="現在月份" title="NOW"></span>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          <!-- 狀態列：底部訊息列，呼應 Windows Form 語彙 -->
+          <div class="commission-form-statusbar font-mono text-xs">
+            <span>STATUS: READY</span>
+            <span>LAST SYNC: {lights.syncedAt.slice(0, 10)} UTC</span>
+            <span>SOURCE: NOTION WORKLOG</span>
+          </div>
+        </div>
       </section>
     </div>
   </main>

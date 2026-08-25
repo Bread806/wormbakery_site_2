@@ -238,9 +238,19 @@ h6 {
 /* Hero 對比：拉開物件與背景 */
 #hero-section {
   background-color: var(--bg);
+  position: relative;
 }
-#hero-section .bg-grid {
+/* 格線背景改用偽元素，避免 opacity 連帶子孫一起淡化 */
+#hero-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(to right, var(--border) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--border) 1px, transparent 1px);
+  background-size: 40px 40px;
   opacity: 0.08;
+  pointer-events: none;
+  z-index: 0;
 }
 .hero-kacha-img {
   filter: drop-shadow(-4px 0 var(--accent-red)) drop-shadow(4px 0 var(--accent-cyan))
@@ -460,38 +470,6 @@ h6 {
   height: 20px;
 }
 
-.mini-strudel-reopen {
-  position: absolute;
-  right: 20px;
-  bottom: 20px;
-  z-index: 49;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: var(--bg);
-  color: var(--fg);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.25rem;
-  cursor: pointer;
-  box-shadow: var(--shadow-hard);
-  user-select: none;
-  transition: transform 0.1s step-end, box-shadow 0.1s step-end;
-}
-
-.mini-strudel-reopen:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: 6px 6px 0 0 var(--fg);
-  background: var(--fg);
-  color: var(--bg);
-}
-
-.mini-strudel-reopen:active {
-  transform: translate(0, 0);
-  box-shadow: 2px 2px 0 0 var(--fg);
-}
-
 @media (max-width: 768px) {
   .mini-strudel {
     min-width: 160px;
@@ -506,13 +484,6 @@ h6 {
   }
   .mini-strudel-select {
     font-size: 0.6875rem;
-  }
-  .mini-strudel-reopen {
-    right: 12px;
-    bottom: 12px;
-    width: 36px;
-    height: 36px;
-    font-size: 1rem;
   }
 }
 
@@ -987,8 +958,325 @@ html[data-theme='light'] .tv-track-item {
 }
 
 /* ============================================
-   14. Commission 燈號牆（年度接單狀態）
+   14. Commission 燈號牆（年度接單狀態 — Windows Form 視窗）
    ============================================ */
 
-/* 兩態燈號由卡帶圖片承載（g_cassettetape_1 = inquire、p_cassettetape_1 = busy），
-   當前月份用 animate-blink 的 NOW 貼紙標示（樣式寫在頁面端），此處無需額外樣式 */
+/* ---------- 14.1 視窗外框 ---------- */
+/* 沿用 tv-dialog 硬邊語彙：var(--fg) 標題列 + var(--bg) 內容區。
+   標題列疊一層低透明度酸性紋理（重複線性漸層），呼應「線條與紋理」需求。 */
+.commission-form {
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+}
+
+/* 標題列：fg 底 / bg 字，加酸性紋理疊層 */
+.commission-form-titlebar {
+  background: var(--fg);
+  color: var(--bg);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 0.875rem;
+  padding: 4px 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  letter-spacing: 0.05em;
+  position: relative;
+  overflow: hidden;
+}
+/* 標題列右側紋理：極淡的掃描線，不喧賓奪主 */
+.commission-form-titlebar::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0,
+    transparent 2px,
+    rgba(255, 255, 255, 0.06) 2px,
+    rgba(255, 255, 255, 0.06) 3px
+  );
+  pointer-events: none;
+}
+
+.commission-form-title {
+  position: relative;
+  z-index: 1;
+}
+
+.commission-form-controls {
+  display: flex;
+  gap: 2px;
+  position: relative;
+  z-index: 1;
+}
+
+.commission-form-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 700;
+  line-height: 1;
+  border: 1px solid var(--bg);
+}
+
+/* ---------- 14.2 內容區 ---------- */
+.commission-form-body {
+  padding: 1.25rem;
+  position: relative;
+  overflow: hidden;
+}
+/* 格線背景用偽元素疊，不影響內容透明度（原 .bg-grid 的 opacity 會連內容一起淡化） */
+.commission-form-body::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(to right, var(--border) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--border) 1px, transparent 1px);
+  background-size: 40px 40px;
+  opacity: 0.05;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ---------- 14.3 月份「資料夾」項目 ---------- */
+.folder-item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  cursor: default;
+}
+
+/* 當前月份：Windows 桌面選取框樣式（dashed outline 不佔版面空間） */
+.folder-item.is-now {
+  outline: 2px dashed var(--accent-lime);
+  outline-offset: 4px;
+}
+
+/* 資料夾 icon：tab + 本體，純 CSS 線條繪製，黑白硬邊 */
+.folder-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  margin-bottom: 0.5rem;
+}
+
+/* tab：上方凸出小標籤，左對齊 */
+.folder-tab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40%;
+  min-width: 28px;
+  height: 14px;
+  background: var(--fg);
+  color: var(--bg);
+  border: 2px solid var(--fg);
+  border-bottom: none;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 0.7rem;
+  line-height: 1;
+  padding: 0 4px;
+  margin-left: 4px;
+  margin-bottom: -2px; /* 與本體接合，無縫 */
+  position: relative;
+  z-index: 1;
+}
+
+.folder-tab-label {
+  letter-spacing: 0.05em;
+}
+
+/* 本體：下方矩形，中央放狀態縮寫（INQ/BSY） */
+.folder-body {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  background: var(--bg);
+  border: 2px solid var(--fg);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+/* 資料夾「開口」紋理線，保留在頂部不與中央文字重疊 */
+.folder-body::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 18%;
+  height: 2px;
+  background: var(--fg);
+  opacity: 0.35;
+}
+/* 細微對角線紋理，用重複線性漸層做出「紙感」讓資料夾有實體感 */
+.folder-body::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    -45deg,
+    transparent 0,
+    transparent 6px,
+    var(--fg) 6px,
+    var(--fg) 7px
+  );
+  opacity: 0.04;
+  pointer-events: none;
+}
+
+.folder-body-label {
+  font-family: var(--font-mono);
+  font-weight: 900;
+  font-size: 0.9rem;
+  letter-spacing: 0.1em;
+  color: var(--fg);
+  opacity: 0.7;
+  position: relative;
+  z-index: 1;
+  text-shadow:
+    1px 0 0 var(--accent-red),
+    -1px 0 0 var(--accent-cyan);
+}
+
+/* 當前月份的 ASCII art 標示 */
+.folder-body-ascii {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 0.6rem;
+  line-height: 1.1;
+  letter-spacing: 0.05em;
+  color: var(--fg);
+  margin: 0;
+  padding: 0;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+  text-shadow:
+    1px 0 0 var(--accent-red),
+    -1px 0 0 var(--accent-cyan);
+  animation: now-ascii-shift 1s step-end infinite;
+}
+@keyframes now-ascii-shift {
+  0%, 49% {
+    text-shadow: 1px 0 0 var(--accent-red), -1px 0 0 var(--accent-cyan);
+  }
+  50%, 100% {
+    text-shadow: -1px 0 0 var(--accent-red), 1px 0 0 var(--accent-cyan);
+  }
+}
+
+/* ---------- 14.4 進度條 ---------- */
+.commission-bar {
+  width: 100%;
+  height: 8px;
+  background: var(--bg);
+  border: 2px solid var(--fg);
+  overflow: hidden;
+  position: relative;
+  /* 空條加一條淡淡的紋理，亮主題下不會太單薄 */
+}
+.commission-bar::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0,
+    transparent 3px,
+    var(--border) 3px,
+    var(--border) 4px
+  );
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.commission-bar-fill {
+  height: 100%;
+  position: relative;
+  z-index: 1;
+  transition: width 0.1s step-end;
+}
+
+/* busy 滿條加酸色光暈，強化「滿檔」視覺重量 */
+.commission-bar-fill[style*='100%'] {
+  box-shadow: 0 0 6px 0 currentColor;
+}
+
+/* ---------- 14.4b NOW 指示燈（脈衝 LED） ---------- */
+/* 取代原本硬閃爍的 NOW 貼紙，改用一顆會脈衝發光的綠色 LED 圓點，
+   像硬體電源燈。貼在資料夾項目右上角。 */
+.now-led {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--accent-lime);
+  border: 2px solid var(--fg);
+  z-index: 20;
+  animation: now-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes now-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 var(--accent-lime), 0 0 4px 1px var(--accent-lime);
+    opacity: 1;
+  }
+  50% {
+    box-shadow: 0 0 0 4px transparent, 0 0 8px 2px var(--accent-lime);
+    opacity: 0.85;
+  }
+}
+
+/* ---------- 14.5 狀態列（視窗底部） ---------- */
+.commission-form-statusbar {
+  background: var(--fg);
+  color: var(--bg);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  padding: 4px 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  letter-spacing: 0.05em;
+  flex-wrap: wrap;
+}
+
+/* ---------- 14.6 響應式 ---------- */
+@media (max-width: 768px) {
+  .commission-form-body {
+    padding: 0.75rem;
+  }
+  .commission-form-statusbar {
+    font-size: 0.6rem;
+    gap: 0.5rem;
+  }
+  .commission-form-statusbar > span {
+    white-space: nowrap;
+  }
+  .folder-body-label {
+    font-size: 0.7rem;
+  }
+  .folder-body-ascii {
+    font-size: 0.45rem;
+  }
+  .now-led {
+    width: 8px;
+    height: 8px;
+    top: -3px;
+    right: -3px;
+  }
+}

@@ -1,7 +1,7 @@
 ---
 // Mini Strudel Player：Windows-form 風格的浮動迷你播放器
 // - 可拖曳（限制在 Hero section 範圍內）
-// - 可關閉（✕ 隱藏、🎵 按鈕重新開啟）
+// - 可關閉（✕ 隱藏、方形按鈕重新開啟）
 // - 預設可見，位於 Hero 右下角
 //
 // 使用方式：在父元件中引入，並可透過 `boundsId` prop 指定拖曳邊界元素 ID，
@@ -57,8 +57,8 @@ const { boundsId = 'hero-section' } = Astro.props;
 </div>
 
 <!-- Reopen button (absolute inside hero, hidden by default) -->
-<button id="mini-strudel-reopen" class="mini-strudel-reopen retro-border hidden" aria-label="開啟音樂播放器">
-  🎵
+<button id="mini-strudel-reopen" class="mini-strudel-reopen retro-border retro-shadow" aria-label="開啟音樂播放器">
+  <span class="mini-strudel-reopen-icon" aria-hidden="true">▶</span>
 </button>
 
 <!-- Import Map：把 @strudel/soundfonts 的裸 import 全部解析回 @strudel/web@1.0.3 的同一個 module instance，
@@ -388,18 +388,14 @@ const { boundsId = 'hero-section' } = Astro.props;
   reopenBtn?.addEventListener('click', openPlayer);
 </script>
 
-<!--
-================================================================================
-以下 CSS 請複製貼上至 src/styles/global.css 檔案末尾
-================================================================================
-
+<style is:global>
 /* ---------- 13. Mini Strudel Player（浮動迷你播放器） ---------- */
 .mini-strudel {
-  position: fixed;
-  /* 預設位於視窗右下角；嵌入 Hero 後會自動重新夾緊到 Hero 範圍內 */
+  position: absolute;
+  /* 預設位於 Hero 右下角；拖曳後改由 left/top 控制（見 .is-positioned） */
   right: 20px;
   bottom: 20px;
-  z-index: 1000;
+  z-index: 40;
   min-width: 200px;
   max-width: 260px;
   user-select: none;
@@ -537,24 +533,28 @@ const { boundsId = 'hero-section' } = Astro.props;
   height: 20px;
 }
 
+/* Reopen 按鈕：方形硬邊，沿用 retro-border / retro-shadow 語彙。
+   不再用圓形 + emoji，改用 mono 字體的 ▶ 符號，跟播放器本身一致。
+   position: fixed 讓按鈕永遠貼齊視窗右下角，與 .mini-strudel 預設錨點一致。 */
 .mini-strudel-reopen {
-  position: fixed;
+  position: absolute;
   right: 20px;
   bottom: 20px;
-  z-index: 999;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
+  z-index: 40;
+  width: 36px;
+  height: 36px;
   background: var(--bg);
   color: var(--fg);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.25rem;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 0.875rem;
   cursor: pointer;
-  box-shadow: var(--shadow-hard);
   user-select: none;
-  transition: transform 0.1s step-end, box-shadow 0.1s step-end;
+  transition: transform 0.1s step-end, box-shadow 0.1s step-end,
+    background-color 0.1s step-end, color 0.1s step-end;
 }
 
 .mini-strudel-reopen:hover {
@@ -567,6 +567,11 @@ const { boundsId = 'hero-section' } = Astro.props;
 .mini-strudel-reopen:active {
   transform: translate(0, 0);
   box-shadow: 2px 2px 0 0 var(--fg);
+}
+
+.mini-strudel-reopen-icon {
+  line-height: 1;
+  letter-spacing: 0;
 }
 
 /* 行動裝置：縮小尺寸並微調位置 */
@@ -591,9 +596,9 @@ const { boundsId = 'hero-section' } = Astro.props;
   .mini-strudel-reopen {
     right: 12px;
     bottom: 12px;
-    width: 36px;
-    height: 36px;
-    font-size: 1rem;
+    width: 30px;
+    height: 30px;
+    font-size: 0.75rem;
   }
 }
 
@@ -603,9 +608,6 @@ const { boundsId = 'hero-section' } = Astro.props;
   .mini-strudel {
     display: none;
   }
-  .mini-strudel-reopen {
-    display: none;
-  }
 }
 */
--->
+</style>
