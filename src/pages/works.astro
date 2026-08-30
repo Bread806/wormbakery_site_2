@@ -5,7 +5,7 @@ import Footer from '../components/Footer.astro';
 import { WORKS, getCategoryLabel } from '../data/works';
 
 // 只顯示指定的 6 部作品
-const DISPLAY_IDS = [19, 10, 21, 22, 25, 26];
+const DISPLAY_IDS = [19, 10, 21, 22, 25, 26, 18, 20, 27];
 const displayWorks = WORKS.filter((w) => DISPLAY_IDS.includes(w.id));
 ---
 
@@ -58,92 +58,181 @@ const displayWorks = WORKS.filter((w) => DISPLAY_IDS.includes(w.id));
     </div>
   </main>
 
-  <!-- 作品 Modal -->
-  <div id="work-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-    <div class="card-retro max-w-2xl w-full max-h-[90vh] overflow-y-auto p-8" role="dialog" aria-modal="true">
-      <button id="modal-close" class="absolute top-4 right-4 p-2 border-2 border-[var(--fg)] hover:bg-[var(--fg)] hover:text-[var(--bg)]" aria-label="關閉">
-        ✕
-      </button>
-      <div id="modal-image-container" class="mb-6 aspect-[16/9]">
-        <img id="modal-image" src="" alt="" class="w-full h-full object-cover border-3 border-[var(--fg)]" />
-      </div>
-      <h2 id="modal-title" class="text-3xl font-bold mb-4 acid-chroma"></h2>
-      <p id="modal-desc" class="text-lg mb-6 leading-relaxed"></p>
-      <div class="flex flex-wrap gap-4">
-        <span id="modal-category" class="px-4 py-2 border-2 border-[var(--fg)] font-mono text-sm"></span>
-        <a id="modal-link" href="#" target="_blank" rel="noopener noreferrer" class="btn-retro hidden">文本 →</a>
-        <a id="modal-release" href="#" target="_blank" rel="noopener noreferrer" class="btn-retro hidden">聆聽 →</a>
-      </div>
-    </div>
-  </div>
+  <!-- 作品面板容器（動態產生多個可拖曳面板） -->
+  <div id="work-panels"></div>
 
   <Footer />
 
   <script>
     import { WORKS, getCategoryLabel } from '../data/works';
 
-    const DISPLAY_IDS = [19, 10, 21, 22, 25, 26];
+const DISPLAY_IDS = [19, 10, 21, 22, 25, 26, 18, 20, 27];
     const works = WORKS.filter((w) => DISPLAY_IDS.includes(w.id));
-    const modal = document.getElementById('work-modal');
-    const modalClose = document.getElementById('modal-close');
-    const modalTitle = document.getElementById('modal-title');
-    const modalDesc = document.getElementById('modal-desc');
-    const modalImage = document.getElementById('modal-image') as HTMLImageElement;
-    const modalImageContainer = document.getElementById('modal-image-container');
-    const modalCategory = document.getElementById('modal-category');
-    const modalLink = document.getElementById('modal-link');
-    const modalRelease = document.getElementById('modal-release');
+    const panelsContainer = document.getElementById('work-panels');
 
-    function openModal(work: typeof works[0]) {
-      if (!modal || !modalTitle || !modalDesc || !modalCategory) return;
-      modalTitle.textContent = work.title;
-      modalDesc.textContent = work.description;
-      modalCategory.textContent = getCategoryLabel(work.category);
+    // z-index 管理器：每次開新面板或點擊面板時遞增，確保最上層
+    let zIndexCounter = 100;
+    // 面板偏移計數器：每開一個面板往右下偏移 24px，開太多時回捲
+    let offsetCounter = 0;
 
-      if (work.image) {
-        modalImage.src = work.image;
-        modalImage.alt = work.title;
-        modalImageContainer?.classList.remove('hidden');
-      } else {
-        modalImageContainer?.classList.add('hidden');
-      }
-
-      if (work.link) {
-        modalLink?.setAttribute('href', work.link);
-        modalLink?.classList.remove('hidden');
-      } else {
-        modalLink?.classList.add('hidden');
-      }
-      if (work.release) {
-        modalRelease?.setAttribute('href', work.release);
-        modalRelease?.classList.remove('hidden');
-      } else {
-        modalRelease?.classList.add('hidden');
-      }
-
-      modal.classList.remove('hidden');
-      modal.classList.add('flex');
+    function nextZIndex(): number {
+      zIndexCounter += 1;
+      return zIndexCounter;
     }
 
-    function closeModal() {
-      modal?.classList.add('hidden');
-      modal?.classList.remove('flex');
+    function nextOffset(): number {
+      const offset = (offsetCounter % 6) * 24;
+      offsetCounter += 1;
+      return offset;
     }
 
+    // 建立單一面板並插入容器
+    function createPanel(work: typeof works[0]): HTMLElement | null {
+      if (!panelsContainer) return null;
+
+      const panel = document.createElement('div');
+      panel.className = 'work-panel retro-border retro-shadow';
+      panel.dataset.workId = String(work.id);
+      panel.style.zIndex = String(nextZIndex());
+
+      const offset = nextOffset();
+      panel.style.setProperty('--panel-offset', `${offset}px`);
+
+      const categoryLabel = getCategoryLabel(work.category);
+      const hasImage = !!work.image;
+      const hasLink = !!work.link;
+      const hasRelease = !!work.release;
+
+      panel.innerHTML = `
+        <div class="work-panel-titlebar">
+          <span class="work-panel-title">${work.title}</span>
+          <button class="work-panel-close" aria-label="關閉">✕</button>
+        </div>
+        <div class="work-panel-body">
+          ${hasImage ? `
+            <div class="work-panel-image-wrap">
+              <img src="${work.image}" alt="${work.title}" class="work-panel-image" loading="lazy" />
+            </div>
+          ` : ''}
+          <h2 class="work-panel-heading acid-chroma">${work.title}</h2>
+          <p class="work-panel-desc">${work.description}</p>
+          <div class="work-panel-tags">
+            <span class="work-panel-category">${categoryLabel}</span>
+            <span class="work-panel-id font-barcode">#${String(work.id).padStart(3, '0')}</span>
+          </div>
+          <div class="work-panel-links">
+            ${hasLink ? `<a href="${work.link}" target="_blank" rel="noopener noreferrer" class="btn-retro">文本 →</a>` : ''}
+            ${hasRelease ? `<a href="${work.release}" target="_blank" rel="noopener noreferrer" class="btn-retro">聆聽 →</a>` : ''}
+          </div>
+        </div>
+      `;
+
+      panelsContainer.appendChild(panel);
+      bindPanelEvents(panel);
+      return panel;
+    }
+
+    // 綁定面板的拖曳、關閉、點擊提升事件
+    function bindPanelEvents(panel: HTMLElement) {
+      const titlebar = panel.querySelector('.work-panel-titlebar');
+      const closeBtn = panel.querySelector('.work-panel-close');
+
+      // 關閉：移除 DOM
+      closeBtn?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        panel.remove();
+      });
+
+      // 點擊面板任意處提升到最上層
+      panel.addEventListener('mousedown', () => {
+        panel.style.zIndex = String(nextZIndex());
+      });
+      panel.addEventListener('touchstart', () => {
+        panel.style.zIndex = String(nextZIndex());
+      }, { passive: true });
+
+      // 拖曳邏輯（沿用 mini strudel player 的做法）
+      let dragOffsetX = 0;
+      let dragOffsetY = 0;
+      let isDragging = false;
+
+      function startDrag(clientX: number, clientY: number) {
+        const rect = panel.getBoundingClientRect();
+        dragOffsetX = clientX - rect.left;
+        dragOffsetY = clientY - rect.top;
+        isDragging = true;
+        document.body.style.userSelect = 'none';
+        panel.classList.add('is-dragging');
+        panel.style.zIndex = String(nextZIndex());
+      }
+
+      function doDrag(clientX: number, clientY: number) {
+        if (!isDragging) return;
+        let newLeft = clientX - dragOffsetX;
+        let newTop = clientY - dragOffsetY;
+        // 限制在視窗內（不要整個拖出去）
+        const maxX = window.innerWidth - panel.offsetWidth;
+        const maxY = window.innerHeight - panel.offsetHeight;
+        newLeft = Math.max(0, Math.min(newLeft, maxX));
+        newTop = Math.max(0, Math.min(newTop, maxY));
+        panel.style.left = `${newLeft}px`;
+        panel.style.top = `${newTop}px`;
+        panel.classList.add('is-positioned');
+      }
+
+      function endDrag() {
+        isDragging = false;
+        document.body.style.userSelect = '';
+        panel.classList.remove('is-dragging');
+      }
+
+      titlebar?.addEventListener('mousedown', (e) => {
+        startDrag(e.clientX, e.clientY);
+        e.preventDefault();
+      });
+      document.addEventListener('mousemove', (e) => doDrag(e.clientX, e.clientY));
+      document.addEventListener('mouseup', endDrag);
+
+      titlebar?.addEventListener('touchstart', (e) => {
+        if (e.touches.length > 0) {
+          startDrag(e.touches[0].clientX, e.touches[0].clientY);
+          e.preventDefault();
+        }
+      }, { passive: false });
+      document.addEventListener('touchmove', (e) => {
+        if (isDragging && e.touches.length > 0) {
+          doDrag(e.touches[0].clientX, e.touches[0].clientY);
+        }
+      }, { passive: false });
+      document.addEventListener('touchend', endDrag);
+    }
+
+    // 作品卡片點擊 → 開新面板
     document.querySelectorAll('.work-card').forEach((card) => {
       card.addEventListener('click', () => {
         const id = Number((card as HTMLElement).dataset.workId);
         const work = works.find((w) => w.id === id);
-        if (work) openModal(work);
+        if (work) createPanel(work);
       });
     });
 
-    modalClose?.addEventListener('click', closeModal);
-    modal?.addEventListener('click', (e) => {
-      if (e.target === modal) closeModal();
-    });
+    // ESC 關閉最上層面板
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') closeModal();
+      if (e.key === 'Escape' && panelsContainer) {
+        const panels = panelsContainer.querySelectorAll<HTMLElement>('.work-panel');
+        if (panels.length === 0) return;
+        // 找 z-index 最高的面板關閉
+        let topPanel: HTMLElement | null = null;
+        let topZ = -1;
+        panels.forEach((p) => {
+          const z = Number(p.style.zIndex || 0);
+          if (z > topZ) {
+            topZ = z;
+            topPanel = p;
+          }
+        });
+        topPanel?.remove();
+      }
     });
   </script>
 </BaseLayout>

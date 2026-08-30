@@ -1280,3 +1280,170 @@ html[data-theme='light'] .tv-track-item {
     right: -3px;
   }
 }
+
+/* ============================================
+   15. Works 頁面：多視窗面板（可拖曳、可疊放）
+   ============================================ */
+
+/* 面板容器：覆蓋整個視窗，面板用 absolute 定位在裡面 */
+#work-panels {
+  position: fixed;
+  inset: 0;
+  pointer-events: none; /* 容器本身不擋點擊，只有面板本身會接 */
+  z-index: 60;
+}
+
+/* 單一面板：可拖曳視窗 */
+.work-panel {
+  position: absolute;
+  top: 8vh;
+  left: 50%;
+  transform: translateX(-50%);
+  /* 多面板時用 --panel-offset 變數往右下偏移 */
+  margin-left: var(--panel-offset, 0px);
+  margin-top: var(--panel-offset, 0px);
+  width: min(640px, 90vw);
+  max-height: 84vh;
+  background: var(--bg);
+  pointer-events: auto; /* 容器是 none，面板本身要能接事件 */
+  display: flex;
+  flex-direction: column;
+  /* 拖曳中關閉動畫，避免拖曳時 transform 跳動 */
+  transition: none;
+}
+
+/* JS 開始拖曳後改由 left/top 控制，清除 transform 避免衝突 */
+.work-panel.is-positioned {
+  transform: none;
+  margin-left: 0;
+  margin-top: 0;
+}
+
+/* 拖曳中的面板加微弱陰影強化 */
+.work-panel.is-dragging {
+  box-shadow: 8px 8px 0 0 var(--fg), 0 0 24px rgba(0, 0, 0, 0.2);
+}
+
+/* 標題列：拖曳 handle + 標題 + 關閉鈕 */
+.work-panel-titlebar {
+  background: var(--fg);
+  color: var(--bg);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 0.875rem;
+  padding: 4px 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: move;
+  user-select: none;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+
+.work-panel-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.work-panel-close {
+  background: var(--fg);
+  color: var(--bg);
+  border: 2px solid var(--bg);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 0.75rem;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.work-panel-close:hover {
+  background: var(--bg);
+  color: var(--fg);
+}
+
+/* 面板內容區 */
+.work-panel-body {
+  padding: 1.5rem;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.work-panel-image-wrap {
+  margin-bottom: 1.5rem;
+  border: 3px solid var(--fg);
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+}
+
+.work-panel-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.work-panel-heading {
+  font-size: 1.875rem;
+  font-weight: 900;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+.work-panel-desc {
+  font-size: 1rem;
+  line-height: 1.7;
+  margin-bottom: 1.5rem;
+  opacity: 0.85;
+  /* 讓描述中的 \n 換行正常顯示（委託作品的 credit 另起一行） */
+  white-space: pre-line;
+}
+
+.work-panel-tags {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.work-panel-category {
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  padding: 0.25rem 0.75rem;
+  border: 2px solid var(--fg);
+}
+
+.work-panel-id {
+  font-size: 1.25rem;
+  opacity: 0.6;
+}
+
+.work-panel-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+/* 響應式：手機版面板佔滿寬度，位置往上提 */
+@media (max-width: 768px) {
+  .work-panel {
+    top: 5vh;
+    width: 95vw;
+    max-height: 88vh;
+  }
+  .work-panel-body {
+    padding: 1rem;
+  }
+  .work-panel-heading {
+    font-size: 1.5rem;
+  }
+}

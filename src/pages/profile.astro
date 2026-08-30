@@ -8,7 +8,7 @@ const TIMELINE = [
   { year: '2023', events: ['鄉間小路與多愁善感的姐姐', '慾兔', '我們的事'] },
   { year: '2024', events: ['只想要你聽著我', '我才是最特別的納一位', '居酒屋的姊姊似乎討厭下雨天'] },
   { year: '2025', events: ['鼠在不想離開你', 'Love Sick'] },
-  { year: '2026', events: ['羞澀的新婚之夜～小雪在你懷中低聲呢喃的愛', '將尾巴與月色借你，直到雪夜放晴', '敬請期待 :D'] },
+  { year: '2026', events: ['羞澀的新婚之夜～小雪在你懷中低聲呢喃的愛', '將尾巴與月色借你，直到雪夜放晴', { text: '敬請期待 :D', muted: true }] },
 ];
 ---
 
@@ -53,9 +53,13 @@ const TIMELINE = [
             <div class="flex gap-6">
               <div class="font-mono font-bold text-2xl w-20 flex-shrink-0">{item.year}</div>
               <div class="flex-1 border-l-3 border-[var(--fg)] pl-6 space-y-2">
-                {item.events.map((event) => (
+              {item.events.map((event) =>
+                typeof event === 'string' ? (
                   <p class="text-lg">{event}</p>
-                ))}
+                ) : (
+                  <p class="text-lg opacity-40">{event.text}</p>
+                )
+              )}
               </div>
             </div>
           ))}

@@ -18,67 +18,7 @@ export interface Album {
   tracks: Track[];
 }
 
-// 現有作品連結 (works.ts 中提取出來方便共用)
-const DOC_PARAMS = '?usp=sharing&ouid=115379523661572300748&rtpof=true&sd=true';
-
 export const ALBUMS: Album[] = [
-  {
-    id: 'A',
-    title: '依賴型戀愛症候群',
-    coverImage: '/work_pic/work_doctor.jpeg',  // 借用現有作品圖當測試封面
-    tracks: [
-      {
-        id: 'a',
-        title: '病',
-        description: '一位姊姊常常來看診，她發現與她談了戀愛的故事。',
-        link: `https://docs.google.com/document/d/1XpX_o2pX4xCszo77egUeLnKXoZE7XNhm/edit${DOC_PARAMS}`,
-        image: '/work_pic/work_doctor.jpeg',
-        credits: [
-          { role: '台本', name: '卡蚯蚓' },
-        ],
-      },
-    ],
-  },
-  {
-    id: 'B',
-    title: '心之所向',
-    coverImage: '/work_pic/work_MRT.jpeg',  // 借用現有作品圖當測試封面
-    tracks: [
-      {
-        id: 'a',
-        title: '壽星',
-        description: '敬請期待 :D',
-        image: '/pic/bakery-icon.png',
-      },
-      {
-        id: 'b',
-        title: '捷運忠孝新生站',
-        description: '與朋友約在捷運忠孝新生站見面一起去咖啡廳，卻在車站遇見熟人的故事。',
-        image: '/work_pic/work_MRT.jpeg',
-        credits: [
-          { role: '台本', name: '卡蚯蚓' },
-        ],
-      },
-      {
-        id: 'c',
-        title: '神不在的地方',
-        description: '敬請期待 :D',
-        image: '/pic/bakery-icon.png',
-      },
-      {
-        id: 'd',
-        title: '穿洞',
-        description: '敬請期待 :D',
-        image: '/pic/bakery-icon.png',
-      },
-      {
-        id: 'e',
-        title: '念願',
-        description: '敬請期待 :D',
-        image: '/pic/bakery-icon.png',
-      },
-    ],
-  },
   {
     id: 'coming',
     title: '敬請期待',
