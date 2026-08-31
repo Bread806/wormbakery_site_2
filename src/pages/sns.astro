@@ -47,8 +47,15 @@ import { SNS_LINKS, SNS_INTRO, SNS_FOOTER } from '../data/sns';
       <!-- 結尾：固定容器保持比例 -->
       <div class="text-center">
         <p class="text-2xl font-mono mb-6">{SNS_FOOTER}</p>
-        <div class="h-24 flex justify-center">
-          <img src="/pic/text_white.png" alt="蚯蚓麵包屋" class="h-full w-auto object-contain" />
+        <div class="h-28 md:h-36 flex justify-center">
+          {/* 卡蚯蚓字樣：白背景用黑色字（text_black）、黑背景用白色字（text_white） */}
+          <img src="/pic/text_black.png" alt="卡蚯蚓" class="h-full w-auto object-contain max-w-full dark:hidden" />
+          <img src="/pic/text_white.png" alt="卡蚯蚓" class="hidden dark:block h-full w-auto object-contain max-w-full" />
+        </div>
+        <div class="h-28 md:h-36 flex justify-center mt-2">
+          {/* 麵包屋字樣：白背景用黑色字（bakery_type_black）、黑背景用白色字（bakery_type_white） */}
+          <img src="/pic/bakery_type_black_cropped.png" alt="BAKERY" class="h-full w-auto object-contain max-w-full dark:hidden" />
+          <img src="/pic/bakery_type_white_cropped.png" alt="BAKERY" class="hidden dark:block h-full w-auto object-contain max-w-full" />
         </div>
       </div>
     </div>
