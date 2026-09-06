@@ -125,6 +125,10 @@ const DISPLAY_IDS = [19, 10, 21, 22, 25, 26, 18, 20, 27];
             ${hasRelease ? `<a href="${work.release}" target="_blank" rel="noopener noreferrer" class="btn-retro">聆聽 →</a>` : ''}
           </div>
         </div>
+        <!-- 底部置中關閉鈕：位於捲動區之外，內容再長也固定可見，手機也好按 -->
+        <div class="work-panel-footer">
+          <button class="work-panel-footer-close btn-retro" aria-label="關閉面板">關閉 ✕</button>
+        </div>
       `;
 
       panelsContainer.appendChild(panel);
@@ -136,18 +140,51 @@ const DISPLAY_IDS = [19, 10, 21, 22, 25, 26, 18, 20, 27];
     function bindPanelEvents(panel: HTMLElement) {
       const titlebar = panel.querySelector('.work-panel-titlebar');
       const closeBtn = panel.querySelector('.work-panel-close');
+      const footerCloseBtn = panel.querySelector('.work-panel-footer-close');
 
-      // 關閉：移除 DOM
-      closeBtn?.addEventListener('click', (e) => {
-        e.stopPropagation();
+      // 統一的關閉處理
+      function closePanel() {
+        // 先解綁 document 層級的拖曳監聽，避免殘留
+        document.removeEventListener('mousemove', onDocMouseMove);
+        document.removeEventListener('mouseup', onDocMouseUp);
+        document.removeEventListener('touchmove', onDocTouchMove);
+        document.removeEventListener('touchend', onDocTouchEnd);
         panel.remove();
-      });
+      }
+
+      // 關閉鈕共用邏輯：pointerup 觸發（click 在部分手機會被拖曳的 preventDefault 吃掉）
+      // 只在按壓與放開都落在同一顆按鈕時才關閉，避免拖曳標題列經過按鈕時誤觸
+      function bindClose(el: Element | null) {
+        if (!el) return;
+        let pressed = false;
+        el.addEventListener('pointerdown', (e) => {
+          e.stopPropagation();
+          pressed = true;
+        });
+        el.addEventListener('pointerup', (e) => {
+          e.stopPropagation();
+          if (pressed) {
+            e.preventDefault();
+            closePanel();
+          }
+          pressed = false;
+        });
+        // 按住後移出按鈕範圍就取消（一般 click 行為）
+        el.addEventListener('pointerleave', () => {
+          pressed = false;
+        });
+      }
+
+      bindClose(closeBtn);
+      bindClose(footerCloseBtn);
 
       // 點擊面板任意處提升到最上層
       panel.addEventListener('mousedown', () => {
         panel.style.zIndex = String(nextZIndex());
       });
-      panel.addEventListener('touchstart', () => {
+      panel.addEventListener('touchstart', (e) => {
+        // 關閉鈕不該被拖曳邏輯干擾，直接跳過
+        if ((e.target as HTMLElement).closest('.work-panel-close, .work-panel-footer-close')) return;
         panel.style.zIndex = String(nextZIndex());
       }, { passive: true });
 
@@ -155,6 +192,12 @@ const DISPLAY_IDS = [19, 10, 21, 22, 25, 26, 18, 20, 27];
       let dragOffsetX = 0;
       let dragOffsetY = 0;
       let isDragging = false;
+
+      // 標題列上的叉叉例外：pointer 按壓起始不在標題列本身就別啟動拖曳，
+      // 避免手機誤觸叉叉附近時被當成拖曳
+      function isOnCloseButton(e: Event): boolean {
+        return !!(e.target as HTMLElement)?.closest?.('.work-panel-close, .work-panel-footer-close');
+      }
 
       function startDrag(clientX: number, clientY: number) {
         const rect = panel.getBoundingClientRect();
@@ -190,21 +233,34 @@ const DISPLAY_IDS = [19, 10, 21, 22, 25, 26, 18, 20, 27];
         startDrag(e.clientX, e.clientY);
         e.preventDefault();
       });
-      document.addEventListener('mousemove', (e) => doDrag(e.clientX, e.clientY));
-      document.addEventListener('mouseup', endDrag);
+      document.addEventListener('mousemove', onDocMouseMove);
+      document.addEventListener('mouseup', onDocMouseUp);
 
       titlebar?.addEventListener('touchstart', (e) => {
+        // 叉叉在標題列內：手機觸碰叉叉時，不能 preventDefault 吃掉後續 pointerup
+        if (isOnCloseButton(e)) return;
         if (e.touches.length > 0) {
           startDrag(e.touches[0].clientX, e.touches[0].clientY);
           e.preventDefault();
         }
       }, { passive: false });
-      document.addEventListener('touchmove', (e) => {
+      document.addEventListener('touchmove', onDocTouchMove);
+      document.addEventListener('touchend', onDocTouchEnd);
+
+      function onDocMouseMove(e: MouseEvent) {
+        doDrag(e.clientX, e.clientY);
+      }
+      function onDocMouseUp() {
+        endDrag();
+      }
+      function onDocTouchMove(e: TouchEvent) {
         if (isDragging && e.touches.length > 0) {
           doDrag(e.touches[0].clientX, e.touches[0].clientY);
         }
-      }, { passive: false });
-      document.addEventListener('touchend', endDrag);
+      }
+      function onDocTouchEnd() {
+        endDrag();
+      }
     }
 
     // 作品卡片點擊 → 開新面板

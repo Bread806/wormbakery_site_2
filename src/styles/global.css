@@ -1353,9 +1353,10 @@ html[data-theme='light'] .tv-track-item {
   border: 2px solid var(--bg);
   font-family: var(--font-mono);
   font-weight: 700;
-  font-size: 0.75rem;
-  width: 20px;
-  height: 20px;
+  font-size: 1rem;
+  /* 加大到 32px：原本 20px 在手機上太小，難以命中 */
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1363,11 +1364,27 @@ html[data-theme='light'] .tv-track-item {
   padding: 0;
   line-height: 1;
   flex-shrink: 0;
+  touch-action: manipulation; /* 移除 300ms click 延遲 */
 }
 
 .work-panel-close:hover {
   background: var(--bg);
   color: var(--fg);
+}
+
+/* 面板底部固定關閉列：不隨內容捲動，電腦/手機都好按 */
+.work-panel-footer {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  padding: 0.75rem 1rem calc(0.75rem + env(safe-area-inset-bottom, 0px));
+  border-top: 3px solid var(--fg);
+  background: var(--bg);
+}
+
+.work-panel-footer-close {
+  min-width: 60%;
+  padding: 0.6rem 1.5rem;
 }
 
 /* 面板內容區 */
@@ -1445,5 +1462,9 @@ html[data-theme='light'] .tv-track-item {
   }
   .work-panel-heading {
     font-size: 1.5rem;
+  }
+  .work-panel-footer-close {
+    min-width: 70%;
+    padding: 0.8rem 1.5rem;
   }
 }
