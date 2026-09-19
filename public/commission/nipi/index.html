@@ -1,0 +1,998 @@
+<!doctype html>
+<html lang="zh-TW"><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>尼皮音聲作品 · 心智圖 · 人物・劇情・整體架構</title>
+  <style>
+    :root {
+      --bg: #f5f4ed;
+      --surface: #faf9f5;
+      --surface-warm: #e8e6dc;
+      --fg: #141413;
+      --fg-2: #3d3d3a;
+      --muted: #504e49;
+      --meta: #6b6a64;
+      --border: #e8e6dc;
+      --border-soft: #e5e3d8;
+      --accent: #1b365d;
+      --accent-on: #faf9f5;
+      --accent-light: #2d5a8a;
+      --accent-hover: var(--accent);
+      --accent-active: #142a48;
+      --tag-bg-faint: #eef2f7;
+      --tag-bg-soft: #e4ecf5;
+      --tag-bg-base: #d6e1ee;
+      --tag-bg-strong: #d0dce9;
+
+      --font-display: "TsangerJinKai02", "Source Han Serif SC", "Noto Serif CJK SC",
+        "Songti SC", "STSong", Georgia, serif;
+      --font-body: "TsangerJinKai02", "Source Han Serif SC", "Noto Serif CJK SC",
+        "Songti SC", "STSong", Georgia, serif;
+      --font-mono: "JetBrains Mono", "SF Mono", "Fira Code", Consolas, Monaco,
+        "TsangerJinKai02", "Source Han Serif SC", monospace;
+
+      --text-xs: 11px;
+      --text-sm: 12px;
+      --text-base: 14px;
+      --text-md: 15px;
+      --text-lg: 17px;
+      --text-xl: 22px;
+      --text-2xl: 32px;
+      --text-3xl: 48px;
+      --text-4xl: 96px;
+
+      --leading-display: 1.1;
+      --leading-tight: 1.25;
+      --leading-body: 1.55;
+      --leading-dense: 1.4;
+
+      --tracking-display: -1.2px;
+      --tracking-eyebrow: 1.2px;
+      --tracking-label: 0.4px;
+
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+      --space-7: 28px;
+      --space-8: 32px;
+      --space-12: 48px;
+      --space-18: 72px;
+      --space-22: 88px;
+
+      --radius-xs: 2px;
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --radius-xl: 16px;
+
+      --elev-flat: none;
+      --elev-ring: 0 0 0 1px var(--border);
+      --elev-ring-accent: 0 0 0 1px var(--accent);
+      --elev-raised: 0 4px 24px rgba(0, 0, 0, 0.05);
+
+      --focus-ring: 0 0 0 2px var(--accent-active);
+
+      --motion-fast: 150ms;
+      --motion-base: 200ms;
+      --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+
+      --container-max: 1440px;
+      --container-gutter-desktop: 64px;
+      --container-gutter-tablet: 32px;
+      --container-gutter-phone: 16px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--fg);
+      font-family: var(--font-body);
+      font-size: var(--text-base);
+      line-height: var(--leading-body);
+      letter-spacing: 0.35px;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+    }
+    img, svg { display: block; max-width: 100%; }
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; cursor: pointer; }
+    p { text-wrap: pretty; margin: 0; }
+    h1, h2, h3, h4 { text-wrap: balance; margin: 0; font-weight: 500; }
+    strong { font-weight: 500; }
+    .num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+
+    /* ─── layout primitives ─── */
+    .container {
+      max-width: var(--container-max);
+      margin-inline: auto;
+      padding-inline: var(--container-gutter-desktop);
+    }
+    @media (max-width: 920px) {
+      .container { padding-inline: var(--container-gutter-tablet); }
+    }
+    @media (max-width: 600px) {
+      .container { padding-inline: var(--container-gutter-phone); }
+    }
+    .section { padding-block: var(--space-18); }
+    .section + .section { border-top: 1px solid var(--border); }
+
+    /* ─── type ─── */
+    h1, .h1 {
+      font-family: var(--font-display);
+      font-size: clamp(38px, 9.5vw, var(--text-4xl));
+      line-height: var(--leading-display);
+      letter-spacing: var(--tracking-display);
+    }
+    h2, .h2 {
+      font-family: var(--font-display);
+      font-size: var(--text-2xl);
+      line-height: var(--leading-tight);
+      letter-spacing: 0.4px;
+    }
+    h3, .h3 {
+      font-family: var(--font-display);
+      font-size: var(--text-xl);
+      line-height: 1.3;
+    }
+    .eyebrow {
+      font-family: var(--font-mono);
+      font-size: var(--text-sm);
+      letter-spacing: var(--tracking-eyebrow);
+      text-transform: uppercase;
+      color: var(--accent);
+      margin: 0 0 var(--space-6);
+    }
+    .label {
+      font-family: var(--font-mono);
+      font-size: var(--text-sm);
+      letter-spacing: var(--tracking-label);
+      text-transform: uppercase;
+      color: var(--meta);
+    }
+    .meta { font-family: var(--font-mono); font-size: var(--text-sm); color: var(--meta); }
+    .lead { font-size: var(--text-md); line-height: var(--leading-body); color: var(--muted); max-width: 60ch; }
+
+    /* ─── chrome ─── */
+    .topnav {
+      position: sticky; top: 0; z-index: 20;
+      background: color-mix(in oklch, var(--bg) 92%, transparent);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .topnav-inner {
+      display: flex; align-items: center; justify-content: space-between;
+      padding-block: 14px;
+    }
+    .topnav .logo {
+      font-family: var(--font-display);
+      font-size: 19px;
+      font-weight: 500;
+      letter-spacing: 0.4px;
+    }
+    .topnav nav { display: flex; gap: var(--space-8); }
+    .topnav nav a { font-size: var(--text-base); color: var(--muted); }
+    .topnav nav a:hover { color: var(--accent); }
+    .pagefoot {
+      padding-block: var(--space-12);
+      color: var(--muted);
+      font-size: var(--text-sm);
+      border-top: 1px solid var(--border);
+    }
+    .pagefoot .row-between { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); flex-wrap: wrap; }
+
+    /* ─── tag ─── */
+    .tag {
+      display: inline-flex; align-items: center;
+      padding: 2px 8px;
+      background: var(--tag-bg-soft);
+      color: var(--accent);
+      border-radius: var(--radius-xs);
+      font-family: var(--font-mono);
+      font-size: var(--text-sm);
+      letter-spacing: var(--tracking-label);
+    }
+    .tag-faint { background: var(--tag-bg-faint); }
+    .tag-strong { background: var(--tag-bg-strong); padding: 2px 10px; border-radius: var(--radius-sm); }
+
+    /* ─── hero ─── */
+    .hero { padding-block: clamp(64px, 10vw, 120px); }
+    .hero-center { text-align: center; margin-inline: auto; }
+    .hero h1 { margin-bottom: var(--space-6); }
+    .hero .lead { margin: var(--space-5) auto 0; }
+
+    /* ─── tab switcher ─── */
+    .tabbar {
+      display: flex;
+      justify-content: center;
+      gap: var(--space-2);
+      padding: var(--space-3);
+      background: var(--surface);
+      border: var(--elev-ring);
+      border-radius: var(--radius-lg);
+      max-width: max-content;
+      margin-inline: auto;
+    }
+    .tabbtn {
+      padding: 10px 22px;
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      font-family: var(--font-display);
+      font-size: var(--text-md);
+      font-weight: 500;
+      letter-spacing: 0.4px;
+      border-radius: var(--radius-md);
+      transition: background var(--motion-base) var(--ease-standard), color var(--motion-base) var(--ease-standard);
+    }
+    .tabbtn:hover { color: var(--fg); }
+    .tabbtn:focus-visible { outline: var(--focus-ring); outline-offset: 2px; }
+    .tabbtn[aria-selected="true"] {
+      background: var(--accent);
+      color: var(--accent-on);
+    }
+    .tabbtn .num-tag {
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      margin-right: 6px;
+      opacity: 0.7;
+    }
+
+    /* ─── mind-map canvas ─── */
+    .mm-panel { display: none; }
+    .mm-panel[aria-hidden="false"] { display: block; }
+
+    .mm-root-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--space-12);
+      padding-block: var(--space-12);
+    }
+
+    /* central node */
+    .mm-central {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: 14px 28px;
+      background: var(--accent);
+      color: var(--accent-on);
+      border-radius: var(--radius-lg);
+      font-family: var(--font-display);
+      font-size: var(--text-xl);
+      font-weight: 500;
+      letter-spacing: 0.4px;
+      box-shadow: var(--elev-ring-accent);
+    }
+    .mm-central .mm-central-num {
+      font-family: var(--font-mono);
+      font-size: var(--text-sm);
+      opacity: 0.6;
+    }
+
+    /* branch row */
+    .mm-branches {
+      display: flex;
+      justify-content: center;
+      gap: var(--space-12);
+      flex-wrap: wrap;
+      width: 100%;
+    }
+    @media (max-width: 920px) {
+      .mm-branches { flex-direction: column; align-items: center; gap: var(--space-8); }
+    }
+
+    /* branch column */
+    .mm-branch {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      min-width: 320px;
+      max-width: 480px;
+      flex: 1 1 380px;
+    }
+
+    /* branch header node */
+    .mm-branch-head {
+      align-self: center;
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: 10px 20px;
+      background: var(--surface);
+      color: var(--accent);
+      border: var(--elev-ring-accent);
+      border-radius: var(--radius-md);
+      font-family: var(--font-display);
+      font-size: var(--text-lg);
+      font-weight: 500;
+      margin-bottom: var(--space-6);
+      position: relative;
+    }
+    .mm-branch-head::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: -24px;
+      width: 1px;
+      height: 24px;
+      background: var(--accent);
+      opacity: 0.4;
+      transform: translateX(-50%);
+    }
+
+    /* leaf list */
+    .mm-leaves {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+      padding-top: var(--space-6);
+      border-top: 1px solid var(--border);
+      position: relative;
+    }
+    .mm-leaf {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 12px 16px;
+      background: var(--surface);
+      border: var(--elev-ring);
+      border-radius: var(--radius-md);
+      position: relative;
+      transition: box-shadow var(--motion-base) var(--ease-standard);
+    }
+    .mm-leaf:hover { box-shadow: var(--elev-raised); }
+    .mm-leaf-key {
+      font-family: var(--font-mono);
+      font-size: var(--text-sm);
+      letter-spacing: var(--tracking-label);
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+    .mm-leaf-val {
+      font-family: var(--font-body);
+      font-size: var(--text-base);
+      line-height: var(--leading-dense);
+      color: var(--fg-2);
+    }
+    .mm-leaf-val strong { color: var(--fg); }
+
+    /* relation pair */
+    .mm-pair {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: var(--space-6);
+      align-items: center;
+      margin-top: var(--space-8);
+    }
+    @media (max-width: 720px) {
+      .mm-pair { grid-template-columns: 1fr; }
+      .mm-pair-link { display: none; }
+    }
+    .mm-pair-node {
+      padding: 16px 20px;
+      background: var(--surface);
+      border: var(--elev-ring);
+      border-radius: var(--radius-md);
+      text-align: center;
+    }
+    .mm-pair-node .mm-pair-name {
+      font-family: var(--font-display);
+      font-size: var(--text-lg);
+      font-weight: 500;
+      color: var(--fg);
+    }
+    .mm-pair-node .mm-pair-role {
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      color: var(--meta);
+      letter-spacing: var(--tracking-label);
+      margin-top: 4px;
+    }
+    .mm-pair-link {
+      font-family: var(--font-mono);
+      font-size: var(--text-sm);
+      color: var(--accent);
+      letter-spacing: var(--tracking-label);
+      white-space: nowrap;
+    }
+
+    /* ─── chapter card (劇情) ─── */
+    .ch-group {
+      margin-bottom: var(--space-12);
+    }
+    .ch-group-head {
+      display: flex;
+      align-items: baseline;
+      gap: var(--space-4);
+      margin-bottom: var(--space-6);
+      padding-bottom: var(--space-3);
+      border-bottom: 1px solid var(--accent);
+    }
+    .ch-group-num {
+      font-family: var(--font-mono);
+      font-size: var(--text-sm);
+      color: var(--accent);
+      letter-spacing: var(--tracking-label);
+    }
+    .ch-group-title {
+      font-family: var(--font-display);
+      font-size: var(--text-xl);
+      font-weight: 500;
+      color: var(--fg);
+    }
+    .ch-group-fn {
+      font-family: var(--font-body);
+      font-size: var(--text-base);
+      color: var(--muted);
+      margin-left: auto;
+    }
+    @media (max-width: 720px) {
+      .ch-group-fn { margin-left: 0; display: block; margin-top: 4px; }
+      .ch-group-head { flex-wrap: wrap; }
+    }
+
+    .ch-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: var(--space-5);
+    }
+    .ch-card {
+      background: var(--surface);
+      border: var(--elev-ring);
+      border-radius: var(--radius-md);
+      padding: var(--space-6);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+      transition: box-shadow var(--motion-base) var(--ease-standard);
+    }
+    .ch-card:hover { box-shadow: var(--elev-raised); }
+    .ch-card-head {
+      display: flex;
+      align-items: baseline;
+      gap: var(--space-3);
+      flex-wrap: wrap;
+    }
+    .ch-num {
+      font-family: var(--font-mono);
+      font-size: var(--text-sm);
+      color: var(--accent);
+      letter-spacing: var(--tracking-label);
+    }
+    .ch-title {
+      font-family: var(--font-display);
+      font-size: var(--text-md);
+      font-weight: 500;
+      color: var(--fg);
+      line-height: 1.3;
+    }
+    .ch-meta-row {
+      display: flex;
+      gap: var(--space-2);
+      flex-wrap: wrap;
+    }
+    .ch-scene {
+      font-family: var(--font-body);
+      font-size: var(--text-sm);
+      color: var(--muted);
+      line-height: var(--leading-dense);
+    }
+    .ch-scene .label {
+      margin-right: 4px;
+    }
+    .ch-plot {
+      font-family: var(--font-body);
+      font-size: var(--text-base);
+      color: var(--fg-2);
+      line-height: var(--leading-dense);
+    }
+    .ch-hits {
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      color: var(--accent);
+      letter-spacing: var(--tracking-label);
+      padding-top: var(--space-2);
+      border-top: 1px solid var(--border-soft);
+      margin-top: auto;
+    }
+    .ch-hits::before { content: "◆ "; opacity: 0.5; }
+
+    /* ─── structure table ─── */
+    .ds-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: var(--text-base);
+      font-variant-numeric: tabular-nums;
+    }
+    .ds-table th, .ds-table td {
+      padding: 12px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    .ds-table th {
+      color: var(--meta);
+      font-weight: 500;
+      font-family: var(--font-mono);
+      font-size: var(--text-sm);
+      letter-spacing: var(--tracking-label);
+      text-transform: uppercase;
+      border-bottom-color: var(--fg);
+    }
+    .ds-table tbody tr:hover { background: color-mix(in oklch, var(--accent) 4%, transparent); }
+    .ds-table .grp-cell {
+      font-family: var(--font-display);
+      font-weight: 500;
+      color: var(--accent);
+    }
+    .ds-table .ch-cell {
+      font-family: var(--font-mono);
+      color: var(--fg-2);
+    }
+
+    .struct-notes {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: var(--space-5);
+      margin-top: var(--space-12);
+    }
+    .struct-note {
+      padding: var(--space-6);
+      background: var(--surface);
+      border: var(--elev-ring);
+      border-radius: var(--radius-md);
+    }
+    .struct-note h3 {
+      font-size: var(--text-md);
+      color: var(--accent);
+      margin-bottom: var(--space-3);
+      padding-bottom: var(--space-2);
+      border-bottom: 1px solid var(--border-soft);
+    }
+    .struct-note p {
+      font-size: var(--text-base);
+      color: var(--fg-2);
+      line-height: var(--leading-dense);
+    }
+
+    /* ─── intro strip ─── */
+    .intro-strip {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-5);
+      margin-top: var(--space-12);
+    }
+    @media (max-width: 720px) {
+      .intro-strip { grid-template-columns: 1fr; }
+    }
+    .intro-cell {
+      text-align: center;
+      padding: var(--space-6) var(--space-4);
+    }
+    .intro-cell .intro-num {
+      font-family: var(--font-mono);
+      font-size: var(--text-sm);
+      color: var(--accent);
+      letter-spacing: var(--tracking-label);
+      margin-bottom: var(--space-2);
+    }
+    .intro-cell .intro-title {
+      font-family: var(--font-display);
+      font-size: var(--text-lg);
+      font-weight: 500;
+      color: var(--fg);
+      margin-bottom: var(--space-2);
+    }
+    .intro-cell .intro-desc {
+      font-size: var(--text-sm);
+      color: var(--muted);
+      line-height: var(--leading-dense);
+    }
+
+    .focusable:focus-visible { outline: var(--focus-ring); outline-offset: 2px; }
+  </style>
+</head>
+<body>
+  <header class="topnav" data-od-id="topnav">
+    <div class="container topnav-inner">
+      <span class="logo">尼皮音聲作品 · 心智圖</span>
+      <nav>
+        <a href="#layer-characters" class="focusable">人物</a>
+        <a href="#layer-plot" class="focusable">劇情</a>
+        <a href="#layer-structure" class="focusable">整體架構</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="content">
+    <section class="section hero" data-od-id="hero">
+      <div class="container hero-center">
+        
+        <h1>尼皮音聲作品 brainstorming</h1>
+        <p class="lead">以人物、劇情、整體架構三個層次，拆解這部可愛甜甜＋戀愛感的音聲作品。
+點選下方分頁切換圖層。</p>
+      </div>
+      <div class="container">
+        <div class="intro-strip">
+          <div class="intro-cell">
+            <p class="intro-num">01</p>
+            <p class="intro-title">人物</p>
+            <p class="intro-desc">尼皮、趴控與兩人曖昧關係的全景設定</p>
+          </div>
+          <div class="intro-cell">
+            <p class="intro-num">02</p>
+            <p class="intro-title">劇情</p>
+            <p class="intro-desc">七章故事依三組功能拆解的情境與亮點</p>
+          </div>
+          <div class="intro-cell">
+            <p class="intro-num">03</p>
+            <p class="intro-title">整體架構</p>
+            <p class="intro-desc">分組時間線與全劇調性的結構脈絡</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" data-od-id="mind-map-tabs" id="mindmap">
+      <div class="container">
+        <div class="tabbar" role="tablist" aria-label="心智圖圖層">
+          <button class="tabbtn focusable" role="tab" id="tab-characters" aria-controls="layer-characters" aria-selected="true" data-layer="characters">
+            <span class="num-tag">01</span>人物
+          </button>
+          <button class="tabbtn focusable" role="tab" id="tab-plot" aria-controls="layer-plot" aria-selected="false" data-layer="plot">
+            <span class="num-tag">02</span>劇情
+          </button>
+          <button class="tabbtn focusable" role="tab" id="tab-structure" aria-controls="layer-structure" aria-selected="false" data-layer="structure">
+            <span class="num-tag">03</span>整體架構
+          </button>
+        </div>
+
+        <!-- ─── Layer 01 · 人物 ─── -->
+        <div class="mm-panel" id="layer-characters" role="tabpanel" aria-labelledby="tab-characters" aria-hidden="false">
+          <div class="mm-root-wrap">
+            <div class="mm-central">
+              <span class="mm-central-num">01</span>
+              <span>人物</span>
+            </div>
+            <p class="lead" style="text-align:center; max-width: 48ch;">兩個角色撐起全劇：一位是逞強冒失的小丑 VTuber，一位是總在身邊接住她的曖昧對象。</p>
+
+            <div class="mm-branches">
+              <!-- 尼皮 -->
+              <div class="mm-branch" data-od-id="char-nipi">
+                <div class="mm-branch-head">尼皮（主角・唯一說話角色）</div>
+                <div class="mm-leaves">
+                  <div class="mm-leaf">
+                    <span class="mm-leaf-key">外型</span>
+                    <span class="mm-leaf-val">紅髮雙球髻、丑角帽鈴鐺、馬戲團色系、小丑系 VTuber、自稱「聖誕小丑」</span>
+                  </div>
+                  <div class="mm-leaf">
+                    <span class="mm-leaf-key">職業</span>
+                    <span class="mm-leaf-val">小丑</span>
+                  </div>
+                  
+                  <div class="mm-leaf">
+                    <span class="mm-leaf-key">性格反差</span>
+                    <span class="mm-leaf-val">總是和趴控稱兄道弟、相互挖苦。實際上非常依賴趴控，也會因趴控的行為感到害羞。</span>
+                  </div>
+                  <div class="mm-leaf">
+                    <span class="mm-leaf-key">行為模式</span>
+                    <span class="mm-leaf-val">想到新有趣的事要分享給趴控看，結果弄巧成拙，要趴控拯救她。</span>
+                  </div>
+                  <div class="mm-leaf">
+                    <span class="mm-leaf-key">想要（Want）</span>
+                    <span class="mm-leaf-val">趴控開開心心。喜歡逗趴控笑，想被刮目相看。</span>
+                  </div>
+                  <div class="mm-leaf">
+                    <span class="mm-leaf-key">弱點</span>
+                    <span class="mm-leaf-val">逞強、冒失</span>
+                  </div>
+                  <div class="mm-leaf">
+                    <span class="mm-leaf-key">情感線</span>
+                    <span class="mm-leaf-val">表演失敗的丟臉事件累積 → 趴控每一次都幫她收拾 → 信任與依賴 → 好感與靠近</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 趴控 -->
+              <div class="mm-branch" data-od-id="char-pakon">
+                <div class="mm-branch-head">聽眾（趴控）</div>
+                <div class="mm-leaves">
+                  <div class="mm-leaf">
+                    <span class="mm-leaf-key">身份</span>
+                    <span class="mm-leaf-val">尼皮的曖昧對象</span>
+                  </div>
+                  <div class="mm-leaf">
+                    <span class="mm-leaf-key">角色定位</span>
+                    <span class="mm-leaf-val">總是協助尼皮進行表演練習，也是每次出糗後的收拾者。</span>
+                  </div>
+                  <div class="mm-leaf">
+                    <span class="mm-leaf-key">功能</span>
+                    <span class="mm-leaf-val">全劇的傾聽與照顧者；讓尼皮得以展現脆弱與撒嬌的對象。</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 關係 -->
+              <div class="mm-branch" data-od-id="char-relation">
+                <div class="mm-branch-head">關係</div>
+                <div class="mm-leaves">
+                  <div class="mm-leaf">
+                    <span class="mm-leaf-key">狀態</span>
+                    <span class="mm-leaf-val">兩人<strong>曖昧當中</strong></span>
+                  </div>
+                  <div class="mm-leaf">
+                    <span class="mm-leaf-key">日常</span>
+                    <span class="mm-leaf-val">很常互相去對方的家裡。</span>
+                  </div>
+                  
+                </div>
+              </div>
+            </div>
+
+            <div class="mm-pair">
+              <div class="mm-pair-node">
+                <p class="mm-pair-name">尼皮</p>
+                <p class="mm-pair-role">向觀眾展示好笑與冒失的一面</p>
+              </div>
+              <span class="mm-pair-link">曖昧 ↔ 互相照顧</span>
+              <div class="mm-pair-node">
+                <p class="mm-pair-name">趴控</p>
+                <p class="mm-pair-role">照顧出意外的尼皮</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ─── Layer 02 · 劇情 ─── -->
+        <div class="mm-panel" id="layer-plot" role="tabpanel" aria-labelledby="tab-plot" aria-hidden="true">
+          <div class="mm-root-wrap">
+            <div class="mm-central">
+              <span class="mm-central-num">02</span>
+              <span>劇情 · 七章</span>
+            </div>
+            <p class="lead" style="text-align:center; max-width: 52ch;">七章故事分為三組：表演出錯組建立曖昧、灌腸組推進親密、療育組收束情感。</p>
+
+            <!-- 表演出錯組 -->
+            <div class="ch-group" data-od-id="plot-group-1">
+              <div class="ch-group-head">
+                <span class="ch-group-num">組一</span>
+                <span class="ch-group-title">表演出錯組 · Ch1–3</span>
+                <span class="ch-group-fn">利用出糗的擦邊行為展現尼皮的活力並拉近兩人距離 · 第一天至第三天</span>
+              </div>
+              <div class="ch-grid">
+                <article class="ch-card" data-od-id="plot-ch1">
+                  <div class="ch-card-head">
+                    <span class="ch-num">Ch1</span>
+                    <span class="ch-title">來自聖誕小丑的禮物</span>
+                  </div>
+                  <div class="ch-meta-row">
+                    <span class="tag tag-faint">協助換裝</span>
+                  </div>
+                  <p class="ch-scene"><span class="label">場景</span>在趴控的家中</p>
+                  <p class="ch-plot">尼皮把自己用緞帶綑綁成聖誕禮物送出，原本設計好特定拉扯方式即可瞬間解開，卻失效把自己越綁越緊。扯來扯去間表演服也被扯鬆滑落一半，哀號地請趴控幫忙——趴控一邊解繩、一邊幫她把滑掉的衣服拉回去穿好。</p>
+                </article>
+
+                <article class="ch-card" data-od-id="plot-ch2">
+                  <div class="ch-card-head">
+                    <span class="ch-num">Ch2</span>
+                    <span class="ch-title">把胸部變大的魔術</span>
+                  </div>
+                  <div class="ch-meta-row">
+                    <span class="tag tag-faint">胸部周圍的消腫按摩</span>
+                  </div>
+                  <p class="ch-scene"><span class="label">場景</span>在趴控家中</p>
+                  <p class="ch-plot">尼皮喝了偏門魔法藥水（自稱馬戲團前輩秘方），胸部真的變超大，卻腫脹發癢發燙像過敏。她只在意變大沒注意到副作用，藥水說明寫著過敏需按摩才能消，狼狽的尼皮只好請趴控幫忙按摩胸部周圍。</p>
+                </article>
+
+                <article class="ch-card" data-od-id="plot-ch3">
+                  <div class="ch-card-head">
+                    <span class="ch-num">Ch3</span>
+                    <span class="ch-title">馴服動物用的催眠術</span>
+                  </div>
+                  <div class="ch-meta-row">
+                    <span class="tag tag-faint">舔耳</span>
+                  </div>
+                  <p class="ch-scene"><span class="label">場景</span>在趴控的房間床上</p>
+                  <p class="ch-plot">尼皮需要練習使用浣腸劑但害怕，想到馬戲團用催眠馴服動物，決定催眠自己壯膽。結果把自己催眠成一隻貓咪——愛撒嬌、喜歡喵喵叫、又有點任性。趴控幫忙時，本來躺床的尼皮反過來壓制趴控；因為變成貓咪，她能說出一些對趴控撒嬌的真心話。</p>
+                  <p class="ch-hits">把浣腸劑當成貓咪玩具在玩</p>
+                </article>
+              </div>
+            </div>
+
+            <!-- 灌腸組 -->
+            <div class="ch-group" data-od-id="plot-group-2">
+              <div class="ch-group-head">
+                <span class="ch-group-num">組二</span>
+                <span class="ch-group-title">灌腸組 · Ch4–5</span>
+                <span class="ch-group-fn">用前三章培養的關係，使兩人灌腸的行為合理 · 兩章相隔幾天</span>
+              </div>
+              <div class="ch-grid">
+                <article class="ch-card" data-od-id="plot-ch4">
+                  <div class="ch-card-head">
+                    <span class="ch-num">Ch4</span>
+                    <span class="ch-title">把布丁變不見的特技表演</span>
+                  </div>
+                  <div class="ch-meta-row">
+                    <span class="tag tag-faint">撫摸肚子、揉肚子</span>
+                  </div>
+                  <p class="ch-scene"><span class="label">場景</span>在趴控的家中</p>
+                  <p class="ch-plot">兩人在家一起做甜點，做完後尼皮跟趴控玩小遊戲：兩個大桶猜中布丁在哪桶就可以吃掉所有布丁。尼皮趁趴控閉眼時把所有布丁狼吞虎嚥吃掉，過沒多久就肚子痛，詭辯這是「把布丁變不見的特技表演」，之後非常不舒服地靠在趴控身上——趴控抱著她、照顧她、揉她的肚子。</p>
+                </article>
+
+                <article class="ch-card" data-od-id="plot-ch5">
+                  <div class="ch-card-head">
+                    <span class="ch-num">Ch5</span>
+                    <span class="ch-title">灌腸輔助</span>
+                  </div>
+                  <div class="ch-meta-row">
+                    <span class="tag tag-faint">灌腸</span>
+                  </div>
+                  <p class="ch-scene"><span class="label">場景</span>在趴控的房間床上</p>
+                  <p class="ch-plot">過了幾周尼皮都沒辦法好好上廁所，找上趴控想辦法；因為尼媽不在，只好請趴控幫忙使用浣腸劑。趴控一邊協助灌腸一邊安撫情緒，但過程不順——時常剛碰到洞口尼皮就移動身體。她不斷申明這是正當醫療行為，聲音與舉動卻不斷讓人聯想到灌腸以外的東西。</p>
+                  <p class="ch-hits">做擦邊的台詞硬說是灌腸</p>
+                </article>
+              </div>
+            </div>
+
+            <!-- 療育組 -->
+            <div class="ch-group" data-od-id="plot-group-3">
+              <div class="ch-group-head">
+                <span class="ch-group-num">組三</span>
+                <span class="ch-group-title">療育組 · Ch6–7</span>
+                <span class="ch-group-fn">抱睡（坦露真心）→ 掏耳（互相回饋）· 第五章晚上至隔天早上</span>
+              </div>
+              <div class="ch-grid">
+                <article class="ch-card" data-od-id="plot-ch6">
+                  <div class="ch-card-head">
+                    <span class="ch-num">Ch6</span>
+                    <span class="ch-title">辛辛苦苦之後的抱睡</span>
+                  </div>
+                  <div class="ch-meta-row">
+                    <span class="tag tag-faint">悄悄話</span>
+                  </div>
+                  <p class="ch-scene"><span class="label">場景</span>在趴控的房間床上</p>
+                  <p class="ch-plot">尼皮來到趴控房間，以不舒服為理由希望趴控陪她睡覺。經歷幾次出糗與今天的灌腸，身體與心理的無力感侵蝕著她，唯一能讓她充電的是眼前能信任的趴控。兩人抱著躺下，尼皮退去兄弟模樣，蜷縮成依人可愛的小動物般存在。</p>
+                  <p class="ch-hits">坦露身心話的橋段</p>
+                </article>
+
+                <article class="ch-card" data-od-id="plot-ch7">
+                  <div class="ch-card-head">
+                    <span class="ch-num">Ch7</span>
+                    <span class="ch-title">早上起來的掏耳朵</span>
+                  </div>
+                  <div class="ch-meta-row">
+                    <span class="tag tag-faint">掏耳</span>
+                  </div>
+                  <p class="ch-scene"><span class="label">場景</span>在趴控的房間床上</p>
+                  <p class="ch-plot">隔天早上，尼皮醒來很感謝趴控這幾天的幫忙，想也幫他做點舒服療癒的事。她搬出掏耳工具，叫趴控躺到她大腿上。掏耳過程兩人閒聊有趣的事，也互相表示情感上的好感。</p>
+                </article>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ─── Layer 03 · 整體架構 ─── -->
+        <div class="mm-panel" id="layer-structure" role="tabpanel" aria-labelledby="tab-structure" aria-hidden="true">
+          <div class="mm-root-wrap">
+            <div class="mm-central">
+              <span class="mm-central-num">03</span>
+              <span>整體架構</span>
+            </div>
+            <p class="lead" style="text-align:center; max-width: 52ch;">全劇調性：可愛甜甜＋戀愛感。場所固定在趴控家中。三組功能串成情感升溫的弧線。</p>
+
+            <div style="width:100%; overflow-x:auto;">
+              <table class="ds-table">
+                <thead>
+                  <tr>
+                    <th>組</th>
+                    <th>章</th>
+                    <th>功能</th>
+                    <th>時間線</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="grp-cell">表演出錯組</td>
+                    <td class="ch-cell">Ch1–3</td>
+                    <td>利用出糗的擦邊行為展現尼皮的活力以及拉近兩人的距離</td>
+                    <td class="ch-cell">第一天連貫到第三天</td>
+                  </tr>
+                  <tr>
+                    <td class="grp-cell">灌腸組</td>
+                    <td class="ch-cell">Ch4–5</td>
+                    <td>用前三章培養的關係，使兩人灌腸的行為合理</td>
+                    <td class="ch-cell">四、五章節相隔了幾天</td>
+                  </tr>
+                  <tr>
+                    <td class="grp-cell">療育組</td>
+                    <td class="ch-cell">Ch6–7</td>
+                    <td>抱睡（坦露真心）→ 掏耳（互相回饋）</td>
+                    <td class="ch-cell">第五章的晚上以及隔天早上</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="struct-notes">
+              <div class="struct-note" data-od-id="struct-1">
+                <h3>前三章 · 幸運色狼感</h3>
+                <p>有點像「ラッキースケベ」的感覺。利用兩人曖昧的關係與接觸，來製造害羞與暗示互相有好感。</p>
+              </div>
+              <div class="struct-note" data-od-id="struct-2">
+                <h3>四、五章 · 擦邊合理化</h3>
+                <p>在兩人已建立的基礎下讓趴控協助尼皮灌腸。會盡量做成意有所指的樣子：「不要突然放進來⋯⋯」「有點緊張，可能需要放鬆一下才可以⋯⋯」</p>
+              </div>
+              <div class="struct-note" data-od-id="struct-3">
+                <h3>六、七章 · 情感交流</h3>
+                <p>讓兩人有更多的情感交流。因為互相喜歡，所以才能夠讓趴控踏入到尼皮那麼私人的領域中。</p>
+              </div>
+            </div>
+
+            <div style="display:flex; flex-wrap:wrap; gap:var(--space-3); justify-content:center; margin-top:var(--space-8);">
+              <span class="tag tag-strong">全劇調性 · 可愛甜甜＋戀愛感</span>
+              <span class="tag">場所 · 趴控的家中</span>
+              <span class="tag tag-faint">結構 · 三組七章</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <footer class="pagefoot" data-od-id="footer">
+    <div class="container row-between">
+      <span>尼皮音聲作品梗概</span>
+      <span class="meta">人物 · 劇情 · 整體架構</span>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      var tabs = Array.prototype.slice.call(document.querySelectorAll('.tabbtn'));
+      var panels = Array.prototype.slice.call(document.querySelectorAll('.mm-panel'));
+      var navlinks = Array.prototype.slice.call(document.querySelectorAll('.topnav nav a'));
+
+      function activate(layer) {
+        tabs.forEach(function (t) {
+          var match = t.getAttribute('data-layer') === layer;
+          t.setAttribute('aria-selected', match ? 'true' : 'false');
+        });
+        panels.forEach(function (p) {
+          var match = p.id.indexOf(layer) !== -1;
+          p.setAttribute('aria-hidden', match ? 'false' : 'true');
+        });
+        navlinks.forEach(function (a) {
+          var href = a.getAttribute('href') || '';
+          var match = href.indexOf(layer) !== -1;
+          a.style.color = match ? 'var(--accent)' : '';
+        });
+        try { localStorage.setItem('nipi-mm-layer', layer); } catch (e) {}
+      }
+
+      tabs.forEach(function (t) {
+        t.addEventListener('click', function () { activate(t.getAttribute('data-layer')); });
+      });
+      navlinks.forEach(function (a) {
+        a.addEventListener('click', function (e) {
+          var href = a.getAttribute('href') || '';
+          var hash = href.replace('#', '');
+          if (hash) { e.preventDefault(); activate(hash.replace('layer-', '')); }
+        });
+      });
+
+      try {
+        var saved = localStorage.getItem('nipi-mm-layer');
+        if (saved) activate(saved);
+      } catch (e) {}
+    })();
+  </script>
+
+</body></html>
