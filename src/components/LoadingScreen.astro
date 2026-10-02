@@ -5,7 +5,8 @@
 
 <div
   id="loading-screen"
-  class="fixed inset-0 z-[9999] bg-[var(--bg)] flex items-center justify-center"
+  class="fixed inset-0 z-[9999] bg-[var(--bg)] flex items-center justify-center pointer-events-none"
+  hidden
   role="status"
   aria-live="polite"
   aria-label="載入中"
@@ -35,6 +36,7 @@
 </div>
 
 <style>
+  #loading-screen[hidden] { display: none; }
   .wheel-ring {
     position: relative;
     width: 200px;
@@ -73,13 +75,11 @@
   @keyframes wheel-spin {
     to { transform: rotate(360deg); }
   }
-  /* 退場動畫：從中心 scale 放大 + opacity 淡出，露出底層內容
-     easeOutQuint 曲線提供阻尼感：起步快、尾段平緩收束 */
+  /* 短促淡出，避免全螢幕大幅縮放增加重繪成本。 */
   #loading-screen.exiting {
-    transform: scale(15);
+    transform: scale(1.08);
     opacity: 0;
-    transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1),
-                opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+    transition: transform 0.3s ease-out, opacity 0.3s ease-out;
     pointer-events: none;
   }
   @media (prefers-reduced-motion: reduce) {
@@ -87,62 +87,36 @@
   }
 </style>
 
-<script>
+<script is:inline>
   const loadingScreen = document.getElementById('loading-screen');
   const wheelProgress = document.getElementById('wheel-progress');
 
   if (loadingScreen && wheelProgress) {
     // Navigation Timing API：判斷進入方式
     // reload = F5 / Ctrl+R；navigate = 點連結；back_forward = 回上一頁
-    const navEntry = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined;
+    const navEntry = performance.getEntriesByType('navigation')[0];
     const navType = navEntry?.type ?? 'navigate';
 
     // 只在硬刷新時播放動畫，其餘直接跳過
-    if (navType !== 'reload') {
+    if (navType !== 'reload' || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       loadingScreen.remove();
     } else {
-      let progress = 0;
-      const MIN_DURATION = 2200;
-      const startTime = performance.now();
-
-      const updateProgress = () => {
-        const deg = (progress / 100) * 360;
-        wheelProgress.style.background = `conic-gradient(var(--fg) ${deg}deg, transparent ${deg}deg)`;
+      loadingScreen.hidden = false;
+      wheelProgress.style.background = 'conic-gradient(var(--fg) 360deg, transparent 360deg)';
+      let dismissed = false;
+      const dismiss = () => {
+        if (dismissed) return;
+        dismissed = true;
+        loadingScreen.classList.add('exiting');
+        setTimeout(() => loadingScreen.remove(), 300);
       };
-
-      const interval = setInterval(() => {
-        progress += Math.random() * 12;
-        if (progress > 90) progress = 90;
-        updateProgress();
-      }, 120);
-
-      // 預載關鍵圖片
-      const images = ['/pic/bakery-logo-white.png', '/pic/profile_1.png', '/pic/bakery-icon.png'];
-      const preloadPromise = Promise.all(
-        images.map(
-          (src) =>
-            new Promise((resolve) => {
-              const img = new Image();
-              img.src = src;
-              img.onload = resolve;
-              img.onerror = resolve;
-            })
-        )
-      );
-
-      // 強制等最短播放時間 + 圖片預載都完成才放行
-      Promise.all([preloadPromise, new Promise((r) => setTimeout(r, MIN_DURATION))]).then(() => {
-        clearInterval(interval);
-        progress = 100;
-        updateProgress();
-        // 進度環填滿後停一下，再從中心擴散退場
-        setTimeout(() => {
-          loadingScreen.classList.add('exiting');
-          setTimeout(() => {
-            loadingScreen.remove();
-          }, 600);
-        }, 350);
-      });
+      // 僅保留短退場：不讓非首屏圖片或外部資源阻擋閱讀。
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', dismiss, { once: true });
+      } else {
+        dismiss();
+      }
+      setTimeout(dismiss, 700);
     }
   }
 </script>

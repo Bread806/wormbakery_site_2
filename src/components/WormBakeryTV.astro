@@ -4,14 +4,21 @@
 // - 下方電視機：滾輪 / 按鈕切換合輯
 // - 圖片撐滿 + 左上曲目清單 + 右下 windows-form 簡介
 import { ALBUMS } from '../data/albums';
+import { Image } from 'astro:assets';
+import brandLogo from '../../public/pic/bakerylogo.png';
 ---
 
 <!-- 品牌區：獨立 section，大大的 logo + 簡介 -->
 <section class="bakery-brand">
   <div class="bakery-brand-inner">
     <div class="bakery-logo-wrap">
-      <img
-        src="/pic/bakerylogo.png"
+      <Image
+        src={brandLogo}
+        widths={[450, 900, 1800]}
+        sizes="(max-width: 1000px) 90vw, 900px"
+        width={1800}
+        format="webp"
+        loading="lazy"
         alt="蚯蚓麵包屋標準字"
         class="bakery-logo-img acid-chroma-strong"
       />
@@ -23,7 +30,7 @@ import { ALBUMS } from '../data/albums';
 </section>
 
 <!-- TV 區 -->
-<section id="wormbakery-tv" class="tv-section">
+<section id="wormbakery-tv" class="tv-section" style={`--tv-scroll-distance: ${ALBUMS.length === 1 ? 24 : (ALBUMS.length - 1) * 60 + 24}vh;`}>
   <!-- Sticky TV 視窗 -->
   <div class="tv-sticky">
     <!-- 電視外框 -->
@@ -40,7 +47,7 @@ import { ALBUMS } from '../data/albums';
         <div class="tv-screen retro-border">
           <!-- 當前合輯封面：幾乎填滿 -->
           <div id="tv-cover" class="tv-cover">
-            <img id="tv-cover-img" src={ALBUMS[0].coverImage} alt="" class="tv-cover-img" />
+            <img id="tv-cover-img" src={ALBUMS[0].coverImage} alt={ALBUMS[0].title} class="tv-cover-img" loading="lazy" decoding="async" />
           </div>
 
           <!-- CRT 掃描線 -->
@@ -105,6 +112,11 @@ import { ALBUMS } from '../data/albums';
         </div>
       </div>
 
+      <div class="tv-scroll-feedback" aria-hidden="true">
+        <span>SCROLL TO CONTINUE ↓</span>
+        <span class="tv-scroll-meter"><span id="tv-scroll-progress"></span></span>
+      </div>
+
       <!-- 手機版切換控制（桌面隱藏） -->
       <div class="tv-mobile-controls">
         <button id="tv-prev" class="tv-nav-btn" aria-label="上一張合輯">◀</button>
@@ -124,11 +136,7 @@ import { ALBUMS } from '../data/albums';
   </div>
 
   <!-- 滾動區域：縮短高度讓瀏覽更順暢 -->
-  <div class="tv-scroll-area">
-    {ALBUMS.map((album) => (
-      <div class="tv-scroll-item" data-album-id={album.id}></div>
-    ))}
-  </div>
+  <div class="tv-scroll-area" aria-hidden="true"></div>
 </section>
 
 <script>
@@ -136,10 +144,10 @@ import { ALBUMS } from '../data/albums';
 
   let currentAlbumIndex = 0;
   let currentTrackId: string | null = null;
-  const isMobile = window.matchMedia('(max-width: 768px)').matches;
+  const mobileQuery = window.matchMedia('(max-width: 768px)');
 
   const section = document.getElementById('wormbakery-tv');
-  const scrollItems = document.querySelectorAll('.tv-scroll-item');
+  const scrollProgress = document.getElementById('tv-scroll-progress');
   const coverImg = document.getElementById('tv-cover-img') as HTMLImageElement;
   const staticOverlay = document.getElementById('tv-static');
   const trackList = document.getElementById('tv-track-list');
@@ -169,11 +177,22 @@ import { ALBUMS } from '../data/albums';
       timeCodeEl.textContent = `${pad(hours)}:${pad(minutes % 60)}:${pad(seconds % 60)}:${pad(frames)}`;
     }
   }
-  setInterval(updateTimeCode, 33);
+  // 不在畫面內時不更新裝飾時間碼，避免閒置 DOM 工作。
+  let clock: ReturnType<typeof setInterval> | undefined;
+  let visible = false;
+  function syncClock() {
+    if (clock !== undefined) clearInterval(clock);
+    clock = visible && !document.hidden ? setInterval(updateTimeCode, 33) : undefined;
+  }
+  if (section) new IntersectionObserver(([entry]) => {
+    visible = entry.isIntersecting;
+    syncClock();
+  }).observe(section);
+  document.addEventListener('visibilitychange', syncClock);
 
   function switchAlbum(index: number, trackId?: string) {
     if (index < 0 || index >= ALBUMS.length) return;
-    if (index === currentAlbumIndex && trackId === currentTrackId) return;
+    if (index === currentAlbumIndex && currentTrackId !== null && (!trackId || trackId === currentTrackId)) return;
 
     triggerChannelSwitch();
     currentAlbumIndex = index;
@@ -263,24 +282,25 @@ import { ALBUMS } from '../data/albums';
     }
   }
 
-  // 桌面：滾動切換
-  if (!isMobile && scrollItems.length > 0) {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const index = parseInt((entry.target as HTMLElement).dataset.albumIndex || '0');
-            switchAlbum(index);
-          }
-        });
-      },
-      { threshold: 0.5 }
-    );
-    scrollItems.forEach((item, i) => {
-      (item as HTMLElement).dataset.albumIndex = String(i);
-      observer.observe(item);
-    });
+  // 原生捲動保持跟手；以 sticky 的實際行程計算進度，避免多個 observer 同時換台。
+  let scheduled = false;
+  function updateScroll() {
+    scheduled = false;
+    if (!section || mobileQuery.matches) return;
+    const rect = section.getBoundingClientRect();
+    const distance = Math.max(1, section.offsetHeight - window.innerHeight);
+    const progress = Math.max(0, Math.min(1, -rect.top / distance));
+    if (scrollProgress) scrollProgress.style.transform = `scaleX(${progress})`;
+    if (ALBUMS.length > 1) switchAlbum(Math.min(ALBUMS.length - 1, Math.floor(progress * ALBUMS.length)));
   }
+  function scheduleScroll() {
+    if (scheduled) return;
+    scheduled = true;
+    requestAnimationFrame(updateScroll);
+  }
+  window.addEventListener('scroll', scheduleScroll, { passive: true });
+  window.addEventListener('resize', scheduleScroll);
+  mobileQuery.addEventListener('change', scheduleScroll);
 
   // 手機：按鈕切換
   prevBtn?.addEventListener('click', () => {
@@ -296,4 +316,5 @@ import { ALBUMS } from '../data/albums';
   });
 
   switchAlbum(0);
+  updateScroll();
 </script>

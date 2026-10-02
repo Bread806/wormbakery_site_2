@@ -885,12 +885,30 @@ html[data-theme='light'] .tv-track-item {
 /* ---------- 滾動區域（縮短，讓瀏覽更順暢） ---------- */
 .tv-scroll-area {
   display: block;
+  height: var(--tv-scroll-distance, 24vh);
 }
 
-.tv-scroll-item {
-  height: 50vh;  /* 原本 100vh 太長，改短讓切換更靈敏 */
-  visibility: hidden;
-  pointer-events: none;
+.tv-scroll-feedback {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+}
+
+.tv-scroll-meter {
+  flex: 1;
+  height: 2px;
+  background: var(--border);
+}
+
+#tv-scroll-progress {
+  display: block;
+  height: 100%;
+  background: var(--accent-pink);
+  transform: scaleX(0);
+  transform-origin: left;
 }
 
 /* 手機版 */
@@ -946,6 +964,9 @@ html[data-theme='light'] .tv-track-item {
   }
 
   .tv-scroll-area {
+    display: none;
+  }
+  .tv-scroll-feedback {
     display: none;
   }
 }

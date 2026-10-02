@@ -6,6 +6,8 @@ import LoadingScreen from '../components/LoadingScreen.astro';
 import MiniStrudelPlayer from '../components/MiniStrudelPlayer.astro';
 import WormBakeryTV from '../components/WormBakeryTV.astro';
 import Waveform from '../components/Waveform.astro';
+import { Image } from 'astro:assets';
+import heroImage from '../../public/pic/卡蚯蚓_去背.png';
 ---
 
 <BaseLayout title="BAKERY / 卡蚯蚓" description="卡蚯蚓的個人作品集：寫作、編劇、音聲台本與 VTuber Staff 相關作品。">
@@ -17,8 +19,14 @@ import Waveform from '../components/Waveform.astro';
     <div class="relative z-10 text-center px-4">
       <!-- 主視覺圖 -->
       <div class="mb-8 w-full max-w-md mx-auto h-48 md:h-64">
-        <img
-          src="/pic/卡蚯蚓_去背.png"
+        <Image
+          src={heroImage}
+          widths={[448, 896]}
+          sizes="(max-width: 480px) calc(100vw - 32px), 448px"
+          width={896}
+          format="webp"
+          loading="eager"
+          fetchpriority="high"
           alt="卡蚯蚓的個人圖像"
           class="w-full h-full object-contain acid-chroma-strong hero-kacha-img"
         />
