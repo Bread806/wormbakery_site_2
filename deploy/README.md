@@ -2,6 +2,13 @@
 
 正式來源分支是 `rebuild`，網站由 GitHub Actions 建置並部署至 `161.33.175.126`。VM 只負責 Caddy 靜態檔案服務。以下操作需由有 VM、Cloudflare 與 GitHub repository 管理權限的人執行；先記錄現況，再切換流量。
 
+## 目前進度（2026-10-27）
+
+- 已在 Oracle Linux 9.8 建立 `wormdeploy` 專用帳號與部署目錄；專用 Ed25519 金鑰和經核對的主機金鑰分別保存在本機 `E:\hermes\wormbakery_actions_ed25519`、`E:\hermes\wormbakery_known_hosts`，兩者皆未進入倉庫。
+- Caddy 2.11.7 已安裝並設為開機啟動，現用 `Caddyfile.preflight` 提供 HTTP。首次版本 `manual-20261027-1` 已切為 `current`；VM 本機測試首頁、`/works/` 與圖片均回 200。正式 `Caddyfile` 已在 VM 驗證語法，但尚未啟用。
+- 主機 `firewalld` 已開 HTTP/HTTPS。從外部連 `161.33.175.126:80` 仍逾時，**待 OCI VCN 的 NSG 或 Security List 放行 TCP 80/443**。
+- GitHub Actions secrets、預設分支、Cloudflare DNS 與公開 HTTPS 尚待設定及驗收。舊 GitHub Pages 網站目前仍是正式流量目標。
+
 ## 1. VM 與網路
 
 1. 用既有的 `opc` 管理金鑰登入 VM，辨識系統版本，檢查 `sudo ss -ltnp | grep -E ':(80|443)\b'`。若埠已被占用，先確認既有服務與用途，再調整配置。
@@ -19,7 +26,7 @@
 
    產生**另一組只供 Actions 部署使用**的 Ed25519 金鑰；將公鑰加入 `authorized_keys`，私鑰填入 GitHub secret `VM_SSH_PRIVATE_KEY`。不把管理員私鑰或任何私鑰放進倉庫。部署帳號不需 sudo。將該帳號的 SSH 登入限制在所需來源；若採 GitHub hosted runner，來源 IP 可能變動，需依組織網路政策決定限制方式。SSH 仍保留管理員的必要來源。
 
-3. 安裝 `caddy`、`rsync`、`coreutils`。依 VM 的發行版使用 [Caddy 官方安裝步驟](https://caddyserver.com/docs/install)，先以 `caddy version`、`rsync --version`、`sha256sum --version` 確認。Caddy 服務帳號必須能讀取 `/srv/wormbakery/current` 與其版本目錄。若 VM 啟用 SELinux，也要確認 `/srv/wormbakery` 的安全標籤允許 Caddy 讀取，不能僅靠 Unix 權限判斷。
+3. 這台 VM 是 Oracle Linux 9.8，已提供 `rsync`、`sha256sum`。由於 1 GB 記憶體下 DNF 查詢耗時過久，Caddy 使用[官方靜態執行檔](https://caddyserver.com/docs/install) 2.11.7（`linux_amd64`），比對該 release 的 SHA-512 清單後安裝為 `/usr/local/bin/caddy`。`deploy/caddy.service` 安裝至 `/etc/systemd/system/caddy.service`；服務以無登入權限的 `caddy` 帳號執行，憑證資料保存在 `/var/lib/caddy`。以 `caddy version`、`rsync --version`、`sha256sum --version` 確認。Caddy 服務帳號必須能讀取 `/srv/wormbakery/current` 與其版本目錄。VM 啟用 SELinux Enforcing，亦須確認 `/srv/wormbakery` 的安全標籤允許 Caddy 讀取。
 4. 在 OCI VCN 的 subnet security list 或 NSG，以及 VM 的防火牆，開放外部 TCP 80/443。確認雲端與主機兩層規則；不要為了網站開放其他埠。Caddy 取得公開憑證需要網域指向 VM 且 80/443 可達。
 5. 先把本目錄的 `Caddyfile.preflight` 安裝為 `/etc/caddy/Caddyfile`，執行 `sudo caddy validate --config /etc/caddy/Caddyfile` 後啟動或重載 Caddy。初次部署前 `current` 尚不存在，網站暫時回 404 是預期情況。
 
