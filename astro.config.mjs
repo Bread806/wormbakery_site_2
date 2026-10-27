@@ -10,6 +10,4 @@ export default defineConfig({
   vite: {
     plugins: [tailwindcss()],
   },
-  // 確保 public/ 下的檔案（CNAME、pic/、work_pic/）會被複製到 dist/
-  // Astro 預設會這麼做，不需要額外設定
 });

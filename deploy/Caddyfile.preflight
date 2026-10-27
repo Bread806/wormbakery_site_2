@@ -1,0 +1,5 @@
+# DNS 切換前暫用 HTTP，以 Host header 驗證 VM 上的靜態網站。
+http://wormbakery.com {
+	root * /srv/wormbakery/current
+	file_server
+}

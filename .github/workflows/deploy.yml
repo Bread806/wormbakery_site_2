@@ -1,9 +1,6 @@
-name: Build & Deploy to GitHub Pages
+name: Build and deploy to Oracle Cloud VM
 
-# 部署來源固定為 rebuild 分支（目前的主力開發分支）。
-# 排程觸發時 GitHub 一律跑「預設分支」上的 workflow 檔，
-# 因此 checkout 明確釘 ref: rebuild，避免 cron 抓到落後的 main 蓋掉新站。
-# 日後若要改從 main 部署：把 branches 與下面的 ref 一起換掉即可。
+# schedule 與 workflow_dispatch 都要求此檔存在於預設分支。
 on:
   push:
     branches: [rebuild]
@@ -14,49 +11,49 @@ on:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
-# 同一時間只允許一個部署在跑，排程與手動觸發不會互相踩踏
 concurrency:
-  group: github-pages
-  cancel-in-progress: true
+  group: wormbakery-vm-deploy
+  cancel-in-progress: false
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout rebuild
         uses: actions/checkout@v4
         with:
           ref: rebuild
 
-      - uses: actions/setup-node@v4
+      - name: Set up Node
+        uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
 
-      - run: npm ci
+      - name: Install dependencies
+        run: npm ci
 
-      - name: Build
+      - name: Build static site
         run: npm run build
         env:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
           NOTION_DATA_SOURCE_ID: ${{ secrets.NOTION_DATA_SOURCE_ID }}
 
-      - uses: actions/configure-pages@v5
-
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: dist
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+      - name: Deploy verified release
+        shell: bash
+        env:
+          VM_SSH_PRIVATE_KEY: ${{ secrets.VM_SSH_PRIVATE_KEY }}
+          VM_SSH_KNOWN_HOSTS: ${{ secrets.VM_SSH_KNOWN_HOSTS }}
+        run: |
+          set -euo pipefail
+          test -n "$VM_SSH_PRIVATE_KEY"
+          test -n "$VM_SSH_KNOWN_HOSTS"
+          install -m 700 -d "$RUNNER_TEMP/wormbakery-ssh"
+          key="$RUNNER_TEMP/wormbakery-ssh/id_ed25519"
+          known_hosts="$RUNNER_TEMP/wormbakery-ssh/known_hosts"
+          trap 'rm -f "$key" "$known_hosts"' EXIT
+          (umask 077; printf '%s\n' "$VM_SSH_PRIVATE_KEY" > "$key"; printf '%s\n' "$VM_SSH_KNOWN_HOSTS" > "$known_hosts")
+          chmod 600 "$key" "$known_hosts"
+          ssh-keygen -y -f "$key" > /dev/null
+          VM_SSH_KEY_PATH="$key" VM_SSH_KNOWN_HOSTS_PATH="$known_hosts" bash scripts/deploy-vm.sh
