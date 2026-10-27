@@ -7,8 +7,9 @@
 - 已在 Oracle Linux 9.8 建立 `wormdeploy` 專用帳號與部署目錄；專用 Ed25519 金鑰和經核對的主機金鑰分別保存在本機 `E:\hermes\wormbakery_actions_ed25519`、`E:\hermes\wormbakery_known_hosts`，兩者皆未進入倉庫。
 - Caddy 2.11.7 已安裝並設為開機啟動，現用 `Caddyfile.preflight` 提供 HTTP。首次版本 `manual-20261027-1` 已切為 `current`；VM 本機測試首頁、`/works/` 與圖片均回 200。正式 `Caddyfile` 已在 VM 驗證語法，但尚未啟用。
 - 主機 `firewalld` 已開 HTTP/HTTPS。從外部連 `161.33.175.126:80` 仍逾時，**待 OCI VCN 的 NSG 或 Security List 放行 TCP 80/443**。
-- `VM_SSH_PRIVATE_KEY`、`VM_SSH_KNOWN_HOSTS` 已存入 GitHub Actions secrets，原有 Notion secrets 保留；同一 workflow 已同步到預設分支 `main`。`rebuild` 推送執行 `40522703701` 與從 `main` 手動觸發的 `40522994084` 均成功，後者將 `current` 切至 `releases/40522994084-1`。每日排程仍待下一次 UTC 22:00 實際驗證。
-- Cloudflare DNS 與公開 HTTPS 尚待設定及驗收。舊 GitHub Pages 網站目前仍是正式流量目標。
+- Cloudflare DNS 的 `@` A 與 `www` CNAME 已指向 VM，目前是 DNS only。Caddy 已從 Let’s Encrypt 取得 `wormbakery.com` 與 `www.wormbakery.com` 憑證；HTTP 會轉 HTTPS，`www` 會轉至主網域。首頁、五個路由、圖片、robots.txt 與 Strudel/CDN 音訊來源均已檢查可用。
+- `VM_SSH_PRIVATE_KEY`、`VM_SSH_KNOWN_HOSTS` 已存入 GitHub Actions secrets，原有 Notion secrets 保留；同一 workflow 已同步到預設分支 `main`。`rebuild` 推送執行 `40522703701` 與從 `main` 手動觸發的 `40522994084` 均成功，後者將 `current` 切至 `releases/40522994084-1`，Notion build log 未見查詢失敗。每日排程仍待下一次 UTC 22:00 實際驗證。
+- GitHub Pages 的 `wormbakery.com` 自訂網域已解除，舊 `gh-pages` 分支保留。GitHub REST API 拒絕停用 Pages（HTTP 422：`Deactivating GitHub pages for this repository is not allowed`）；若仍要取消 Pages 發布，需在 Settings → Pages 手動選擇 Unpublish site，參見[GitHub 取消發布說明](https://docs.github.com/en/pages/getting-started-with-github-pages/unpublishing-a-github-pages-site)。
 
 ## 1. VM 與網路
 
