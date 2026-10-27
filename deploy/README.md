@@ -7,7 +7,8 @@
 - 已在 Oracle Linux 9.8 建立 `wormdeploy` 專用帳號與部署目錄；專用 Ed25519 金鑰和經核對的主機金鑰分別保存在本機 `E:\hermes\wormbakery_actions_ed25519`、`E:\hermes\wormbakery_known_hosts`，兩者皆未進入倉庫。
 - Caddy 2.11.7 已安裝並設為開機啟動，現用 `Caddyfile.preflight` 提供 HTTP。首次版本 `manual-20261027-1` 已切為 `current`；VM 本機測試首頁、`/works/` 與圖片均回 200。正式 `Caddyfile` 已在 VM 驗證語法，但尚未啟用。
 - 主機 `firewalld` 已開 HTTP/HTTPS。從外部連 `161.33.175.126:80` 仍逾時，**待 OCI VCN 的 NSG 或 Security List 放行 TCP 80/443**。
-- GitHub Actions secrets、預設分支、Cloudflare DNS 與公開 HTTPS 尚待設定及驗收。舊 GitHub Pages 網站目前仍是正式流量目標。
+- `VM_SSH_PRIVATE_KEY`、`VM_SSH_KNOWN_HOSTS` 已存入 GitHub Actions secrets，原有 Notion secrets 保留；同一 workflow 已同步到預設分支 `main`。`rebuild` 推送執行 `40522703701` 與從 `main` 手動觸發的 `40522994084` 均成功，後者將 `current` 切至 `releases/40522994084-1`。每日排程仍待下一次 UTC 22:00 實際驗證。
+- Cloudflare DNS 與公開 HTTPS 尚待設定及驗收。舊 GitHub Pages 網站目前仍是正式流量目標。
 
 ## 1. VM 與網路
 
@@ -36,9 +37,9 @@
 - `VM_SSH_KNOWN_HOSTS`：**已透過另一可信管道核對指紋**的 VM SSH 主機公鑰紀錄，格式如 `161.33.175.126 ssh-ed25519 AAAA...`。可用 `ssh-keyscan -t ed25519 161.33.175.126` 取得候選紀錄，再於 VM 主控台讀取 `/etc/ssh/ssh_host_ed25519_key.pub` 或其指紋，比對一致後才存入 secret。不能直接信任未核對的 `ssh-keyscan` 輸出。
 - `NOTION_TOKEN` 與 `NOTION_DATA_SOURCE_ID` 沿用原有設定。
 
-`workflow_dispatch` 與每日 `schedule` 都要求 workflow 存在**預設分支**。目前預設分支是 `main`，且 `main` 沒有 `.github/workflows/deploy.yml`。手動觸發和每日更新前，須將 `rebuild` 設為預設分支，或將同一 workflow 同步到 `main`。若採後者，必須保持 `checkout ref: rebuild`，並在往後修改部署流程時同步兩份檔案。若無法完成此項，手動與每日排程驗收尚未成立。參見 [GitHub 手動觸發規則](https://docs.github.com/en/actions/how-tos/manage-workflow-runs/manually-run-a-workflow)及[排程事件規則](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule)。
+`workflow_dispatch` 與每日 `schedule` 都要求 workflow 存在**預設分支**。目前預設分支是 `main`，已同步 `.github/workflows/deploy.yml`，且 `checkout ref: rebuild` 固定從正式來源分支建置。往後修改部署流程時需同步 `main` 與 `rebuild` 兩份 workflow。參見 [GitHub 手動觸發規則](https://docs.github.com/en/actions/how-tos/manage-workflow-runs/manually-run-a-workflow)及[排程事件規則](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule)。
 
-手動觸發一次 workflow，確認 `Activated release <run-id>-<attempt>` 出現在部署日誌。部署失敗會在切換 `current` 前中止，既有版本仍在服務中。檢查 `readlink /srv/wormbakery/current`、`sudo journalctl -u caddy -n 100 --no-pager` 及 Actions 執行日誌。
+手動觸發已於 2026-10-27 成功驗證（`40522994084`）。部署失敗會在切換 `current` 前中止，既有版本仍在服務中。檢查 `readlink /srv/wormbakery/current`、`sudo journalctl -u caddy -n 100 --no-pager` 及 Actions 執行日誌。
 
 ## 3. DNS 切換
 
