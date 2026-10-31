@@ -1,0 +1,248 @@
+---
+import { Image } from 'astro:assets';
+import '../styles/global.css';
+import artwork from '../../ch.png';
+
+// 正式素材備妥後，在此替換文字與網址；空網址會顯示不可點擊的按鈕。
+const album = {
+  title: '念願',
+  youtubePlaylistUrl: '',
+  productTitle: '念願｜專輯',
+  contents: '內容物介紹預留文字。請在此填入商品規格、收錄內容與隨附品項。',
+  shops: [
+    { name: '買動漫', url: '' },
+    { name: '賣貨便', url: '' },
+  ],
+};
+const tracks = [
+  '壽星', '捷運忠孝新生站', '神不在的地方', '穿洞', '念願',
+].map((title, index) => ({
+  title,
+  number: String(index + 1).padStart(2, '0'),
+  description: '這裡是章節描述的測試文字。留下一段關於這首作品的故事、心情，或是尚未說出口的話。正式文案完成後，可以在這裡替換，並保留你想要的段落與換行。',
+}));
+const credits = [
+  { role: '表演', name: '晚晚' },
+  { role: '台本', name: '卡蚯蚓' },
+  { role: '主視覺', name: 'GIGI' },
+];
+const navigation = ['home', 'story', 'shop', 'credit'];
+---
+
+<!doctype html>
+<html lang="zh-Hant" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content="#101016" />
+    <meta name="description" content="念願 NENGAN — 專輯特設頁" />
+    <title>念願 NENGAN｜專輯特設頁</title>
+    <link rel="icon" href="/pic/icon-dark-32x32.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <a class="skip-link" href="#home">跳至主要內容</a>
+    <nav class="navigation" aria-label="專輯導覽">
+      <div class="nav-inner">
+        <a class="wordmark" href="#home">心之所向</a>
+        <button class="menu-toggle" type="button" aria-label="開啟選單" aria-expanded="false" aria-controls="album-menu">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" /></svg>
+        </button>
+        <div class="nav-links" id="album-menu">
+          {navigation.map((section) => <a href={`#${section}`} data-section={section}>{section}</a>)}
+        </div>
+      </div>
+    </nav>
+
+    <main>
+      <section id="home" aria-label="念願專輯主視覺">
+        <div class="artwork">
+          <Image src={artwork} widths={[480, 800, 1200, 1600, 2232]} sizes="(max-width: 800px) calc(100vw - 32px), 780px" format="webp" alt="雨夜窗邊的人物與城市燈光，念願專輯主視覺" loading="eager" fetchpriority="high" />
+          <!-- 正式標準字圖片可替換這個標題區塊。 -->
+          <div class="album-title">
+            <h1>{album.title}</h1>
+            <span>NENGAN</span>
+          </div>
+        </div>
+        <div class="listen">
+          {album.youtubePlaylistUrl ? (
+            <a class="btn-retro" href={album.youtubePlaylistUrl} target="_blank" rel="noopener noreferrer">YouTube 播放清單 <span aria-hidden="true">↗</span></a>
+          ) : (
+            <button class="btn-retro" disabled>YouTube 播放清單 <span aria-hidden="true">↗</span></button>
+          )}
+        </div>
+      </section>
+
+      <section id="story" class="section story" aria-labelledby="story-title">
+        <header class="section-heading"><h2 id="story-title">Story</h2></header>
+        <div class="tracks">
+          {tracks.map((track) => (
+            <article class="track">
+              <div class="track-heading"><span class="track-number">{track.number}</span><h3>{track.title}</h3></div>
+              <p>{track.description}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section id="shop" class="section" aria-labelledby="shop-title">
+        <header class="section-heading"><h2 id="shop-title">Shop</h2></header>
+        <div class="product">
+          <div class="product-placeholder" role="img" aria-label="商品圖片預留位置">
+            <span class="placeholder-cross" aria-hidden="true">＋</span>
+            <span>商品圖片預留</span>
+            <small>PRODUCT IMAGE</small>
+          </div>
+          <div class="product-details">
+            <h3>{album.productTitle}</h3>
+            <div class="contents"><h4>內容物</h4><p>{album.contents}</p></div>
+            <div class="shop-links">
+              {album.shops.map((shop) => shop.url ? (
+                <a class="btn-retro" href={shop.url} target="_blank" rel="noopener noreferrer">{shop.name} <span aria-hidden="true">↗</span></a>
+              ) : (
+                <button class="btn-retro" disabled>{shop.name} <span aria-hidden="true">↗</span></button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="credit" class="section credit" aria-labelledby="credit-title">
+        <header class="section-heading"><h2 id="credit-title">Credit</h2></header>
+        <dl class="credits">
+          {credits.map(({ role, name }) => <div class="credit-row"><dt>{role}</dt><dd>{name}</dd></div>)}
+        </dl>
+      </section>
+    </main>
+
+    <footer><a href="/">wormbakery <span aria-hidden="true">↗</span></a></footer>
+    <script>
+      const toggle = document.querySelector<HTMLButtonElement>('.menu-toggle');
+      const menu = document.querySelector<HTMLElement>('.nav-links');
+      function closeMenu() {
+        toggle?.setAttribute('aria-expanded', 'false');
+        toggle?.setAttribute('aria-label', '開啟選單');
+        menu?.classList.remove('is-open');
+      }
+      toggle?.addEventListener('click', () => {
+        const open = toggle.getAttribute('aria-expanded') !== 'true';
+        toggle.setAttribute('aria-expanded', String(open));
+        toggle.setAttribute('aria-label', open ? '關閉選單' : '開啟選單');
+        menu?.classList.toggle('is-open', open);
+      });
+      menu?.querySelectorAll('a').forEach((link) => link.addEventListener('click', closeMenu));
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && toggle?.getAttribute('aria-expanded') === 'true') {
+          closeMenu();
+          toggle.focus();
+        }
+      });
+      const sections = [...document.querySelectorAll<HTMLElement>('main > section')];
+      const links = [...document.querySelectorAll<HTMLAnchorElement>('[data-section]')];
+      let queued = false;
+      function updateActiveSection() {
+        const active = [...sections].reverse().find((section) => section.getBoundingClientRect().top <= 150) || sections[0];
+        links.forEach((link) => {
+          if (link.dataset.section === active?.id) link.setAttribute('aria-current', 'location');
+          else link.removeAttribute('aria-current');
+        });
+        queued = false;
+      }
+      window.addEventListener('scroll', () => {
+        if (!queued) { queued = true; requestAnimationFrame(updateActiveSection); }
+      }, { passive: true });
+      updateActiveSection();
+    </script>
+  </body>
+</html>
+
+<style>
+  :global(html:has(.album-title)) { color-scheme: dark; scroll-padding-top: 96px; }
+  body {
+    font-family: 'Noto Serif TC', serif;
+    font-weight: 400;
+    letter-spacing: .06em;
+    background-color: #101016;
+    background-image: linear-gradient(to right, rgb(164 164 164 / .065) 1px, transparent 1px), linear-gradient(to bottom, rgb(164 164 164 / .065) 1px, transparent 1px);
+    background-size: 40px 40px;
+    color: #eeeef0;
+  }
+  h1, h2, h3, h4 { font-family: 'Noto Serif TC', serif; font-weight: 300; letter-spacing: .12em; }
+  a { color: inherit; text-decoration: none; }
+  a:focus-visible, button:focus-visible { outline: 2px solid #eeeef0; outline-offset: 6px; }
+  .skip-link { position: fixed; top: -100px; left: 16px; z-index: 100; padding: 12px; background: #101016; }
+  .skip-link:focus { top: 12px; }
+  .navigation { position: fixed; inset: 0 0 auto; z-index: 50; border-bottom: 3px solid var(--fg); background: rgb(16 16 22 / .94); backdrop-filter: blur(8px); }
+  .nav-inner { max-width: 1280px; margin: auto; padding: 0 32px; min-height: 64px; display: flex; align-items: center; justify-content: space-between; }
+  .wordmark { font-size: 18px; letter-spacing: .3em; }
+  .nav-links { display: flex; gap: 32px; }
+  .nav-links a { font-family: var(--font-mono); text-transform: capitalize; font-size: 14px; padding: 8px 0; }
+  .nav-links a:hover, .nav-links a[aria-current] { text-decoration: underline; text-underline-offset: 7px; }
+  .menu-toggle { display: none; color: inherit; background: none; padding: 6px; border: 2px solid var(--fg); }
+  main { max-width: 1120px; margin: auto; padding: 104px 32px 0; }
+  #home { scroll-margin-top: 100px; }
+  .artwork { position: relative; max-width: 780px; margin: auto; }
+  .artwork img { display: block; width: 100%; height: auto; }
+  .album-title { position: absolute; left: 9%; top: 13%; text-align: center; color: #fff5ed; text-shadow: 0 2px 20px #101016; }
+  .album-title h1 { font-size: clamp(48px, 8vw, 100px); letter-spacing: .2em; margin-right: -.2em; line-height: 1.4; }
+  .album-title span { display: block; font-size: 12px; letter-spacing: .4em; margin-right: -.4em; }
+  .listen { display: flex; justify-content: center; margin-top: 32px; }
+  .btn-retro { font-size: 13px; letter-spacing: .06em; gap: 20px; }
+  .btn-retro:disabled { cursor: not-allowed; color: #96969f; border-color: #74747e; box-shadow: 4px 4px 0 #74747e; }
+  .btn-retro:disabled:hover { transform: none; background: var(--bg); }
+  .section { padding-top: 128px; scroll-margin-top: -20px; }
+  .section-heading { margin-bottom: 48px; }
+  .section-heading h2 { font-size: 32px; }
+  .product { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
+  .product-placeholder { aspect-ratio: 1; border: 1px solid #494952; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 12px; color: #92929c; background: rgb(16 16 22 / .7); }
+  .placeholder-cross { font-size: 30px; font-weight: 300; }
+  .product-placeholder small { font: 10px var(--font-mono); letter-spacing: .15em; }
+  .product-details h3 { font-size: 28px; line-height: 1.6; }
+  .contents { margin: 32px 0 40px; }
+  .contents h4 { font-size: 13px; color: #b1b1b9; }
+  .contents p { font-size: 14px; color: #aaaab5; line-height: 2; margin: 12px 0 0; }
+  .shop-links { display: flex; gap: 20px; flex-wrap: wrap; }
+  .story { max-width: 780px; margin: auto; }
+  .track { padding: 44px 0; }
+  .track:first-child { padding-top: 0; }
+  .track + .track { border-top: 1px solid #3e3e48; }
+  .track-heading { display: flex; align-items: baseline; gap: 24px; }
+  .track-number { font: 11px var(--font-mono); color: #898994; }
+  .track h3 { font-size: 25px; line-height: 1.6; }
+  .track p { margin: 24px 0 0 40px; color: #c0c0c8; font-size: 16px; line-height: 2.3; white-space: pre-line; }
+  .credit { max-width: 780px; margin: auto; }
+  .credits { width: fit-content; margin: 64px auto 0; font-weight: 300; }
+  .credit-row { display: grid; grid-template-columns: 5em minmax(5em, auto); gap: clamp(32px, 8vw, 96px); margin-bottom: 28px; font-size: 18px; }
+  .credit-row dt { text-align: justify; text-align-last: justify; color: #a9a9b3; }
+  .credit-row dd { margin: 0; }
+  footer { max-width: 1056px; margin: 128px auto 0; padding: 28px 0 40px; border-top: 1px solid #3e3e48; display: flex; justify-content: center; color: #aaaab5; font: 12px var(--font-mono); }
+  footer a:hover { color: #fff; }
+  @media (max-width: 767px) {
+    .nav-inner { padding: 0 20px; flex-wrap: wrap; }
+    .menu-toggle { display: block; }
+    .nav-links { display: none; width: 100%; flex-direction: column; gap: 0; padding: 12px 0 24px; }
+    .nav-links.is-open { display: flex; }
+    .nav-links a { padding: 14px 0; }
+    main { padding: 88px 16px 0; }
+    .album-title h1 { font-size: clamp(38px, 12vw, 76px); }
+    .album-title span { font-size: 9px; }
+    .section { padding-top: 88px; scroll-margin-top: 0; }
+    .section-heading { margin-bottom: 32px; }
+    .section-heading h2 { font-size: 28px; }
+    .product { grid-template-columns: 1fr; gap: 32px; }
+    .product-details { padding: 0 8px; }
+    .product-details h3 { font-size: 24px; }
+    .story, .credit { padding-left: 8px; padding-right: 8px; }
+    .track h3 { font-size: 22px; }
+    .track p { margin-left: 0; font-size: 15px; }
+    .track { padding: 32px 0; }
+    footer { margin: 88px 24px 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    :global(html:has(.album-title)) { scroll-behavior: auto; }
+    *, *::before, *::after { transition: none !important; }
+  }
+</style>
