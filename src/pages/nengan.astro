@@ -2,6 +2,7 @@
 import { Image } from 'astro:assets';
 import '../styles/global.css';
 import artwork from '../../ch.png';
+import NenganStars from '../components/NenganStars.astro';
 
 // 正式素材備妥後，在此替換文字與網址；空網址會顯示不可點擊的按鈕。
 const album = {
@@ -19,7 +20,6 @@ const tracks = [
 ].map((title, index) => ({
   title,
   number: String(index + 1).padStart(2, '0'),
-  description: '這裡是章節描述的測試文字。留下一段關於這首作品的故事、心情，或是尚未說出口的話。正式文案完成後，可以在這裡替換，並保留你想要的段落與換行。',
 }));
 const credits = [
   { role: '表演', name: '晚晚' },
@@ -44,6 +44,7 @@ const navigation = ['home', 'story', 'shop', 'credit'];
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400&display=swap" rel="stylesheet" />
   </head>
   <body>
+    <NenganStars />
     <a class="skip-link" href="#home">跳至主要內容</a>
     <nav class="navigation" aria-label="專輯導覽">
       <div class="nav-inner">
@@ -78,11 +79,14 @@ const navigation = ['home', 'story', 'shop', 'credit'];
 
       <section id="story" class="section story" aria-labelledby="story-title">
         <header class="section-heading"><h2 id="story-title">Story</h2></header>
+        <div class="story-intro">
+          <p>心之所向由五則短篇故事組成，描述青少年生活處於不安定狀態時的心情與抉擇。</p>
+          <p>擁有傷疤的人們仍要勇敢探求，努力尋找自己的心之所向。</p>
+        </div>
         <div class="tracks">
           {tracks.map((track) => (
             <article class="track">
               <div class="track-heading"><span class="track-number">{track.number}</span><h3>{track.title}</h3></div>
-              <p>{track.description}</p>
             </article>
           ))}
         </div>
@@ -166,10 +170,9 @@ const navigation = ['home', 'story', 'shop', 'credit'];
     font-weight: 400;
     letter-spacing: .06em;
     background-color: #101016;
-    background-image: linear-gradient(to right, rgb(164 164 164 / .065) 1px, transparent 1px), linear-gradient(to bottom, rgb(164 164 164 / .065) 1px, transparent 1px);
-    background-size: 40px 40px;
     color: #eeeef0;
   }
+  main, footer { position: relative; z-index: 1; }
   h1, h2, h3, h4 { font-family: 'Noto Serif TC', serif; font-weight: 300; letter-spacing: .12em; }
   a { color: inherit; text-decoration: none; }
   a:focus-visible, button:focus-visible { outline: 2px solid #eeeef0; outline-offset: 6px; }
@@ -193,7 +196,8 @@ const navigation = ['home', 'story', 'shop', 'credit'];
   .btn-retro { font-size: 13px; letter-spacing: .06em; gap: 20px; }
   .btn-retro:disabled { cursor: not-allowed; color: #96969f; border-color: #74747e; box-shadow: 4px 4px 0 #74747e; }
   .btn-retro:disabled:hover { transform: none; background: var(--bg); }
-  .section { padding-top: 128px; scroll-margin-top: -20px; }
+  .section { position: relative; padding-top: 128px; scroll-margin-top: -20px; }
+  .section::before { content: ''; position: absolute; top: 48px; left: 50%; width: min(calc(100vw - 64px), 1056px); height: 1px; background: rgb(238 238 240 / .18); transform: translateX(-50%); }
   .section-heading { margin-bottom: 48px; }
   .section-heading h2 { font-size: 32px; }
   .product { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
@@ -205,14 +209,21 @@ const navigation = ['home', 'story', 'shop', 'credit'];
   .contents h4 { font-size: 13px; color: #b1b1b9; }
   .contents p { font-size: 14px; color: #aaaab5; line-height: 2; margin: 12px 0 0; }
   .shop-links { display: flex; gap: 20px; flex-wrap: wrap; }
-  .story { max-width: 780px; margin: auto; }
-  .track { padding: 44px 0; }
-  .track:first-child { padding-top: 0; }
-  .track + .track { border-top: 1px solid #3e3e48; }
-  .track-heading { display: flex; align-items: baseline; gap: 24px; }
+  .story { max-width: 700px; margin: auto; text-align: center; }
+  .story-intro { max-width: 650px; margin: 0 auto 64px; color: #c0c0c8; font-size: 16px; line-height: 2.3; }
+  .story-intro p { margin: 0; }
+  .story-intro p + p { margin-top: 24px; }
+  .tracks { display: grid; max-width: 650px; margin: auto; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-areas: 'first . second' 'third fourth fifth'; column-gap: 16px; row-gap: 36px; }
+  .track:nth-child(1) { grid-area: first; }
+  .track:nth-child(2) { grid-area: second; }
+  .track:nth-child(3) { grid-area: third; }
+  .track:nth-child(4) { grid-area: fourth; }
+  .track:nth-child(5) { grid-area: fifth; }
+  .track-heading { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .track:nth-child(1) .track-heading, .track:nth-child(3) .track-heading { align-items: flex-start; text-align: left; }
+  .track:nth-child(2) .track-heading, .track:nth-child(5) .track-heading { align-items: flex-end; text-align: right; }
   .track-number { font: 11px var(--font-mono); color: #898994; }
   .track h3 { font-size: 25px; line-height: 1.6; }
-  .track p { margin: 24px 0 0 40px; color: #c0c0c8; font-size: 16px; line-height: 2.3; white-space: pre-line; }
   .credit { max-width: 780px; margin: auto; }
   .credits { width: fit-content; margin: 64px auto 0; font-weight: 300; }
   .credit-row { display: grid; grid-template-columns: 5em minmax(5em, auto); gap: clamp(32px, 8vw, 96px); margin-bottom: 28px; font-size: 18px; }
@@ -230,15 +241,17 @@ const navigation = ['home', 'story', 'shop', 'credit'];
     .album-title h1 { font-size: clamp(38px, 12vw, 76px); }
     .album-title span { font-size: 9px; }
     .section { padding-top: 88px; scroll-margin-top: 0; }
+    .section::before { top: 32px; width: calc(100vw - 32px); }
     .section-heading { margin-bottom: 32px; }
     .section-heading h2 { font-size: 28px; }
     .product { grid-template-columns: 1fr; gap: 32px; }
     .product-details { padding: 0 8px; }
     .product-details h3 { font-size: 24px; }
     .story, .credit { padding-left: 8px; padding-right: 8px; }
-    .track h3 { font-size: 22px; }
-    .track p { margin-left: 0; font-size: 15px; }
-    .track { padding: 32px 0; }
+    .story-intro { margin-bottom: 48px; font-size: 15px; }
+    .tracks { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-areas: none; gap: 32px 16px; }
+    .tracks .track { grid-area: auto; }
+    .track h3 { font-size: 18px; }
     footer { margin: 88px 24px 0; }
   }
   @media (prefers-reduced-motion: reduce) {
