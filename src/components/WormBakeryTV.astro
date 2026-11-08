@@ -6,6 +6,7 @@
 import { ALBUMS } from '../data/albums';
 import { Image } from 'astro:assets';
 import brandLogo from '../../public/pic/bakerylogo.png';
+const popupOrder = [8, 1, 15, 4, 19, 11, 2, 22, 6, 13, 0, 17, 9, 21, 5, 14, 3, 18, 10, 23, 7, 16, 12, 20];
 ---
 
 <!-- TV 區 -->
@@ -144,9 +145,16 @@ import brandLogo from '../../public/pic/bakerylogo.png';
       </div>
     </div>
     <div class="bakery-window-transition" aria-hidden="true">
-      <div class="bakery-transition-window bakery-transition-window-a"><span>BAKERY.EXE</span><div>LOVE / GROWTH</div></div>
-      <div class="bakery-transition-window bakery-transition-window-b"><span>LOADING...</span><div>✳ ✳ ✳</div></div>
-      <div class="bakery-transition-window bakery-transition-window-c"><span>ARCHIVE_02</span><div>蚯蚓麵包屋</div></div>
+      {popupOrder.map((order, index) => (
+        <div
+          class="bakery-transition-window"
+          data-popup-order={order}
+          style={`left: ${(index % 6) * (100 / 6)}%; top: ${Math.floor(index / 6) * 25}%; z-index: ${order + 1};`}
+        >
+          <span>系統錯誤 #{String(index + 1).padStart(2, '0')}</span>
+          <div><strong>!</strong><small>ERROR / RETRY</small></div>
+        </div>
+      ))}
     </div>
   </div>
 </section>
@@ -160,6 +168,7 @@ import brandLogo from '../../public/pic/bakerylogo.png';
 
   const section = document.getElementById('wormbakery-tv');
   const storySection = document.getElementById('bakery-story');
+  const errorWindows = storySection?.querySelectorAll<HTMLElement>('.bakery-transition-window');
   const storyStaticQuery = window.matchMedia('(max-width: 768px), (prefers-reduced-motion: reduce)');
   const scrollProgress = document.getElementById('tv-scroll-progress');
   const coverImg = document.getElementById('tv-cover-img') as HTMLImageElement;
@@ -303,21 +312,25 @@ import brandLogo from '../../public/pic/bakerylogo.png';
     if (!storySection) return;
     if (storyStaticQuery.matches) {
       storySection.style.setProperty('--story-reveal', '1');
-      storySection.style.setProperty('--window-opacity', '0');
       storySection.style.setProperty('--story-logo-shift', '0%');
       storySection.style.setProperty('--story-copy-shift', '0rem');
+      errorWindows?.forEach((popup) => { popup.style.opacity = '0'; });
       return;
     }
     const rect = storySection.getBoundingClientRect();
     const distance = Math.max(1, storySection.offsetHeight - window.innerHeight);
     const progress = clamp(-rect.top / distance);
-    const covering = clamp((progress - 0.1) / 0.18) * (1 - clamp((progress - 0.38) / 0.18));
+    const fading = 1 - clamp((progress - 0.42) / 0.14);
     const reveal = clamp((progress - 0.56) / 0.22);
-    storySection.style.setProperty('--window-opacity', String(covering));
+    errorWindows?.forEach((popup) => {
+      const order = Number(popup.dataset.popupOrder);
+      const appearing = clamp((progress - 0.08 - order * 0.012) / 0.06);
+      popup.style.opacity = String(appearing * fading);
+      popup.style.transform = `scale(${0.7 + appearing * 0.3})`;
+    });
     storySection.style.setProperty('--story-reveal', String(reveal));
     storySection.style.setProperty('--story-logo-shift', `${(1 - reveal) * 50}%`);
     storySection.style.setProperty('--story-copy-shift', `${(1 - reveal) * 5}rem`);
-    storySection.style.setProperty('--window-scale', String(0.8 + covering * 0.2));
   }
   function updateScroll() {
     scheduled = false;
