@@ -5,7 +5,7 @@ import Footer from '../components/Footer.astro';
 import { WORKS, getCategoryLabel } from '../data/works';
 
 // 只顯示指定的 6 部作品
-const DISPLAY_IDS = [19, 10, 21, 22, 25, 26, 18, 20, 27];
+const DISPLAY_IDS = [19, 10, 21, 22, 25, 26, 18, 20, 27, 28];
 const displayWorks = WORKS.filter((w) => DISPLAY_IDS.includes(w.id));
 ---
 
@@ -66,7 +66,7 @@ const displayWorks = WORKS.filter((w) => DISPLAY_IDS.includes(w.id));
   <script>
     import { WORKS, getCategoryLabel } from '../data/works';
 
-const DISPLAY_IDS = [19, 10, 21, 22, 25, 26, 18, 20, 27];
+const DISPLAY_IDS = [19, 10, 21, 22, 25, 26, 18, 20, 27, 28];
     const works = WORKS.filter((w) => DISPLAY_IDS.includes(w.id));
     const panelsContainer = document.getElementById('work-panels');
 

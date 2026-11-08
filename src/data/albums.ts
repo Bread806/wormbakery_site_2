@@ -20,15 +20,16 @@ export interface Album {
 
 export const ALBUMS: Album[] = [
   {
-    id: 'coming',
-    title: '敬請期待',
-    coverImage: '/pic/bakery-logo-black.png',
+    id: 'hacker-senpai',
+    title: 'Hacker Senpai',
+    coverImage: '/work_pic/hacker-senpai.png',
     tracks: [
       {
         id: 'a',
-        title: '敬請期待',
-        description: '敬請期待 :D',
-        image: '/pic/bakery-icon.png',
+        title: 'Hacker Senpai',
+        description: '以小助手的身分幫忙自己的前輩做事結果好像搞砸了\n為了表示一點歉意，小助手做了料理邀請前輩一同用餐\n卻意外得知前輩心理一直存在的，隱隱作痛的過去',
+        release: 'https://youtu.be/baFMkvwwa6w',
+        image: '/work_pic/hacker-senpai.png',
       },
     ],
   },

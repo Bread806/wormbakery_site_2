@@ -1,5 +1,4 @@
-// 作品資料：25 部作品，完整保留原 bundle 連結
-// 所有作品目前歸屬卡蚯蚓（brandId: 'kacha'）；未來可將公開台本移到麵包屋
+// 作品資料，完整保留原 bundle 連結
 
 export type WorkCategory = 'script' | 'creation' | 'commission';
 
@@ -11,7 +10,7 @@ export interface Work {
   link?: string;      // Google Doc 連結
   release?: string;   // YouTube 連結
   image?: string;     // 作品封面圖
-  brandId: 'kacha' | 'worm';  // 品牌歸屬（預設全部 'kacha'）
+  brandId: 'kacha' | 'worm';  // 品牌歸屬
 }
 
 const DOC_PARAMS = '?usp=sharing&ouid=115379523661572300748&rtpof=true&sd=true';
@@ -250,6 +249,15 @@ export const WORKS: Work[] = [
     description: '豹崽子向 Vivy 打聽塞壬之歌的情報，卻意外踩到 Vivy 的雷。經過一番爭執與拉扯才發現是場誤會，於是兩人重修舊好，甚至感情更加深厚。\n（Project:雪白薄紗｜Voice:名雪薇薇｜Script:卡蚯蚓）',
     image: '/work_pic/work_tailmoon.jpg',
     brandId: 'kacha',
+  },
+  {
+    id: 28,
+    title: 'Hacker Senpai',
+    category: 'creation',
+    description: '以小助手的身分幫忙自己的前輩做事結果好像搞砸了\n為了表示一點歉意，小助手做了料理邀請前輩一同用餐\n卻意外得知前輩心理一直存在的，隱隱作痛的過去',
+    release: 'https://youtu.be/baFMkvwwa6w',
+    image: '/work_pic/hacker-senpai.png',
+    brandId: 'worm',
   },
 ];
 

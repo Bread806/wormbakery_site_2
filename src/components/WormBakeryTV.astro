@@ -67,23 +67,23 @@ import brandLogo from '../../public/pic/bakerylogo.png';
           <!-- 右下 overlay：Windows-form 簡介 dialog -->
           <div id="tv-dialog" class="tv-dialog retro-border retro-shadow bg-[var(--bg)]">
             <div class="tv-dialog-titlebar">
-              <span id="tv-dialog-title" class="font-mono text-xs font-bold">track_a.wav</span>
+              <span id="tv-dialog-title" class="font-mono text-xs font-bold">{ALBUMS[0].id}_{ALBUMS[0].tracks[0].id}.wav</span>
               <button class="tv-dialog-close" aria-label="關閉" disabled>✕</button>
             </div>
             <div class="tv-dialog-body">
-              <h4 id="tv-dialog-track-title" class="text-lg font-bold acid-chroma mb-1">病</h4>
-              <p id="tv-dialog-desc" class="text-xs leading-relaxed mb-2 opacity-90">
-                一位姊姊常常來看診，她發現與她談了戀愛的故事。
+              <h4 id="tv-dialog-track-title" class="text-lg font-bold acid-chroma mb-1">{ALBUMS[0].tracks[0].title}</h4>
+              <p id="tv-dialog-desc" class="text-xs leading-relaxed mb-2 opacity-90 whitespace-pre-line">
+                {ALBUMS[0].tracks[0].description}
               </p>
               <div id="tv-dialog-credits" class="tv-dialog-credits mb-2 hidden">
                 <p class="text-xs font-mono opacity-60 mb-0.5">CREDITS</p>
                 <ul id="tv-dialog-credits-list" class="text-xs font-mono space-y-0.5"></ul>
               </div>
               <div class="flex flex-wrap gap-1">
-                <a id="tv-dialog-release" href="#" target="_blank" rel="noopener noreferrer" class="btn-retro text-xs px-2 py-1 hidden">聆聽 →</a>
+                <a id="tv-dialog-release" href={ALBUMS[0].tracks[0].release} target="_blank" rel="noopener noreferrer" class="btn-retro text-xs px-2 py-1">聆聽 →</a>
               </div>
               <div class="tv-dialog-barcode font-barcode text-sm opacity-50 mt-2">
-                <span id="tv-dialog-barcode-text">TV.01.A</span>
+                <span id="tv-dialog-barcode-text">TV.01.{ALBUMS[0].tracks[0].id.toUpperCase()}</span>
               </div>
             </div>
           </div>
