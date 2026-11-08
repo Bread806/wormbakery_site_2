@@ -1,7 +1,7 @@
 ---
 // WormBakery TV Gallery：模仿 109ichiki works category 的電視轉台檢視窗
 // - 電視機：滾輪 / 按鈕切換合輯
-// - 電視下方：麵包屋 logo、視窗轉場與作品清單
+// - 電視下方：麵包屋 logo、視窗轉場與社團簡介
 // - 圖片撐滿 + 左上曲目清單 + 右下 windows-form 簡介
 import { ALBUMS } from '../data/albums';
 import { Image } from 'astro:assets';
@@ -119,8 +119,8 @@ const popupOrder = [8, 1, 15, 4, 19, 11, 2, 22, 6, 13, 0, 17, 9, 21, 5, 14, 3, 1
   <div class="tv-scroll-area" aria-hidden="true"></div>
 </section>
 
-<!-- 捲動時先由視窗覆蓋，再讓 logo 移至左側並顯示作品清單 -->
-<section id="bakery-story" class="bakery-brand" aria-label="蚯蚓麵包屋作品清單">
+<!-- 捲動時先由視窗覆蓋，再讓 logo 移至左側並顯示社團簡介 -->
+<section id="bakery-story" class="bakery-brand" aria-label="蚯蚓麵包屋介紹">
   <div class="bakery-brand-sticky">
     <div class="bakery-brand-inner">
       <div class="bakery-logo-wrap">
@@ -136,12 +136,7 @@ const popupOrder = [8, 1, 15, 4, 19, 11, 2, 22, 6, 13, 0, 17, 9, 21, 5, 14, 3, 1
         />
       </div>
       <div class="bakery-story-copy">
-        <p class="bakery-brand-intro">蚯蚓麵包屋是用來記錄愛與成長的地方，希望你喜歡。</p>
-        <h2>作品清單</h2>
-        <ul>
-          <li><a href="https://youtu.be/baFMkvwwa6w" target="_blank" rel="noopener noreferrer">Hacker Senpai</a></li>
-          <li class="bakery-work-unreleased">心之所向</li>
-        </ul>
+        <p class="bakery-brand-intro">蚯蚓麵包屋是由卡蚯蚓建立的音聲社團，製作一些我覺得很酷的作品<br />希望能透過音聲作品傳達我心中的理念與複雜感受</p>
       </div>
     </div>
     <div class="bakery-window-transition" aria-hidden="true">
