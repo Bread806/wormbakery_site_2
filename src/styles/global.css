@@ -521,6 +521,7 @@ h6 {
 .bakery-logo-wrap {
   display: flex;
   justify-content: center;
+  opacity: var(--story-reveal);
   transform: translateX(var(--story-logo-shift));
 }
 
@@ -1032,6 +1033,7 @@ html[data-theme='light'] .tv-track-item {
   }
 
   .bakery-logo-wrap {
+    opacity: 1;
     transform: none;
   }
 
@@ -1119,6 +1121,7 @@ html[data-theme='light'] .tv-track-item {
     transform: none;
   }
 
+  .bakery-logo-wrap,
   .bakery-story-copy {
     opacity: 1;
   }
