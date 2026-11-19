@@ -4,8 +4,8 @@ import Navigation from '../components/Navigation.astro';
 import Footer from '../components/Footer.astro';
 import { WORKS, getCategoryLabel } from '../data/works';
 
-// 只顯示指定的 6 部作品
-const DISPLAY_IDS = [19, 10, 21, 22, 25, 26, 18, 20, 27, 28];
+// 只顯示指定的作品
+const DISPLAY_IDS = [19, 10, 21, 22, 25, 26, 18, 20, 27, 29, 30, 28];
 const displayWorks = WORKS.filter((w) => DISPLAY_IDS.includes(w.id));
 ---
 
@@ -66,7 +66,7 @@ const displayWorks = WORKS.filter((w) => DISPLAY_IDS.includes(w.id));
   <script>
     import { WORKS, getCategoryLabel } from '../data/works';
 
-const DISPLAY_IDS = [19, 10, 21, 22, 25, 26, 18, 20, 27, 28];
+    const DISPLAY_IDS = [19, 10, 21, 22, 25, 26, 18, 20, 27, 29, 30, 28];
     const works = WORKS.filter((w) => DISPLAY_IDS.includes(w.id));
     const panelsContainer = document.getElementById('work-panels');
 
@@ -122,7 +122,7 @@ const DISPLAY_IDS = [19, 10, 21, 22, 25, 26, 18, 20, 27, 28];
           </div>
           <div class="work-panel-links">
             ${hasLink ? `<a href="${work.link}" target="_blank" rel="noopener noreferrer" class="btn-retro">文本 →</a>` : ''}
-            ${hasRelease ? `<a href="${work.release}" target="_blank" rel="noopener noreferrer" class="btn-retro">聆聽 →</a>` : ''}
+            ${hasRelease ? `<a href="${work.release}" target="_blank" rel="noopener noreferrer" class="btn-retro">${work.releaseLabel ?? '聆聽'} →</a>` : ''}
           </div>
         </div>
         <!-- 底部置中關閉鈕：位於捲動區之外，內容再長也固定可見，手機也好按 -->

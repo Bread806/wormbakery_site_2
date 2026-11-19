@@ -8,7 +8,8 @@ export interface Work {
   category: WorkCategory | WorkCategory[];
   description: string;
   link?: string;      // Google Doc 連結
-  release?: string;   // YouTube 連結
+  release?: string;   // 作品公開連結
+  releaseLabel?: string; // 非影音連結的按鈕文字
   image?: string;     // 作品封面圖
   brandId: 'kacha' | 'worm';  // 品牌歸屬
 }
@@ -248,6 +249,26 @@ export const WORKS: Work[] = [
     category: 'commission',
     description: '豹崽子向 Vivy 打聽塞壬之歌的情報，卻意外踩到 Vivy 的雷。經過一番爭執與拉扯才發現是場誤會，於是兩人重修舊好，甚至感情更加深厚。\n（Project:雪白薄紗｜Voice:名雪薇薇｜Script:卡蚯蚓）',
     image: '/work_pic/work_tailmoon.jpg',
+    brandId: 'kacha',
+  },
+  {
+    id: 29,
+    title: '獻給你的Encore Kiss～校花學姊愛姆與夏伊拉的秘密心意♡',
+    category: 'commission',
+    description: '校慶前一天發生了場意外，這場意外的後果在三人心中逐漸發酵，愛姆掩不住貪婪與好奇心，在主角身上投射了心靈深處的慾望和壞心；夏伊拉跨越了矜持，覺察自己面對愛人時可以卸下武裝，並且接受自己喜歡被照顧被佔有的一面。三人見到並接納自己更真實的情感後關係昇華，三人攜手答應在一起，照顧彼此。\nCV：夢寐愛姆＆夏伊拉',
+    release: 'https://x.com/purelysilkvoice/status/2114195053413536013',
+    releaseLabel: '作品連結',
+    image: '/work_pic/work_encore_kiss.jpg',
+    brandId: 'kacha',
+  },
+  {
+    id: 30,
+    title: '只屬於你的幸運兔兔～兔女郎Aoi的VIP包廂服務♪',
+    category: 'commission',
+    description: '患者是兔女郎酒吧客人，首次指名了紅牌兔女郎 Aoi，被她溫柔周到的服務深深圈住，從此一再光顧、消費不斷加碼：從一萬的掏耳到一擲十萬的包廂貼身服務。然而某天患者遇到了人生的低潮，消失一陣子後再度上門卻只點了一節，羞愧得不敢看 Aoi。Aoi 卻不計較消費，把低落的他抱進懷裡安撫。原來她早就喜歡上患者，喜歡的不是他的錢，而是他陪她、逗她、和她分享快樂的樣子。兩人的關係越過紅牌與客人的界線，變成私下的曖昧與陪伴。最後在 Aoi 的溫柔守護下，患者走出低潮、重新出發，兩人成為真正的伴侶，過上幸福的日子。\nCV：Aoi Hinamori',
+    release: 'https://x.com/purelysilkvoice/status/2113450336094761006',
+    releaseLabel: '作品連結',
+    image: '/work_pic/work_lucky_bunny.jpg',
     brandId: 'kacha',
   },
   {
